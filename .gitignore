@@ -1,3 +1,6 @@
+#QtFiles project configuration
+*.user
+
 # Build directories
 build-tp1*
 
