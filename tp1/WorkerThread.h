@@ -1,9 +1,17 @@
 #ifndef WORKERTHREAD_H
 #define WORKERTHREAD_H
+#include <queue>
 #include "QThread"
 #include "QPushButton"
 #include "QTextEdit"
+#include "QTime"
+#include "QLCDNumber"
+
 #include "mainwindow.h"
+#include "JefeDeEstacion.h"
+#include "Auto.h"
+#include "Logger.h"
+
 
 class WorkerThread : public QThread{
     Q_OBJECT
@@ -11,9 +19,42 @@ class WorkerThread : public QThread{
     void run() Q_DECL_OVERRIDE {
 
         MainWindow* mainWindow=MainWindow::getInstance();
-        //Para que la vista no se ponga unresponsive mantenemos la vista en un proceso separado.
-        //int surtidores=mainWindow->getNumeroSurtidores();
-        //int empleados=mainWindow->getNumeroSurtidores();
+        QLCDNumber* displayNumber=mainWindow->findChild<QLCDNumber*>("timeDisplay");
+
+        int surtidores=mainWindow->getNumeroSurtidores();
+        int empleados=mainWindow->getNumeroSurtidores();
+        int tiempoSimulacion=mainWindow->getTiempoSimulacion();
+
+        //queue<Auto*> autos;
+        //JefeDeEstacion jefe;
+        //jefe.setEmpleados(empleados);
+
+        Logger::debug(getpid(), "Inicio de simulacion\n");
+        QTime timeElapsed;
+        timeElapsed.start();
+
+        while (tiempoSimulacion > timeElapsed.elapsed()/1000) {
+
+            if(timeElapsed.elapsed()%1000==0)
+                displayNumber->display(timeElapsed.elapsed()/1000);
+
+//            srand(time(NULL));
+//            if (rand() % 2 == 0) {
+//                autos.push(new Auto());
+//            }
+
+//            if (autos.size() > 0) {
+//                Auto* a = autos.front();
+
+//                jefe.recibirAuto(*a);
+
+//                autos.pop();
+//            }
+        }
+
+
+        Logger::debug(getpid(), string("Fin de simulacion\n"));
+        mainWindow->writeToStdOuT("Fin de la simulación");
         emit finishSignal();
     }
 

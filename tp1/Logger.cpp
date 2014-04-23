@@ -1,6 +1,6 @@
 #include "Logger.h"
 
-LockFile Logger::lf((char*)"logger.txt");
+LockFile Logger::lf((char*)"logger");
 
 Logger::Logger() {
 

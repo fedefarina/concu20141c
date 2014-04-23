@@ -23,6 +23,7 @@ public:
     static MainWindow* getInstance();
     int getNumeroSurtidores();
     int getNumeroEmpleados();
+    int getTiempoSimulacion();
     void cleanInputVariables();
     bool event(QEvent *event);
     ~MainWindow();
@@ -37,7 +38,7 @@ signals:
     void updateSalidaSignal(const QString &s);
 
 private:
-    int nSurtidores, nEmpleados;
+    int nSurtidores, nEmpleados, tiempoSimulacion;
     Ui::MainWindow *ui;
     explicit MainWindow(QWidget *parent = 0);
     static MainWindow* instance;
