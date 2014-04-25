@@ -48,6 +48,7 @@ class WorkerThread : public QThread{
             }
         }
 
+        displayNumber->display(0);
         Logger::debug(getpid(), string("Fin de simulacion\n"));
         mainWindow->writeToStdOuT("Fin de la simulación");
         EstacionDeServicio::destruirInstancia();
