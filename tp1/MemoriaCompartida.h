@@ -17,16 +17,18 @@ private:
 
     int 	shmId;
     T*		ptrDatos;
+    unsigned int cantidad;
     int cantidadProcesosAdosados ();
 
 public:
 
     MemoriaCompartida ();
     ~MemoriaCompartida ();
-    int crear ( char *archivo,char letra );
+    int crear ( char *archivo, char letra, int cantidad = 1 );
     void liberar ();
-    void escribir ( T dato );
-    T leer ();
+    void escribir ( T dato, int posicion = 0 );
+    T leer ( int posicion = 0 );
+    unsigned int getCantidad ();
 
 };
 
@@ -38,7 +40,7 @@ template <class T> MemoriaCompartida<T> :: MemoriaCompartida () {
 template <class T> MemoriaCompartida<T> :: ~MemoriaCompartida () {
 }
 
-template <class T> int MemoriaCompartida<T> :: crear ( char *archivo,char letra ) {
+template <class T> int MemoriaCompartida<T> :: crear ( char *archivo, char letra, int cantidad ) {
 
     // generacion de la clave
     key_t clave = ftok ( archivo,letra );
@@ -46,7 +48,7 @@ template <class T> int MemoriaCompartida<T> :: crear ( char *archivo,char letra 
         return ERROR_FTOK;
     else {
         // creacion de la memoria compartida
-        this->shmId = shmget ( clave,sizeof(T),0644|IPC_CREAT );
+        this->shmId = shmget ( clave,sizeof(T)*cantidad,0644|IPC_CREAT );
 
         if ( this->shmId == -1 )
             return ERROR_SHMGET;
@@ -56,8 +58,9 @@ template <class T> int MemoriaCompartida<T> :: crear ( char *archivo,char letra 
 
             if ( ptrTemporal == (void *) -1 ) {
                 return ERROR_SHMAT;
-            } else {
+            } else {                
                 this->ptrDatos = (T *) ptrTemporal;
+                this->cantidad = cantidad;
                 return SHM_OK;
             }
         }
@@ -76,18 +79,22 @@ template <class T> void MemoriaCompartida<T> :: liberar () {
     }
 }
 
-template <class T> void MemoriaCompartida<T> :: escribir ( T dato ) {
-    * (this->ptrDatos) = dato;
+template <class T> void MemoriaCompartida<T> :: escribir ( T dato, int posicion ) {
+    this->ptrDatos[posicion] = dato;
 }
 
-template <class T> T MemoriaCompartida<T> :: leer () {
-    return ( *(this->ptrDatos) );
+template <class T> T MemoriaCompartida<T> :: leer ( int posicion ) {
+    return ( this->ptrDatos[posicion] );
 }
 
 template <class T> int MemoriaCompartida<T> :: cantidadProcesosAdosados () {
     shmid_ds estado;
     shmctl ( this->shmId,IPC_STAT,&estado );
     return estado.shm_nattch;
+}
+
+template <class T> unsigned int MemoriaCompartida<T> :: getCantidad () {
+    return this->cantidad;
 }
 
 

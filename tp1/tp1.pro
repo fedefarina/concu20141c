@@ -9,13 +9,15 @@ HEADERS += \
     LockFile.h \
     JefeDeEstacion.h \
     Empleado.h \
-    Auto.h
+    Auto.h \
+    EstacionDeServicio.h
 
 SOURCES += \
     main.cpp \
     mainwindow.cpp \
     Logger.cpp \
-    LockFile.cpp
+    LockFile.cpp \
+    EstacionDeServicio.cpp
 
 FORMS += \
     mainwindow.ui \

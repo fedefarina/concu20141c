@@ -7,7 +7,6 @@
 #include "MemoriaCompartida.h"
 #include "Logger.h"
 #include "mainwindow.h"
-
 using namespace std;
 
 class JefeDeEstacion {
@@ -18,7 +17,7 @@ private:
 
 public:
     JefeDeEstacion() {
-        this->caja.crear("/bin/ls", 33);
+        this->caja.crear((char*)"/bin/ls", 33);
         this->caja.escribir(0);
     }
 
@@ -27,27 +26,26 @@ public:
         mainWindow->writeToStdOuT(string("Evento > Un nuevo auto entra a la estacion de servicio"));
         Logger::debug(getpid(), string("Evento > Un nuevo auto entra a la estacion de servicio\n"));
 
-        Empleado* empleado = NULL;
-
+        int pos = -1;
         //Busco un empleado libre
         for(unsigned int i = 0; i < empleados.size(); i++) {
-            Empleado* empl = empleados.at(i);
-            if (empl->getEstado() == Libre) {
-                empleado = empl;
+            if (((Empleado*)empleados.at(i))->getEstado() == Libre) {
+                pos = i;
                 break;
             }
         }
 
         //Si hay empleados libres.
-        if (empleado != NULL) {
+        if (pos >= 0) {
             mainWindow->writeToStdOuT(string("Evento > Atendiendo auto\n"));
             Logger::debug(getpid(), string("Evento > Atendiendo auto\n"));
+
             pid_t pid = fork();
             if (pid == 0) {
                 sleep(1);
-                empleado->atenderAuto(a);
+                empleados.at(pos)->atenderAuto(a);
             }
-        }else{
+        } else {
             Logger::debug(getpid(), string("Evento > No hay empleados disponibles\n"));
             mainWindow->writeToStdOuT(string("Evento > No hay empleados disponibles"));
         }

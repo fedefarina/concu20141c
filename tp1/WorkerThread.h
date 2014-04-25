@@ -6,12 +6,11 @@
 #include "QTextEdit"
 #include "QTime"
 #include "QLCDNumber"
-
 #include "mainwindow.h"
+#include "EstacionDeServicio.h"
 #include "JefeDeEstacion.h"
-#include "Auto.h"
 #include "Logger.h"
-
+#include "Auto.h"
 
 class WorkerThread : public QThread{
     Q_OBJECT
@@ -21,10 +20,10 @@ class WorkerThread : public QThread{
         MainWindow* mainWindow=MainWindow::getInstance();
         QLCDNumber* displayNumber=mainWindow->findChild<QLCDNumber*>("timeDisplay");
 
-        //int surtidores=mainWindow->getNumeroSurtidores();
+        int surtidores=mainWindow->getNumeroSurtidores();
         int empleados=mainWindow->getNumeroEmpleados();
         int tiempoSimulacion=mainWindow->getTiempoSimulacion();
-
+        EstacionDeServicio::getInstancia()->setSurtidores(surtidores);
         queue<Auto*> autos;
         JefeDeEstacion jefe;
         jefe.setEmpleados(empleados);
@@ -51,6 +50,7 @@ class WorkerThread : public QThread{
 
         Logger::debug(getpid(), string("Fin de simulacion\n"));
         mainWindow->writeToStdOuT("Fin de la simulación");
+        EstacionDeServicio::destruirInstancia();
         emit finishSignal();
     }
 
