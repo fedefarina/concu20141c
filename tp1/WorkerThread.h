@@ -21,13 +21,13 @@ class WorkerThread : public QThread{
         MainWindow* mainWindow=MainWindow::getInstance();
         QLCDNumber* displayNumber=mainWindow->findChild<QLCDNumber*>("timeDisplay");
 
-        int surtidores=mainWindow->getNumeroSurtidores();
-        int empleados=mainWindow->getNumeroSurtidores();
+        //int surtidores=mainWindow->getNumeroSurtidores();
+        int empleados=mainWindow->getNumeroEmpleados();
         int tiempoSimulacion=mainWindow->getTiempoSimulacion();
 
-        //queue<Auto*> autos;
-        //JefeDeEstacion jefe;
-        //jefe.setEmpleados(empleados);
+        queue<Auto*> autos;
+        JefeDeEstacion jefe;
+        jefe.setEmpleados(empleados);
 
         Logger::debug(getpid(), "Inicio de simulacion\n");
         QTime timeElapsed;
@@ -36,22 +36,18 @@ class WorkerThread : public QThread{
         while (tiempoSimulacion > timeElapsed.elapsed()/1000) {
 
             if(timeElapsed.elapsed()%1000==0)
-                displayNumber->display(timeElapsed.elapsed()/1000);
+                displayNumber->display(tiempoSimulacion - timeElapsed.elapsed()/1000);
 
-//            srand(time(NULL));
-//            if (rand() % 2 == 0) {
-//                autos.push(new Auto());
-//            }
+            if (timeElapsed.elapsed()%2000==0) {
+                autos.push(new Auto());
+            }
 
-//            if (autos.size() > 0) {
-//                Auto* a = autos.front();
-
-//                jefe.recibirAuto(*a);
-
-//                autos.pop();
-//            }
+            if (autos.size() > 0) {
+                Auto* a = autos.front();
+                jefe.recibirAuto(*a);
+                autos.pop();
+            }
         }
-
 
         Logger::debug(getpid(), string("Fin de simulacion\n"));
         mainWindow->writeToStdOuT("Fin de la simulación");

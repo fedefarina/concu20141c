@@ -21,9 +21,7 @@ public:
     void atenderAuto(Auto a) {
         this->estado = Ocupado;
         float tiempoDeCarga = a.getCapacidad();
-
         sleep(tiempoDeCarga);
-
         float recaudacion = this->caja.leer();
         this->caja.escribir(recaudacion + tiempoDeCarga);
         this->estado = Libre;

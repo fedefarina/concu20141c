@@ -5,6 +5,9 @@
 #include "Auto.h"
 #include "Empleado.h"
 #include "MemoriaCompartida.h"
+#include "Logger.h"
+#include "mainwindow.h"
+
 using namespace std;
 
 class JefeDeEstacion {
@@ -20,7 +23,13 @@ public:
     }
 
     void recibirAuto(Auto a) {
+        MainWindow *mainWindow=MainWindow::getInstance();
+        mainWindow->writeToStdOuT(string("Evento > Un nuevo auto entra a la estacion de servicio"));
+        Logger::debug(getpid(), string("Evento > Un nuevo auto entra a la estacion de servicio\n"));
+
         Empleado* empleado = NULL;
+
+        //Busco un empleado libre
         for(unsigned int i = 0; i < empleados.size(); i++) {
             Empleado* empl = empleados.at(i);
             if (empl->getEstado() == Libre) {
@@ -29,15 +38,18 @@ public:
             }
         }
 
+        //Si hay empleados libres.
         if (empleado != NULL) {
+            mainWindow->writeToStdOuT(string("Evento > Atendiendo auto\n"));
+            Logger::debug(getpid(), string("Evento > Atendiendo auto\n"));
             pid_t pid = fork();
             if (pid == 0) {
                 sleep(1);
                 empleado->atenderAuto(a);
             }
-            else {
-                wait();
-            }
+        }else{
+            Logger::debug(getpid(), string("Evento > No hay empleados disponibles\n"));
+            mainWindow->writeToStdOuT(string("Evento > No hay empleados disponibles"));
         }
     }
 
