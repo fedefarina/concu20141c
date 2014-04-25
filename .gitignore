@@ -3,6 +3,7 @@
 
 # Build directories
 build-tp1*
+tp1-build*
 
 # Compiled Object files
 *.slo
