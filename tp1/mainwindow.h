@@ -9,6 +9,7 @@
 #include <QMainWindow>
 #include <stdio.h>
 #include <string>
+#include "FifoEscritura.h"
 
 namespace Ui {
     class MainWindow;
@@ -29,7 +30,7 @@ public:
     ~MainWindow();
 
 public slots:
-
+    void nuevoAuto();
     void ejecutarComando();
     void writeToStdOuT(const string mje);
     void updateSalida(const QString &s);
@@ -42,6 +43,7 @@ private:
     Ui::MainWindow *ui;
     explicit MainWindow(QWidget *parent = 0);
     static MainWindow* instance;
+    FifoEscritura autosFifo;
 };
 
 

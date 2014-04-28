@@ -17,8 +17,10 @@ EstacionDeServicio* EstacionDeServicio::getInstancia() {
 }
 
 void EstacionDeServicio::destruirInstancia() {
-    if (instancia != NULL)
+    if (instancia != NULL){
         delete (instancia);
+        instancia=NULL;
+    }
 }
 
 void EstacionDeServicio::setSurtidores(unsigned int surtidores) {

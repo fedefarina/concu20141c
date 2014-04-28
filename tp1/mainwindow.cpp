@@ -1,11 +1,14 @@
-#include "ui_mainwindow.h"
-#include "mainwindow.h"
-#include "WorkerThread.h"
-
 #include <qtextedit.h>
 #include <QCoreApplication>
 #include <QKeyEvent>
 #include <QFileDialog>
+
+#include "ui_mainwindow.h"
+#include "mainwindow.h"
+#include "WorkerThread.h"
+#include "Constantes.h"
+#include <sys/wait.h>
+
 
 MainWindow* MainWindow::instance = NULL;
 
@@ -16,13 +19,15 @@ MainWindow* MainWindow::getInstance() {
     return instance;
 }
 
-MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow){
+MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow), autosFifo(FIFO_AUTOS){
     ui->setupUi(this);
 
     QPushButton *ejecutarButton = this->findChild<QPushButton*>("iniciarButton");
+    QPushButton *nuevoAutoButton = this->findChild<QPushButton*>("nuevoAuto");
 
     //sender, signal, receiver, slot (callback similar)
     QObject::connect(ejecutarButton, SIGNAL(clicked()), this, SLOT(ejecutarComando()));
+    QObject::connect(nuevoAutoButton, SIGNAL(clicked()), this, SLOT(nuevoAuto()));
     QObject::connect(this, SIGNAL(updateSalidaSignal(QString)), this, SLOT(updateSalida(QString)));
 }
 
@@ -32,7 +37,6 @@ void MainWindow::ejecutarComando(){
     writeToStdOuT("Iniciando simulación");
 
     QPushButton *ejecutarButton = this->findChild<QPushButton*>("iniciarButton");
-
     QString surtidores=this->findChild<QSpinBox*>("nSurtidores")->text();
     QString empleados=this->findChild<QSpinBox*>("nEmpleados")->text();
 
@@ -46,7 +50,6 @@ void MainWindow::ejecutarComando(){
     writeToStdOuT("Surtidores: "+ surtidores.toStdString());
     writeToStdOuT("Empleados: " + empleados.toStdString());
     writeToStdOuT("Tiempo simulacion: " + tSimulacion.toStdString());
-
     ejecutarButton->setEnabled(false);
 
 
@@ -57,8 +60,24 @@ void MainWindow::ejecutarComando(){
 
 }
 
+void MainWindow::nuevoAuto(){
 
-//Si tengo el boton onFocus con el enter inició la aplicación.
+    pid_t pid = fork ();
+    Marshaller marshaller;
+    Auto unAuto;
+    unAuto.setCapacidad(10);
+    std::string mensaje=marshaller.toString(unAuto);
+    if ( pid == 0 ) {//Hijo
+        autosFifo.abrir();
+        autosFifo.escribir ( static_cast<const void*>(mensaje.c_str()),mensaje.length() );
+        autosFifo.cerrar();
+        exit(0);
+    }else{
+        int estado;
+        wait ( (void*) &estado );
+    }
+}
+
 bool MainWindow::event(QEvent *event){
     if (event->type() == QEvent::KeyPress){
         QKeyEvent *ke = static_cast<QKeyEvent *>(event);
@@ -96,5 +115,6 @@ int MainWindow::getTiempoSimulacion(){
 
 MainWindow::~MainWindow(){
     delete ui;
+    autosFifo.eliminar();
 }
 

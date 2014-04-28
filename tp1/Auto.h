@@ -20,10 +20,15 @@ public:
         return this->capacidad;
     }
 
+    void setCapacidad(float capacidad){
+            this->capacidad=capacidad;
+    }
+
     ~Auto() {
 
     }
-
 };
+
+
 
 #endif // AUTO_H

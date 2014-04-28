@@ -9,6 +9,7 @@
 #include	<sys/types.h>
 #include	<sys/ipc.h>
 #include	<sys/shm.h>
+#include	<string>
 
 
 template <class T> class MemoriaCompartida {
@@ -24,7 +25,7 @@ public:
 
     MemoriaCompartida ();
     ~MemoriaCompartida ();
-    int crear ( char *archivo, char letra, int cantidad = 1 );
+    int crear ( std::string archivo, char letra, int cantidad = 1 );
     void liberar ();
     void escribir ( T dato, int posicion = 0 );
     T leer ( int posicion = 0 );
@@ -40,10 +41,11 @@ template <class T> MemoriaCompartida<T> :: MemoriaCompartida () {
 template <class T> MemoriaCompartida<T> :: ~MemoriaCompartida () {
 }
 
-template <class T> int MemoriaCompartida<T> :: crear ( char *archivo, char letra, int cantidad ) {
+template <class T> int MemoriaCompartida<T> :: crear ( std::string archivo, char letra, int cantidad ) {
+
 
     // generacion de la clave
-    key_t clave = ftok ( archivo,letra );
+    key_t clave = ftok ( archivo.c_str(),letra );
     if ( clave == -1 )
         return ERROR_FTOK;
     else {

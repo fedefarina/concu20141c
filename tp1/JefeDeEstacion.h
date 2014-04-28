@@ -7,7 +7,10 @@
 #include "MemoriaCompartida.h"
 #include "Logger.h"
 #include "mainwindow.h"
+#include "FifoLectura.h"
+
 using namespace std;
+
 
 class JefeDeEstacion {
 
@@ -16,15 +19,16 @@ private:
     MemoriaCompartida<float> caja;
 
 public:
-    JefeDeEstacion() {
+    JefeDeEstacion(){
         this->caja.crear((char*)"/bin/ls", 33);
         this->caja.escribir(0);
     }
 
-    void recibirAuto(Auto a) {
+    void recibirAuto(Auto unAuto) {
         MainWindow *mainWindow=MainWindow::getInstance();
+
         mainWindow->writeToStdOuT(string("Evento > Un nuevo auto entra a la estacion de servicio"));
-        Logger::debug(getpid(), string("Evento > Un nuevo auto entra a la estacion de servicio\n"));
+        Logger::debug(getpid(), "Evento > Un nuevo auto entra a la estacion de servicio\n");
 
         int pos = -1;
         //Busco un empleado libre
@@ -43,10 +47,10 @@ public:
             pid_t pid = fork();
             if (pid == 0) {
                 sleep(1);
-                empleados.at(pos)->atenderAuto(a);
+                empleados.at(pos)->atenderAuto(unAuto);
             }
         } else {
-            Logger::debug(getpid(), string("Evento > No hay empleados disponibles\n"));
+            Logger::debug(getpid(), "Evento > No hay empleados disponibles\n");
             mainWindow->writeToStdOuT(string("Evento > No hay empleados disponibles"));
         }
     }
