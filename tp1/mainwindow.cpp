@@ -34,30 +34,18 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
 void MainWindow::ejecutarComando(){
 
-    writeToStdOuT("Iniciando simulación");
-
     QPushButton *ejecutarButton = this->findChild<QPushButton*>("iniciarButton");
     QString surtidores=this->findChild<QSpinBox*>("nSurtidores")->text();
     QString empleados=this->findChild<QSpinBox*>("nEmpleados")->text();
-
     QTimeEdit *timeEdit=this->findChild<QTimeEdit*>("timeEdit");
     QString tSimulacion=timeEdit->text();
-
     nSurtidores=surtidores.toInt();
     nEmpleados=empleados.toInt();
     tiempoSimulacion=tSimulacion.toInt();
-
-    writeToStdOuT("Surtidores: "+ surtidores.toStdString());
-    writeToStdOuT("Empleados: " + empleados.toStdString());
-    writeToStdOuT("Tiempo simulacion: " + tSimulacion.toStdString());
-    ejecutarButton->setEnabled(false);
-
-
     WorkerThread *workerThread = new WorkerThread();
     connect(workerThread, &WorkerThread::finished, workerThread, &QObject::deleteLater);
     connect(workerThread, SIGNAL(finishSignal()), workerThread, SLOT(onFinished()));
     workerThread->start();
-
 }
 
 void MainWindow::nuevoAuto(){
