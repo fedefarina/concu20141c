@@ -34,7 +34,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
 void MainWindow::ejecutarComando(){
 
-    QPushButton *ejecutarButton = this->findChild<QPushButton*>("iniciarButton");
     QString surtidores=this->findChild<QSpinBox*>("nSurtidores")->text();
     QString empleados=this->findChild<QSpinBox*>("nEmpleados")->text();
     QTimeEdit *timeEdit=this->findChild<QTimeEdit*>("timeEdit");
@@ -50,11 +49,12 @@ void MainWindow::ejecutarComando(){
 
 void MainWindow::nuevoAuto(){
 
-    pid_t pid = fork ();
+
     Marshaller marshaller;
     Auto unAuto;
     unAuto.setCapacidad(10);
     std::string mensaje=marshaller.toString(unAuto);
+    pid_t pid = fork ();
     if ( pid == 0 ) {//Hijo
         autosFifo.abrir();
         autosFifo.escribir ( static_cast<const void*>(mensaje.c_str()),mensaje.length() );

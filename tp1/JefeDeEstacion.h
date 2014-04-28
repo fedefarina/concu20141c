@@ -25,9 +25,9 @@ public:
     }
 
     void recibirAuto(Auto unAuto) {
-        MainWindow *mainWindow=MainWindow::getInstance();
 
-        mainWindow->writeToStdOuT(string("Evento > Un nuevo auto entra a la estacion de servicio"));
+        MainWindow *mainWindow=MainWindow::getInstance();
+        mainWindow->writeToStdOuT("Evento > Un nuevo auto entra a la estacion de servicio");
         Logger::debug(getpid(), "Evento > Un nuevo auto entra a la estacion de servicio\n");
 
         int pos = -1;

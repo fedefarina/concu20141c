@@ -10,29 +10,41 @@
 class Marshaller {
 
 private:
-    void split(std::vector<string> &tokens, std::string text, char sep) {
-        int start = 0, end = 0;
-        while ((end = text.find(sep, start)) != std::string::npos) {
-            tokens.push_back(text.substr(start, end - start));
-            text=text.substr(end+1, text.length());
+    void split(std::vector<string> &tokens, std::string text, std::string sep) {
+
+        std::string::size_type end = 0;
+        cout<<"Split Text: "<<text<<endl;
+
+        if((end=text.find(sep))!= std::string::npos){
+            while ( end != std::string::npos) {
+                cout<<"Texto: "<<text<<endl;
+                cout<<"End: "<<end<<endl;
+                tokens.push_back(text.substr(0, end));
+                text=text.substr(end, text.length());
+                cout<<"Texto cortado: "<<text<<endl;
+                end=text.find(sep);
+            }
+        }else{
+            tokens.push_back(text);
         }
     }
 
 public:
     Marshaller(){}
     ~Marshaller() {}
+
+
     std::string toString(Auto unAuto){
         std::string buffer;
         Utils<float> utils;
         buffer.append(utils.tostr(unAuto.getCapacidad()));
-        buffer.append("_");
         return buffer;
     }
 
     Auto fromString(const std::string autoString){
         Auto unAuto;
         std::vector<string> tokens;
-        split(tokens,autoString,'_');
+        split(tokens,autoString,"_");
         Utils<float> utils;
         float number=utils.fromString(tokens.at(0));
         unAuto.setCapacidad(number);

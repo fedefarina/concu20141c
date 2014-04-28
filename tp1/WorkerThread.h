@@ -62,7 +62,6 @@ class WorkerThread : public QThread{
                     std::string mensaje = buffer;
                     mensaje.resize (bytesLeidos);
                     Auto unAuto=marshaller.fromString(mensaje);
-                    cout<<"Leo auto: "<<unAuto.getCapacidad()<<endl;
                     jefe.recibirAuto(unAuto);
                     canal.cerrar();
                 }
