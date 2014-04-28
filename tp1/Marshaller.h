@@ -13,15 +13,10 @@ private:
     void split(std::vector<string> &tokens, std::string text, std::string sep) {
 
         std::string::size_type end = 0;
-        cout<<"Split Text: "<<text<<endl;
-
         if((end=text.find(sep))!= std::string::npos){
             while ( end != std::string::npos) {
-                cout<<"Texto: "<<text<<endl;
-                cout<<"End: "<<end<<endl;
                 tokens.push_back(text.substr(0, end));
                 text=text.substr(end, text.length());
-                cout<<"Texto cortado: "<<text<<endl;
                 end=text.find(sep);
             }
         }else{
@@ -32,7 +27,6 @@ private:
 public:
     Marshaller(){}
     ~Marshaller() {}
-
 
     std::string toString(Auto unAuto){
         std::string buffer;

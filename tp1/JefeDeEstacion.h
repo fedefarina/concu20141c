@@ -19,6 +19,7 @@ private:
     MemoriaCompartida<float> caja;
 
 public:
+
     JefeDeEstacion(){
         this->caja.crear((char*)"/bin/ls", 33);
         this->caja.escribir(0);
@@ -26,10 +27,7 @@ public:
 
     void recibirAuto(Auto unAuto) {
 
-        MainWindow *mainWindow=MainWindow::getInstance();
-        mainWindow->writeToStdOuT("Evento > Un nuevo auto entra a la estacion de servicio");
         Logger::debug(getpid(), "Evento > Un nuevo auto entra a la estacion de servicio\n");
-
         int pos = -1;
         //Busco un empleado libre
         for(unsigned int i = 0; i < empleados.size(); i++) {
@@ -38,20 +36,19 @@ public:
                 break;
             }
         }
-
         //Si hay empleados libres.
         if (pos >= 0) {
-            mainWindow->writeToStdOuT(string("Evento > Atendiendo auto\n"));
             Logger::debug(getpid(), string("Evento > Atendiendo auto\n"));
-
             pid_t pid = fork();
             if (pid == 0) {
                 sleep(1);
                 empleados.at(pos)->atenderAuto(unAuto);
+                exit(0);
+            }else{
+                wait();
             }
         } else {
             Logger::debug(getpid(), "Evento > No hay empleados disponibles\n");
-            mainWindow->writeToStdOuT(string("Evento > No hay empleados disponibles"));
         }
     }
 

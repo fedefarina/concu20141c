@@ -32,11 +32,6 @@ public:
 public slots:
     void nuevoAuto();
     void ejecutarComando();
-    void writeToStdOuT(const string mje);
-    void updateSalida(const QString &s);
-
-signals:
-    void updateSalidaSignal(const QString &s);
 
 private:
     int nSurtidores, nEmpleados, tiempoSimulacion;

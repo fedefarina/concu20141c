@@ -27,9 +27,9 @@ class WorkerThread : public QThread{
         int tiempoSimulacion=mainWindow->getTiempoSimulacion();
 
         if(surtidores<=0)
-            mainWindow->writeToStdOuT("Debe haber al menos 1 surtidor");
+            cout<<"Debe haber al menos 1 surtidor."<<endl;
         if(empleados<=0)
-            mainWindow->writeToStdOuT("Debe haber al menos 1 empleado");
+            cout<<"Debe haber al menos 1 empleado."<<endl;
 
         if(surtidores>0 && empleados>0){
 
@@ -40,7 +40,6 @@ class WorkerThread : public QThread{
             EstacionDeServicio::getInstancia()->setSurtidores(surtidores);
             JefeDeEstacion jefe;
             jefe.setEmpleados(empleados);
-            mainWindow->writeToStdOuT("Inicio de simulacion");
             Logger::debug(getpid(), "Inicio de simulacion\n");
 
             MemoriaCompartida<bool> juegoTerminado;
@@ -91,7 +90,6 @@ public slots:
         EstacionDeServicio::destruirInstancia();
         ejecutarButton->setEnabled(true);
         Logger::debug(getpid(), string("Fin de simulacion\n"));
-        mainWindow->writeToStdOuT("Fin de la simulación");
     }
 };
 #endif // WORKERTHREAD_H

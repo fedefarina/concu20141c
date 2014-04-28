@@ -10,7 +10,7 @@
     <x>0</x>
     <y>0</y>
     <width>521</width>
-    <height>502</height>
+    <height>233</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -194,19 +194,6 @@
      </layout>
     </item>
     <item>
-     <layout class="QHBoxLayout" name="horizontalLayout_2">
-      <property name="spacing">
-       <number>0</number>
-      </property>
-      <property name="topMargin">
-       <number>0</number>
-      </property>
-      <property name="bottomMargin">
-       <number>0</number>
-      </property>
-     </layout>
-    </item>
-    <item>
      <layout class="QHBoxLayout" name="horizontalLayout">
       <property name="topMargin">
        <number>0</number>
@@ -241,44 +228,6 @@
        </widget>
       </item>
      </layout>
-    </item>
-    <item>
-     <widget class="QTextEdit" name="salidaEditText">
-      <property name="mouseTracking">
-       <bool>true</bool>
-      </property>
-      <property name="focusPolicy">
-       <enum>Qt::NoFocus</enum>
-      </property>
-      <property name="frameShadow">
-       <enum>QFrame::Plain</enum>
-      </property>
-      <property name="readOnly">
-       <bool>true</bool>
-      </property>
-     </widget>
-    </item>
-    <item>
-     <widget class="QPushButton" name="limpiarButton">
-      <property name="sizePolicy">
-       <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-        <horstretch>0</horstretch>
-        <verstretch>0</verstretch>
-       </sizepolicy>
-      </property>
-      <property name="layoutDirection">
-       <enum>Qt::RightToLeft</enum>
-      </property>
-      <property name="autoFillBackground">
-       <bool>false</bool>
-      </property>
-      <property name="text">
-       <string>Limpiar</string>
-      </property>
-      <property name="autoDefault">
-       <bool>true</bool>
-      </property>
-     </widget>
     </item>
     <item>
      <widget class="QPushButton" name="iniciarButton">
@@ -707,7 +656,7 @@
        <string>Iniciar Simulación</string>
       </property>
       <property name="autoDefault">
-       <bool>true</bool>
+       <bool>false</bool>
       </property>
       <property name="default">
        <bool>false</bool>
@@ -721,26 +670,6 @@
   </widget>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
- <tabstops>
-  <tabstop>salidaEditText</tabstop>
- </tabstops>
  <resources/>
- <connections>
-  <connection>
-   <sender>limpiarButton</sender>
-   <signal>clicked()</signal>
-   <receiver>salidaEditText</receiver>
-   <slot>clear()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>459</x>
-     <y>483</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>260</x>
-     <y>305</y>
-    </hint>
-   </hints>
-  </connection>
- </connections>
+ <connections/>
 </ui>

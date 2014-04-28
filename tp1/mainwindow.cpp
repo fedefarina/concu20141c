@@ -25,10 +25,9 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     QPushButton *ejecutarButton = this->findChild<QPushButton*>("iniciarButton");
     QPushButton *nuevoAutoButton = this->findChild<QPushButton*>("nuevoAuto");
 
-    //sender, signal, receiver, slot (callback similar)
+     //sender, signal, receiver, slot (callback similar)
     QObject::connect(ejecutarButton, SIGNAL(clicked()), this, SLOT(ejecutarComando()));
     QObject::connect(nuevoAutoButton, SIGNAL(clicked()), this, SLOT(nuevoAuto()));
-    QObject::connect(this, SIGNAL(updateSalidaSignal(QString)), this, SLOT(updateSalida(QString)));
 }
 
 
@@ -48,7 +47,6 @@ void MainWindow::ejecutarComando(){
 }
 
 void MainWindow::nuevoAuto(){
-
 
     Marshaller marshaller;
     Auto unAuto;
@@ -78,17 +76,6 @@ bool MainWindow::event(QEvent *event){
     return QMainWindow::event(event);
 }
 
-
-void MainWindow::writeToStdOuT(const string mje){
-    QString qstr = QString::fromStdString(mje);
-    emit updateSalidaSignal(qstr);
-}
-
-void MainWindow::updateSalida(const QString &s){
-    QTextEdit* salidaText = this->findChild<QTextEdit*>("salidaEditText");
-    salidaText->append(s);
-}
-
 int MainWindow::getNumeroSurtidores(){
     return nSurtidores;
 }
@@ -102,6 +89,7 @@ int MainWindow::getTiempoSimulacion(){
 }
 
 MainWindow::~MainWindow(){
+    cout<<"Eliminando"<<endl;
     delete ui;
     autosFifo.eliminar();
 }

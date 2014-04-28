@@ -11,6 +11,8 @@ Logger::~Logger() {
 }
 
 void Logger::debug(pid_t pid, const string& msg) {
+
+    cout<<msg<<endl;
     stringstream ss;
     ss << pid;
     string str = ss.str();
