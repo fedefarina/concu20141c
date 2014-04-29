@@ -52,7 +52,6 @@ void MainWindow::nuevoAuto(){
 
     Marshaller marshaller;
     Auto unAuto;
-    unAuto.setCapacidad(10);
     std::string mensaje=marshaller.toString(unAuto);
     pid_t pid = fork ();
     if ( pid == 0 ) {//Hijo
