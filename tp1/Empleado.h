@@ -4,6 +4,7 @@
 #include "Auto.h"
 #include "MemoriaCompartida.h"
 #include "EstacionDeServicio.h"
+#include "Logger.h"
 
 enum Estado {Libre, Ocupado};
 
@@ -23,6 +24,7 @@ public:
     }
 
     void atenderAuto(Auto a) {
+        Logger::debug(getpid(), "Evento -> Atendiendo auto");
         this->estado = Ocupado;
         unsigned int surtidores = EstacionDeServicio::getInstancia()->getSurtidores();
 
@@ -32,14 +34,10 @@ public:
 
                 if (this->surtidores.leer(i) == true) {
                     float tiempoDeCarga = a.getCapacidad();
-
                     sleep(tiempoDeCarga);
-
                     float recaudacion = this->caja.leer();
                     this->caja.escribir(recaudacion + tiempoDeCarga);
-
                     this->estado = Libre;
-
                     break;
                 }
             }
@@ -51,7 +49,7 @@ public:
     }
 
     ~Empleado() {
-        //this->caja.liberar();
+        this->caja.liberar();
     }
 
 };

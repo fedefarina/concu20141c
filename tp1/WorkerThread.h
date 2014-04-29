@@ -52,7 +52,6 @@ class WorkerThread : public QThread{
             if ( pid == 0 ) {
                 FifoLectura canal (FIFO_AUTOS);
                 Marshaller marshaller;
-                JefeDeEstacion jefe;
 
                 while (!juegoTerminado.leer()){
                     const int BUFFSIZE=100;
@@ -64,11 +63,9 @@ class WorkerThread : public QThread{
                     Auto unAuto=marshaller.fromString(mensaje);
                     jefe.recibirAuto(unAuto);
                     canal.cerrar();
-
                 }
                 exit (0);
             }else{
-
                 QTime timeElapsed;
                 timeElapsed.start();
                 while (tiempoSimulacion > timeElapsed.elapsed()/1000) {
@@ -77,7 +74,6 @@ class WorkerThread : public QThread{
                 }
                 juegoTerminado.escribir(true);
                 displayNumber->display(0);
-                cout<<"elimino fifo"<<endl;
                 juegoTerminado.liberar();
                 autosFifo.eliminar();
                 emit finishSignal();

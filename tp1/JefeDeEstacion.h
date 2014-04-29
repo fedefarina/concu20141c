@@ -29,6 +29,7 @@ public:
 
         Logger::debug(getpid(), "Evento > Un nuevo auto entra a la estacion de servicio\n");
         int pos = -1;
+
         //Busco un empleado libre
         for(unsigned int i = 0; i < empleados.size(); i++) {
             if (((Empleado*)empleados.at(i))->getEstado() == Libre) {
@@ -38,11 +39,9 @@ public:
         }
         //Si hay empleados libres.
         if (pos >= 0) {
-            Logger::debug(getpid(), string("Evento > Atendiendo auto\n"));
             pid_t pid = fork();
             if (pid == 0) {
-                sleep(1);
-                empleados.at(pos)->atenderAuto(unAuto);
+                ((Empleado*) empleados.at(pos))->atenderAuto(unAuto);
                 exit(0);
             }else{
                 wait();
