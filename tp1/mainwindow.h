@@ -25,6 +25,7 @@ public:
     int getNumeroSurtidores();
     int getNumeroEmpleados();
     int getTiempoSimulacion();
+    void setAutosFifo(const FifoEscritura fifoAutos);
     void cleanInputVariables();
     bool event(QEvent *event);
     ~MainWindow();
@@ -35,10 +36,11 @@ public slots:
 
 private:
     int nSurtidores, nEmpleados, tiempoSimulacion;
+    FifoEscritura fifoAutos;
     Ui::MainWindow *ui;
     explicit MainWindow(QWidget *parent = 0);
     static MainWindow* instance;
-    FifoEscritura autosFifo;
+
 };
 
 

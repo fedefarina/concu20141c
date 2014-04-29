@@ -1,5 +1,9 @@
 #include "FifoEscritura.h"
 
+FifoEscritura::FifoEscritura(){
+
+}
+
 FifoEscritura::FifoEscritura(const std::string nombre) : Fifo(nombre) {
 }
 

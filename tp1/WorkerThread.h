@@ -20,8 +20,9 @@ class WorkerThread : public QThread{
 
     void run() Q_DECL_OVERRIDE {
 
+        FifoEscritura autosFifo(FIFO_AUTOS);
         MainWindow* mainWindow=MainWindow::getInstance();
-
+        mainWindow->setAutosFifo(autosFifo);
         int surtidores=mainWindow->getNumeroSurtidores();
         int empleados=mainWindow->getNumeroEmpleados();
         int tiempoSimulacion=mainWindow->getTiempoSimulacion();
@@ -63,8 +64,8 @@ class WorkerThread : public QThread{
                     Auto unAuto=marshaller.fromString(mensaje);
                     jefe.recibirAuto(unAuto);
                     canal.cerrar();
+
                 }
-                juegoTerminado.liberar();
                 exit (0);
             }else{
 
@@ -76,6 +77,9 @@ class WorkerThread : public QThread{
                 }
                 juegoTerminado.escribir(true);
                 displayNumber->display(0);
+                cout<<"elimino fifo"<<endl;
+                juegoTerminado.liberar();
+                autosFifo.eliminar();
                 emit finishSignal();
             }
         }

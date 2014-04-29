@@ -2,7 +2,6 @@
 #include <QCoreApplication>
 #include <QKeyEvent>
 #include <QFileDialog>
-
 #include "ui_mainwindow.h"
 #include "mainwindow.h"
 #include "WorkerThread.h"
@@ -19,9 +18,8 @@ MainWindow* MainWindow::getInstance() {
     return instance;
 }
 
-MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow), autosFifo(FIFO_AUTOS){
+MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow){
     ui->setupUi(this);
-
     QPushButton *ejecutarButton = this->findChild<QPushButton*>("iniciarButton");
     QPushButton *nuevoAutoButton = this->findChild<QPushButton*>("nuevoAuto");
 
@@ -46,6 +44,10 @@ void MainWindow::ejecutarComando(){
     workerThread->start();
 }
 
+void MainWindow::setAutosFifo(FifoEscritura fifoAutos){
+    this->fifoAutos=fifoAutos;
+}
+
 void MainWindow::nuevoAuto(){
 
     Marshaller marshaller;
@@ -54,9 +56,9 @@ void MainWindow::nuevoAuto(){
     std::string mensaje=marshaller.toString(unAuto);
     pid_t pid = fork ();
     if ( pid == 0 ) {//Hijo
-        autosFifo.abrir();
-        autosFifo.escribir ( static_cast<const void*>(mensaje.c_str()),mensaje.length() );
-        autosFifo.cerrar();
+        fifoAutos.abrir();
+        fifoAutos.escribir ( static_cast<const void*>(mensaje.c_str()),mensaje.length() );
+        fifoAutos.cerrar();
         exit(0);
     }else{
         int estado;
@@ -91,6 +93,5 @@ int MainWindow::getTiempoSimulacion(){
 MainWindow::~MainWindow(){
     cout<<"Eliminando"<<endl;
     delete ui;
-    autosFifo.eliminar();
 }
 
