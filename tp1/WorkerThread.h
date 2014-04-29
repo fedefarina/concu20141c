@@ -34,8 +34,7 @@ class WorkerThread : public QThread{
 
         if(surtidores>0 && empleados>0){
 
-            QPushButton *ejecutarButton = mainWindow->findChild<QPushButton*>("iniciarButton");
-            ejecutarButton->setEnabled(false);
+            enableButtons(false);
 
             QLCDNumber* displayNumber=mainWindow->findChild<QLCDNumber*>("timeDisplay");
             EstacionDeServicio::getInstancia()->setSurtidores(surtidores);
@@ -85,11 +84,19 @@ signals:
     void finishSignal();
 public slots:
     void onFinished(){
-        MainWindow* mainWindow=MainWindow::getInstance();
-        QPushButton *ejecutarButton = mainWindow->findChild<QPushButton*>("iniciarButton");
         EstacionDeServicio::destruirInstancia();
-        ejecutarButton->setEnabled(true);
+        enableButtons(true);
         Logger::debug(getpid(), string("Fin de simulacion\n"));
     }
+public:
+    void enableButtons(bool enabled){
+        MainWindow* mainWindow=MainWindow::getInstance();
+        QPushButton *ejecutarButton = mainWindow->findChild<QPushButton*>("iniciarButton");
+        QPushButton *nuevoAutoButton = mainWindow->findChild<QPushButton*>("nuevoAuto");
+
+        ejecutarButton->setEnabled(enabled);
+        nuevoAutoButton->setEnabled(!enabled);
+    }
+
 };
 #endif // WORKERTHREAD_H

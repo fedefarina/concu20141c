@@ -91,7 +91,6 @@ int MainWindow::getTiempoSimulacion(){
 }
 
 MainWindow::~MainWindow(){
-    cout<<"Eliminando"<<endl;
     delete ui;
 }
 
