@@ -11,7 +11,7 @@ FifoEscritura::~FifoEscritura() {
 }
 
 void FifoEscritura::abrir() {
-	fd = open ( nombre.c_str(),O_WRONLY );
+    fd = open ( nombre.c_str(),O_WRONLY,0);
 }
 
 ssize_t FifoEscritura::escribir(const void* buffer,const ssize_t buffsize) const {

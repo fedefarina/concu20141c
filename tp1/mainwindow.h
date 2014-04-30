@@ -25,7 +25,7 @@ public:
     int getNumeroSurtidores();
     int getNumeroEmpleados();
     int getTiempoSimulacion();
-    void setAutosFifo(const FifoEscritura fifoAutos);
+    void setAutosFifo(const FifoEscritura& fifoAutos);
     void cleanInputVariables();
     bool event(QEvent *event);
     ~MainWindow();

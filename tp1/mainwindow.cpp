@@ -8,7 +8,6 @@
 #include "Constantes.h"
 #include <sys/wait.h>
 
-
 MainWindow* MainWindow::instance = NULL;
 
 
@@ -19,11 +18,12 @@ MainWindow* MainWindow::getInstance() {
 }
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow){
+
     ui->setupUi(this);
     QPushButton *ejecutarButton = this->findChild<QPushButton*>("iniciarButton");
     QPushButton *nuevoAutoButton = this->findChild<QPushButton*>("nuevoAuto");
 
-     //sender, signal, receiver, slot (callback similar)
+    //sender, signal, receiver, slot (callback similar)
     QObject::connect(ejecutarButton, SIGNAL(clicked()), this, SLOT(ejecutarComando()));
     QObject::connect(nuevoAutoButton, SIGNAL(clicked()), this, SLOT(nuevoAuto()));
 }
@@ -38,13 +38,12 @@ void MainWindow::ejecutarComando(){
     nSurtidores=surtidores.toInt();
     nEmpleados=empleados.toInt();
     tiempoSimulacion=tSimulacion.toInt();
+
     WorkerThread *workerThread = new WorkerThread();
-    connect(workerThread, &WorkerThread::finished, workerThread, &QObject::deleteLater);
-    connect(workerThread, SIGNAL(finishSignal()), workerThread, SLOT(onFinished()));
-    workerThread->start();
+    workerThread->run();
 }
 
-void MainWindow::setAutosFifo(FifoEscritura fifoAutos){
+void MainWindow::setAutosFifo(const FifoEscritura& fifoAutos){
     this->fifoAutos=fifoAutos;
 }
 
@@ -55,9 +54,7 @@ void MainWindow::nuevoAuto(){
     std::string mensaje=marshaller.toString(unAuto);
     pid_t pid = fork ();
     if ( pid == 0 ) {//Hijo
-        fifoAutos.abrir();
         fifoAutos.escribir ( static_cast<const void*>(mensaje.c_str()),mensaje.length() );
-        fifoAutos.cerrar();
         exit(0);
     }else{
         int estado;

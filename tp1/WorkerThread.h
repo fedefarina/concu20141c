@@ -1,6 +1,5 @@
 #ifndef WORKERTHREAD_H
 #define WORKERTHREAD_H
-#include "QThread"
 #include "QPushButton"
 #include "QTextEdit"
 #include "QTime"
@@ -15,14 +14,15 @@
 #include "Constantes.h"
 #include <sys/wait.h>
 
-class WorkerThread : public QThread{
-    Q_OBJECT
+class WorkerThread{
 
-    void run() Q_DECL_OVERRIDE {
+public:
+    WorkerThread(){}
+    ~WorkerThread(){}
+    void run(){
 
-        FifoEscritura autosFifo(FIFO_AUTOS);
         MainWindow* mainWindow=MainWindow::getInstance();
-        mainWindow->setAutosFifo(autosFifo);
+
         int surtidores=mainWindow->getNumeroSurtidores();
         int empleados=mainWindow->getNumeroEmpleados();
         int tiempoSimulacion=mainWindow->getTiempoSimulacion();
@@ -47,53 +47,69 @@ class WorkerThread : public QThread{
             juegoTerminado.escribir(false);
 
             pid_t pid = fork ();
-
             if ( pid == 0 ) {
+
                 FifoLectura canal (FIFO_AUTOS);
+                canal.abrir();
+
                 Marshaller marshaller;
+                const int BUFFSIZE=100;
+                char buffer[BUFFSIZE];
 
                 while (!juegoTerminado.leer()){
-                    const int BUFFSIZE=100;
-                    char buffer[BUFFSIZE];
-                    canal.abrir();
+                    cout << "Leo" << endl;
                     ssize_t bytesLeidos = canal.leer(static_cast<void*>(buffer),BUFFSIZE);
-                    std::string mensaje = buffer;
-                    mensaje.resize (bytesLeidos);
-                    Auto unAuto=marshaller.fromString(mensaje);
-                    jefe.recibirAuto(unAuto);
-                    canal.cerrar();
+                    if(bytesLeidos>0){
+                        std::string mensaje = buffer;
+                        mensaje.resize (bytesLeidos);
+
+                        Auto unAuto=marshaller.fromString(mensaje);
+                        jefe.recibirAuto(unAuto);
+                    }
                 }
+                canal.cerrar();
+                canal.eliminar();
+                cout << "Hijo: Terrmine" << endl;
                 exit (0);
-            }else{
-                QTime timeElapsed;
-                timeElapsed.start();
-                while (tiempoSimulacion > timeElapsed.elapsed()/1000) {
-                    if(timeElapsed.elapsed()%1000==0)
-                        displayNumber->display(tiempoSimulacion - timeElapsed.elapsed()/1000);
-                }
-                juegoTerminado.escribir(true);
-                displayNumber->display(0);
-                juegoTerminado.liberar();
-                autosFifo.eliminar();
-                emit finishSignal();
             }
+
+
+            FifoEscritura autosFifo(FIFO_AUTOS);
+            autosFifo.abrir();
+            mainWindow->setAutosFifo(autosFifo);
+            QTime timeElapsed;
+            timeElapsed.start();
+
+            while (tiempoSimulacion > timeElapsed.elapsed()/1000) {
+                if(timeElapsed.elapsed()%1000==0){
+                    displayNumber->display(tiempoSimulacion - timeElapsed.elapsed()/1000);
+                }
+                QCoreApplication::processEvents();
+            }
+
+
+            autosFifo.cerrar();
+            autosFifo.eliminar();
+            juegoTerminado.escribir(true);
+            int estado;
+            wait ( (void*) &estado );
+            juegoTerminado.liberar();
+            displayNumber->display(0);
+            onFinished();
         }
     }
 
-signals:
-    void finishSignal();
-public slots:
+private:
     void onFinished(){
         EstacionDeServicio::destruirInstancia();
         enableButtons(true);
         Logger::debug(getpid(), string("Fin de simulacion\n"));
     }
-public:
+
     void enableButtons(bool enabled){
         MainWindow* mainWindow=MainWindow::getInstance();
         QPushButton *ejecutarButton = mainWindow->findChild<QPushButton*>("iniciarButton");
         QPushButton *nuevoAutoButton = mainWindow->findChild<QPushButton*>("nuevoAuto");
-
         ejecutarButton->setEnabled(enabled);
         nuevoAutoButton->setEnabled(!enabled);
     }
