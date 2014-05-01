@@ -6,6 +6,7 @@
 #include "mainwindow.h"
 #include "WorkerThread.h"
 #include "Constantes.h"
+#include "QCommandLinkButton"
 #include <sys/wait.h>
 
 MainWindow* MainWindow::instance = NULL;
@@ -21,7 +22,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
     ui->setupUi(this);
     QPushButton *ejecutarButton = this->findChild<QPushButton*>("iniciarButton");
-    QPushButton *nuevoAutoButton = this->findChild<QPushButton*>("nuevoAuto");
+    QCommandLinkButton *nuevoAutoButton = this->findChild<QCommandLinkButton*>("nuevoAuto");
 
     //sender, signal, receiver, slot (callback similar)
     QObject::connect(ejecutarButton, SIGNAL(clicked()), this, SLOT(ejecutarComando()));

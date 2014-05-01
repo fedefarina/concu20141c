@@ -90,8 +90,9 @@ public:
                 if(timeElapsed.elapsed()%1000==0){
                     displayNumber->display(timeElapsed.elapsed()/1000);
                     progressBar->setValue(100- (int) ((timeElapsed.elapsed())/tiempoSimulacion)/10);
-                    QCoreApplication::processEvents();
                 }
+                if(timeElapsed.elapsed()%10==0)
+                    QCoreApplication::processEvents();
             }
 
             progressBar->setValue(0);
