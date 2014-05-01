@@ -14,9 +14,9 @@ using namespace std;
 
 class JefeDeEstacion {
 
-private:
-    vector<Empleado*> empleados;
+private:    
     MemoriaCompartida<float> caja;
+    MemoriaCompartida<bool> empleados;
 
 public:
 
@@ -31,8 +31,8 @@ public:
         int pos = -1;
 
         //Busco un empleado libre
-        for(unsigned int i = 0; i < empleados.size(); i++) {
-            if (((Empleado*)empleados.at(i))->getEstado() == Libre) {
+        for(unsigned int i = 0; i < this->empleados.cantidad(); i++) {
+            if (this->empleados.leer(i) == true) {
                 pos = i;
                 break;
             }
@@ -41,10 +41,15 @@ public:
         if (pos >= 0) {
             pid_t pid = fork();
             if (pid == 0) {
-                ((Empleado*) empleados.at(pos))->atenderAuto(unAuto);
+                this->empleados.escribir(false, pos);
+
+                Empleado* empleado = new Empleado();
+                empleado->atenderAuto(unAuto);
+
+                this->empleados.escribir(true, pos);
+                delete(empleado);
+
                 exit(0);
-            }else{
-                wait();
             }
         } else {
             Logger::debug(getpid(), "Evento > No hay empleados disponibles\n");
@@ -52,13 +57,16 @@ public:
     }
 
     void setEmpleados(unsigned int empleados) {
-        for (unsigned int i = 0; i < empleados; i++) {
-            this->empleados.push_back(new Empleado());
-        }
+        this->empleados.crear("/bin/ls", 40, empleados);
+
+        for (unsigned int i = 0; i < empleados; i++)
+            this->empleados.escribir(true, i);
+
     }
 
     ~JefeDeEstacion() {
         this->caja.liberar();
+        this->empleados.liberar();
     }
 
 };

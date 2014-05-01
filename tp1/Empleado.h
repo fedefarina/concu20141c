@@ -20,13 +20,15 @@ public:
         this->estado = Libre;
         this->caja.crear((char*)"/bin/ls", 33);
 
-        this->surtidores.crear((char*)"/bin/ls", 34, EstacionDeServicio::getInstancia()->getSurtidores());
+        this->surtidores.crear((char*)"/bin/ls", 34, EstacionDeServicio::getInstance().getSurtidores());
     }
 
     void atenderAuto(Auto a) {
-        Logger::debug(getpid(), "Evento -> Atendiendo auto");
+        Logger::debug(getpid(), "Evento -> Atendiendo auto\n");
+
         this->estado = Ocupado;
-        unsigned int surtidores = EstacionDeServicio::getInstancia()->getSurtidores();
+
+        unsigned int surtidores = EstacionDeServicio::getInstance().getSurtidores();
 
         while (this->estado == Ocupado) {
 
@@ -34,10 +36,18 @@ public:
 
                 if (this->surtidores.leer(i) == true) {
                     float tiempoDeCarga = a.getCapacidad();
+                    this->surtidores.escribir(false, i);
+
                     sleep(tiempoDeCarga);
+
                     float recaudacion = this->caja.leer();
                     this->caja.escribir(recaudacion + tiempoDeCarga);
+
+                    this->surtidores.escribir(true, i);
                     this->estado = Libre;
+
+                    Logger::debug(getpid(), "Auto atendido\n");
+
                     break;
                 }
             }
@@ -48,8 +58,13 @@ public:
         return this->estado;
     }
 
+    void setEstado(Estado estado) {
+        this->estado = estado;
+    }
+
     ~Empleado() {
         this->caja.liberar();
+        this->surtidores.liberar();
     }
 
 };

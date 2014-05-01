@@ -11,7 +11,6 @@
 #include "Logger.h"
 #include "Constantes.h"
 #include "Marshaller.h"
-#include "Constantes.h"
 #include <sys/wait.h>
 
 class WorkerThread{
@@ -37,7 +36,7 @@ public:
             enableButtons(false);
 
             QLCDNumber* displayNumber=mainWindow->findChild<QLCDNumber*>("timeDisplay");
-            EstacionDeServicio::getInstancia()->setSurtidores(surtidores);
+            EstacionDeServicio::getInstance().setSurtidores(surtidores);
             JefeDeEstacion jefe;
             jefe.setEmpleados(empleados);
             Logger::debug(getpid(), "Inicio de simulacion\n");
@@ -57,7 +56,7 @@ public:
                 char buffer[BUFFSIZE];
 
                 while (!juegoTerminado.leer()){
-                    cout << "Leo" << endl;
+
                     ssize_t bytesLeidos = canal.leer(static_cast<void*>(buffer),BUFFSIZE);
                     if(bytesLeidos>0){
                         std::string mensaje = buffer;
@@ -69,7 +68,7 @@ public:
                 }
                 canal.cerrar();
                 canal.eliminar();
-                cout << "Hijo: Terrmine" << endl;
+                cout << "Hijo: Termine" << endl;
                 exit (0);
             }
 
@@ -101,7 +100,7 @@ public:
 
 private:
     void onFinished(){
-        EstacionDeServicio::destruirInstancia();
+        //EstacionDeServicio::destruirInstancia();
         enableButtons(true);
         Logger::debug(getpid(), string("Fin de simulacion\n"));
     }

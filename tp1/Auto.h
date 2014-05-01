@@ -13,15 +13,15 @@ private:
 public:
     Auto() {
         srand(time(NULL));
-        this->capacidad = rand() % 10;
+        this->capacidad = rand() % 10 + 10;
     }
 
     float getCapacidad() {
         return this->capacidad;
     }
 
-    void setCapacidad(float capacidad){
-            this->capacidad=capacidad;
+    void setCapacidad(float capacidad) {
+            this->capacidad = capacidad;
     }
 
     ~Auto() {

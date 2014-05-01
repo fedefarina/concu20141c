@@ -18,18 +18,18 @@ private:
 
     int 	shmId;
     T*		ptrDatos;
-    unsigned int cantidad;
+    unsigned int numero;
     int cantidadProcesosAdosados ();
 
 public:
 
     MemoriaCompartida ();
     ~MemoriaCompartida ();
-    int crear ( std::string archivo, char letra, int cantidad = 1 );
+    int crear ( std::string archivo, char letra, int numero = 1 );
     void liberar ();
     void escribir ( T dato, int posicion = 0 );
     T leer ( int posicion = 0 );
-    unsigned int getCantidad ();
+    unsigned int cantidad ();
 
 };
 
@@ -41,7 +41,7 @@ template <class T> MemoriaCompartida<T> :: MemoriaCompartida () {
 template <class T> MemoriaCompartida<T> :: ~MemoriaCompartida () {
 }
 
-template <class T> int MemoriaCompartida<T> :: crear ( std::string archivo, char letra, int cantidad ) {
+template <class T> int MemoriaCompartida<T> :: crear ( std::string archivo, char letra, int numero ) {
 
 
     // generacion de la clave
@@ -50,7 +50,7 @@ template <class T> int MemoriaCompartida<T> :: crear ( std::string archivo, char
         return ERROR_FTOK;
     else {
         // creacion de la memoria compartida
-        this->shmId = shmget ( clave,sizeof(T)*cantidad,0644|IPC_CREAT );
+        this->shmId = shmget ( clave,sizeof(T)*numero,0644|IPC_CREAT );
 
         if ( this->shmId == -1 )
             return ERROR_SHMGET;
@@ -62,7 +62,7 @@ template <class T> int MemoriaCompartida<T> :: crear ( std::string archivo, char
                 return ERROR_SHMAT;
             } else {                
                 this->ptrDatos = (T *) ptrTemporal;
-                this->cantidad = cantidad;
+                this->numero = numero;
                 return SHM_OK;
             }
         }
@@ -95,8 +95,8 @@ template <class T> int MemoriaCompartida<T> :: cantidadProcesosAdosados () {
     return estado.shm_nattch;
 }
 
-template <class T> unsigned int MemoriaCompartida<T> :: getCantidad () {
-    return this->cantidad;
+template <class T> unsigned int MemoriaCompartida<T> :: cantidad () {
+    return this->numero;
 }
 
 

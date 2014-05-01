@@ -9,14 +9,15 @@ class EstacionDeServicio {
 
 private:
     MemoriaCompartida<bool> surtidores;
-    static EstacionDeServicio* instancia;
+    static EstacionDeServicio instance;
 
-public:
     EstacionDeServicio();
+
+public:    
     ~EstacionDeServicio();
 
-    static EstacionDeServicio* getInstancia();
-    static void destruirInstancia();
+    static EstacionDeServicio& getInstance();
+    //static void destruirInstancia();
     void setSurtidores(unsigned int surtidores);
     unsigned int getSurtidores();
 };

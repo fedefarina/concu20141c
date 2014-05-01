@@ -1,6 +1,6 @@
 #include "EstacionDeServicio.h"
 
-EstacionDeServicio* EstacionDeServicio::instancia = NULL;
+EstacionDeServicio EstacionDeServicio::instance;
 
 EstacionDeServicio::EstacionDeServicio() {
 
@@ -10,19 +10,19 @@ EstacionDeServicio::~EstacionDeServicio() {
     this->surtidores.liberar();
 }
 
-EstacionDeServicio* EstacionDeServicio::getInstancia() {
-    if (instancia == NULL)
-        instancia = new EstacionDeServicio();
-    return instancia;
+EstacionDeServicio& EstacionDeServicio::getInstance() {
+    //if (instancia == NULL)
+        //instancia = new EstacionDeServicio();
+    return instance;
 }
-
+/*
 void EstacionDeServicio::destruirInstancia() {
     if (instancia != NULL){
         delete (instancia);
         instancia=NULL;
     }
 }
-
+*/
 void EstacionDeServicio::setSurtidores(unsigned int surtidores) {
     this->surtidores.crear((char*)"/bin/ls", 34, surtidores);
 
@@ -32,5 +32,5 @@ void EstacionDeServicio::setSurtidores(unsigned int surtidores) {
 }
 
 unsigned int EstacionDeServicio::getSurtidores() {
-    return this->surtidores.getCantidad();
+    return this->surtidores.cantidad();
 }
