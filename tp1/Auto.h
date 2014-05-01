@@ -13,7 +13,7 @@ private:
 public:
     Auto() {
         srand(time(NULL));
-        this->capacidad = rand() % 10;
+        //this->capacidad = rand() % 10;
     }
 
     float getCapacidad() {
