@@ -31,7 +31,6 @@ public:
         while (this->estado == Ocupado) {
 
             for(unsigned int i = 0; i < surtidores; i++) {
-
                 if (this->surtidores.leer(i) == true) {
                     float tiempoDeCarga = a.getCapacidad();
                     sleep(tiempoDeCarga);

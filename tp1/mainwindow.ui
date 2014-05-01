@@ -10,7 +10,7 @@
     <x>0</x>
     <y>0</y>
     <width>521</width>
-    <height>233</height>
+    <height>254</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -70,7 +70,7 @@
       <item>
        <widget class="QLabel" name="label">
         <property name="text">
-         <string>Tiempo de Simulación (segundos)</string>
+         <string>Tiempo de Simulación (en segundos)</string>
         </property>
        </widget>
       </item>
@@ -116,7 +116,7 @@
          <number>1</number>
         </property>
         <property name="text">
-         <string>Tiempo Transcurrido</string>
+         <string>Tiempo transcurrido</string>
         </property>
         <property name="scaledContents">
          <bool>false</bool>
@@ -148,7 +148,7 @@
         </property>
         <property name="sizeHint" stdset="0">
          <size>
-          <width>244</width>
+          <width>212</width>
           <height>30</height>
          </size>
         </property>
@@ -194,39 +194,93 @@
      </layout>
     </item>
     <item>
+     <widget class="QProgressBar" name="progressBar">
+      <property name="value">
+       <number>100</number>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QGraphicsView" name="graphicsView"/>
+    </item>
+    <item>
      <layout class="QHBoxLayout" name="horizontalLayout">
       <property name="topMargin">
        <number>0</number>
       </property>
       <item>
-       <spacer name="horizontalSpacer">
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
+       <widget class="QLabel" name="label_3">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
         </property>
-        <property name="sizeHint" stdset="0">
+        <property name="maximumSize">
          <size>
-          <width>40</width>
-          <height>20</height>
+          <width>2150</width>
+          <height>16777215</height>
          </size>
         </property>
-       </spacer>
+        <property name="font">
+         <font>
+          <family>Abyssinica SIL</family>
+          <pointsize>14</pointsize>
+          <strikeout>false</strikeout>
+         </font>
+        </property>
+        <property name="text">
+         <string>Nuevo Auto</string>
+        </property>
+       </widget>
       </item>
       <item>
-       <widget class="QPushButton" name="nuevoAuto">
-        <property name="enabled">
-         <bool>false</bool>
+       <widget class="Line" name="line">
+        <property name="orientation">
+         <enum>Qt::Vertical</enum>
         </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="label_2">
+        <property name="text">
+         <string>Capacidad</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLineEdit" name="lineEdit">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
           <horstretch>0</horstretch>
           <verstretch>0</verstretch>
          </sizepolicy>
         </property>
-        <property name="layoutDirection">
-         <enum>Qt::RightToLeft</enum>
+        <property name="maximumSize">
+         <size>
+          <width>50</width>
+          <height>50</height>
+         </size>
         </property>
+        <property name="toolTipDuration">
+         <number>0</number>
+        </property>
+        <property name="maxLength">
+         <number>10</number>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="Line" name="line_2">
+        <property name="orientation">
+         <enum>Qt::Vertical</enum>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QCommandLinkButton" name="nuevoAuto">
         <property name="text">
-         <string>Nuevo Auto</string>
+         <string>Simular Entrada</string>
         </property>
        </widget>
       </item>

@@ -29,6 +29,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 }
 
 
+
 void MainWindow::ejecutarComando(){
 
     QString surtidores=this->findChild<QSpinBox*>("nSurtidores")->text();
