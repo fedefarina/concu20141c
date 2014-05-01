@@ -1,5 +1,10 @@
 #include "Logger.h"
 
+/**
+ * @brief Logger::lf
+ *  Encargada de escribir los eventos de la aplicacion
+ */
+
 LockFile Logger::lf((char*)"logger");
 
 Logger::Logger() {

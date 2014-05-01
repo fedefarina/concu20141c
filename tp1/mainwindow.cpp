@@ -6,6 +6,7 @@
 #include "mainwindow.h"
 #include "WorkerThread.h"
 #include "Constantes.h"
+#include "QCommandLinkButton"
 #include <sys/wait.h>
 
 MainWindow* MainWindow::instance = NULL;
@@ -21,12 +22,16 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
     ui->setupUi(this);
     QPushButton *ejecutarButton = this->findChild<QPushButton*>("iniciarButton");
-    QPushButton *nuevoAutoButton = this->findChild<QPushButton*>("nuevoAuto");
+    QCommandLinkButton *nuevoAutoButton = this->findChild<QCommandLinkButton*>("nuevoAuto");
+
+    QLineEdit* capacidadEdit=this->findChild<QLineEdit*>("capacidadEdit");
+    capacidadEdit->setValidator(new QIntValidator(this));
 
     //sender, signal, receiver, slot (callback similar)
     QObject::connect(ejecutarButton, SIGNAL(clicked()), this, SLOT(ejecutarComando()));
     QObject::connect(nuevoAutoButton, SIGNAL(clicked()), this, SLOT(nuevoAuto()));
 }
+
 
 
 void MainWindow::ejecutarComando(){
@@ -51,6 +56,8 @@ void MainWindow::nuevoAuto(){
 
     Marshaller marshaller;
     Auto unAuto;
+    int capacidad=this->findChild<QLineEdit*>("capacidadEdit")->text().toInt();
+    unAuto.setCapacidad(capacidad);
     std::string mensaje=marshaller.toString(unAuto);
     pid_t pid = fork ();
     if ( pid == 0 ) {//Hijo

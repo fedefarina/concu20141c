@@ -11,7 +11,13 @@
 #include "Logger.h"
 #include "Constantes.h"
 #include "Marshaller.h"
+#include "QProgressBar"
 #include <sys/wait.h>
+
+/**
+ * @brief The WorkerThread class
+ * Maneja el loop principal de la simulacion.
+ */
 
 class WorkerThread{
 
@@ -36,7 +42,11 @@ public:
             enableButtons(false);
 
             QLCDNumber* displayNumber=mainWindow->findChild<QLCDNumber*>("timeDisplay");
+
             EstacionDeServicio::getInstance().setSurtidores(surtidores);
+
+            QProgressBar* progressBar=mainWindow->findChild<QProgressBar*>("progressBar");
+
             JefeDeEstacion jefe;
             jefe.setEmpleados(empleados);
             Logger::debug(getpid(), "Inicio de simulacion\n");
@@ -56,7 +66,6 @@ public:
                 char buffer[BUFFSIZE];
 
                 while (!juegoTerminado.leer()){
-
                     ssize_t bytesLeidos = canal.leer(static_cast<void*>(buffer),BUFFSIZE);
                     if(bytesLeidos>0){
                         std::string mensaje = buffer;
@@ -68,7 +77,9 @@ public:
                 }
                 canal.cerrar();
                 canal.eliminar();
+
                 cout << "Hijo: Termine" << endl;
+
                 exit (0);
             }
 
@@ -81,11 +92,15 @@ public:
 
             while (tiempoSimulacion > timeElapsed.elapsed()/1000) {
                 if(timeElapsed.elapsed()%1000==0){
-                    displayNumber->display(tiempoSimulacion - timeElapsed.elapsed()/1000);
+                    displayNumber->display(timeElapsed.elapsed()/1000);
+                    progressBar->setValue(100- (int) ((timeElapsed.elapsed())/tiempoSimulacion)/10);
                 }
-                QCoreApplication::processEvents();
+                if(timeElapsed.elapsed()%10==0)
+                    QCoreApplication::processEvents();
             }
 
+            progressBar->setValue(0);
+            displayNumber->display(tiempoSimulacion);
 
             autosFifo.cerrar();
             autosFifo.eliminar();
@@ -93,7 +108,6 @@ public:
             int estado;
             wait ( (void*) &estado );
             juegoTerminado.liberar();
-            displayNumber->display(0);
             onFinished();
         }
     }

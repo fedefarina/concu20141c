@@ -21,7 +21,7 @@ public:
     }
 
     void setCapacidad(float capacidad) {
-            this->capacidad = capacidad;
+        this->capacidad = capacidad;
     }
 
     ~Auto() {
