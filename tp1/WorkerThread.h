@@ -14,6 +14,9 @@
 #include "Marshaller.h"
 #include "QProgressBar"
 #include "Semaforo.h"
+#include "SigUnusedHandler.h"
+#include "EventHandler.h"
+#include "SignalHandler.h"
 #include <sys/wait.h>
 
 
@@ -31,7 +34,6 @@ public:
     void run(){
 
         MainWindow* mainWindow=MainWindow::getInstance();
-        MemoriaCompartida < int > buffer;
         Semaforo semaforoFifo ( (char*)SEMAFORO_FIFO,0 );
         mainWindow->setSemaforoFifo(semaforoFifo);
 
@@ -45,7 +47,7 @@ public:
 
         if(surtidores>0 && empleados>0){
 
-            enableButtons(false);
+            restartUI(false);
 
             QLCDNumber* displayNumber=mainWindow->findChild<QLCDNumber*>("timeDisplay");
 
@@ -57,10 +59,6 @@ public:
             jefe.setEmpleados(empleados);
             Logger::debug(getpid(), "Inicio de simulacion\n");
 
-            MemoriaCompartida<bool> juegoTerminado;
-            juegoTerminado.crear("/bin/ls",'A');
-            juegoTerminado.escribir(false);
-
             pid_t pid = fork ();
             if ( pid == 0 ) {
 
@@ -71,8 +69,9 @@ public:
                 const int BUFFSIZE=100;
                 char buffer[BUFFSIZE];
 
-                while (!juegoTerminado.leer()){
-
+                SIGUNUSED_Handler sigint_handler;
+                SignalHandler :: getInstance()->registrarHandler ( SIGUNUSED,&sigint_handler );
+                while (sigint_handler.getGracefulQuit() == 0 ){
                     semaforoFifo.p();
                     ssize_t bytesLeidos = canal.leer(static_cast<void*>(buffer),BUFFSIZE);
 
@@ -97,6 +96,7 @@ public:
             QTime timeElapsed;
             timeElapsed.start();
 
+
             while (tiempoSimulacion > timeElapsed.elapsed()/1000) {
                 if(timeElapsed.elapsed()%1000==0){
                     displayNumber->display(timeElapsed.elapsed()/1000);
@@ -112,10 +112,9 @@ public:
             autosFifo.cerrar();
             autosFifo.eliminar();
             semaforoFifo.eliminar();
-            juegoTerminado.escribir(true);
+            kill(pid, SIGUNUSED);
             int estado;
             wait ((void *) &estado);
-            juegoTerminado.liberar();
             onFinished();
         }
     }
@@ -123,14 +122,16 @@ public:
 private:
     void onFinished(){
         //EstacionDeServicio::destruirInstancia();
-        enableButtons(true);
+        restartUI(true);
         Logger::debug(getpid(), string("Fin de simulacion\n"));
     }
 
-    void enableButtons(bool enabled){
+    void restartUI(bool enabled){
         MainWindow* mainWindow=MainWindow::getInstance();
         QPushButton *ejecutarButton = mainWindow->findChild<QPushButton*>("iniciarButton");
         QPushButton *nuevoAutoButton = mainWindow->findChild<QPushButton*>("nuevoAuto");
+        QProgressBar* progressBar=mainWindow->findChild<QProgressBar*>("progressBar");
+        progressBar->setValue(100);
         ejecutarButton->setEnabled(enabled);
         nuevoAutoButton->setEnabled(!enabled);
     }

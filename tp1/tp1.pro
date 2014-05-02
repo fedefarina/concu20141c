@@ -17,7 +17,10 @@ HEADERS += \
     Marshaller.h \
     Utils.h \
     Constantes.h \
-    Semaforo.h
+    Semaforo.h \
+    SignalHandler.h \
+    EventHandler.h \
+    SigUnusedHandler.h
 
 SOURCES += \
     main.cpp \
@@ -28,7 +31,8 @@ SOURCES += \
     FifoLectura.cpp \
     FifoEscritura.cpp \
     Fifo.cpp \
-    Semaforo.cpp
+    Semaforo.cpp \
+    SignalHandler.cpp
 
 FORMS += \
     mainwindow.ui \
