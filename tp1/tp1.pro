@@ -16,7 +16,8 @@ HEADERS += \
     Fifo.h \
     Marshaller.h \
     Utils.h \
-    Constantes.h
+    Constantes.h \
+    Semaforo.h
 
 SOURCES += \
     main.cpp \
@@ -26,7 +27,8 @@ SOURCES += \
     EstacionDeServicio.cpp \
     FifoLectura.cpp \
     FifoEscritura.cpp \
-    Fifo.cpp
+    Fifo.cpp \
+    Semaforo.cpp
 
 FORMS += \
     mainwindow.ui \
