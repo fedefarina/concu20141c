@@ -14,7 +14,8 @@ private:
 	int inicializar ();
 
 public:
-	Semaforo ( char* nombre,int valorInicial );
+    Semaforo();
+    Semaforo ( char* nombre,int valorInicial );
 	virtual ~Semaforo();
 
 	int p (); // decrementa

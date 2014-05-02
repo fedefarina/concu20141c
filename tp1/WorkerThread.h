@@ -1,5 +1,6 @@
 #ifndef WORKERTHREAD_H
 #define WORKERTHREAD_H
+
 #include "QPushButton"
 #include "QTextEdit"
 #include "QTime"
@@ -12,7 +13,9 @@
 #include "Constantes.h"
 #include "Marshaller.h"
 #include "QProgressBar"
+#include "Semaforo.h"
 #include <sys/wait.h>
+
 
 /**
  * @brief The WorkerThread class
@@ -24,14 +27,17 @@ class WorkerThread{
 public:
     WorkerThread(){}
     ~WorkerThread(){}
+
     void run(){
 
         MainWindow* mainWindow=MainWindow::getInstance();
+        MemoriaCompartida < int > buffer;
+        Semaforo semaforoFifo ( (char*)SEMAFORO_FIFO,0 );
+        mainWindow->setSemaforoFifo(semaforoFifo);
 
         int surtidores=mainWindow->getNumeroSurtidores();
         int empleados=mainWindow->getNumeroEmpleados();
         int tiempoSimulacion=mainWindow->getTiempoSimulacion();
-
         if(surtidores<=0)
             cout<<"Debe haber al menos 1 surtidor."<<endl;
         if(empleados<=0)
@@ -66,7 +72,10 @@ public:
                 char buffer[BUFFSIZE];
 
                 while (!juegoTerminado.leer()){
+
+                    semaforoFifo.p();
                     ssize_t bytesLeidos = canal.leer(static_cast<void*>(buffer),BUFFSIZE);
+
                     if(bytesLeidos>0){
                         std::string mensaje = buffer;
                         mensaje.resize (bytesLeidos);
@@ -77,9 +86,7 @@ public:
                 }
                 canal.cerrar();
                 canal.eliminar();
-
-                cout << "Hijo: Termine" << endl;
-
+                //cout << "Hijo: Termine" << endl;
                 exit (0);
             }
 
@@ -104,9 +111,10 @@ public:
 
             autosFifo.cerrar();
             autosFifo.eliminar();
+            semaforoFifo.eliminar();
             juegoTerminado.escribir(true);
             int estado;
-            wait ( (void*) &estado );
+            wait ((void *) &estado);
             juegoTerminado.liberar();
             onFinished();
         }

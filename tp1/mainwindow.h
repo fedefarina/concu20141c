@@ -10,6 +10,7 @@
 #include <stdio.h>
 #include <string>
 #include "FifoEscritura.h"
+#include "Semaforo.h"
 
 namespace Ui {
     class MainWindow;
@@ -26,6 +27,7 @@ public:
     int getNumeroEmpleados();
     int getTiempoSimulacion();
     void setAutosFifo(const FifoEscritura& fifoAutos);
+    void setSemaforoFifo(const Semaforo& semaforoFifo);
     void cleanInputVariables();
     bool event(QEvent *event);
     ~MainWindow();
@@ -37,6 +39,7 @@ public slots:
 private:
     int nSurtidores, nEmpleados, tiempoSimulacion;
     FifoEscritura fifoAutos;
+    Semaforo semaforoFifo;
     Ui::MainWindow *ui;
     explicit MainWindow(QWidget *parent = 0);
     static MainWindow* instance;

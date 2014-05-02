@@ -50,6 +50,11 @@ void MainWindow::ejecutarComando(){
 
 void MainWindow::setAutosFifo(const FifoEscritura& fifoAutos){
     this->fifoAutos=fifoAutos;
+
+}
+
+void MainWindow::setSemaforoFifo(const Semaforo& semaforoFifo){
+    this->semaforoFifo=semaforoFifo;
 }
 
 void MainWindow::nuevoAuto(){
@@ -62,6 +67,7 @@ void MainWindow::nuevoAuto(){
     pid_t pid = fork ();
     if ( pid == 0 ) {//Hijo
         fifoAutos.escribir ( static_cast<const void*>(mensaje.c_str()),mensaje.length() );
+        semaforoFifo.v();
         exit(0);
     }else{
         int estado;
