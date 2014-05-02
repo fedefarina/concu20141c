@@ -46,7 +46,7 @@
         <property name="font">
          <font>
           <family>Abyssinica SIL</family>
-          <pointsize>12</pointsize>
+          <pointsize>10</pointsize>
          </font>
         </property>
         <property name="text">
@@ -59,7 +59,7 @@
         <property name="font">
          <font>
           <family>Abyssinica SIL</family>
-          <pointsize>12</pointsize>
+          <pointsize>10</pointsize>
          </font>
         </property>
         <property name="text">
@@ -93,7 +93,7 @@
         <property name="font">
          <font>
           <family>Abyssinica SIL</family>
-          <pointsize>12</pointsize>
+          <pointsize>10</pointsize>
          </font>
         </property>
         <property name="text">
@@ -136,7 +136,7 @@
         <property name="font">
          <font>
           <family>Abyssinica SIL</family>
-          <pointsize>12</pointsize>
+          <pointsize>10</pointsize>
          </font>
         </property>
         <property name="layoutDirection">
@@ -292,7 +292,8 @@
         <property name="font">
          <font>
           <family>Abyssinica SIL</family>
-          <pointsize>12</pointsize>
+          <pointsize>10</pointsize>
+          <strikeout>false</strikeout>
          </font>
         </property>
         <property name="text">
@@ -334,7 +335,7 @@
         <property name="font">
          <font>
           <family>Abyssinica SIL</family>
-          <pointsize>12</pointsize>
+          <pointsize>10</pointsize>
          </font>
         </property>
         <property name="text">
@@ -767,6 +768,11 @@
          </colorrole>
         </disabled>
        </palette>
+      </property>
+      <property name="font">
+       <font>
+        <pointsize>12</pointsize>
+       </font>
       </property>
       <property name="contextMenuPolicy">
        <enum>Qt::NoContextMenu</enum>
