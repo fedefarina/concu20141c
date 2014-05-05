@@ -49,12 +49,8 @@ public:
 
             restartUI(false);
 
-            QLCDNumber* displayNumber=mainWindow->findChild<QLCDNumber*>("timeDisplay");
-
             EstacionDeServicio::getInstance().setSurtidores(surtidores);
-
             QProgressBar* progressBar=mainWindow->findChild<QProgressBar*>("progressBar");
-
             JefeDeEstacion jefe;
             jefe.setEmpleados(empleados);
             Logger::debug(getpid(), "Inicio de simulacion\n");
@@ -96,19 +92,15 @@ public:
             QTime timeElapsed;
             timeElapsed.start();
 
-
             while (tiempoSimulacion > timeElapsed.elapsed()/1000) {
                 if(timeElapsed.elapsed()%1000==0){
-                    displayNumber->display(timeElapsed.elapsed()/1000);
-                    progressBar->setValue(100- (int) ((timeElapsed.elapsed())/tiempoSimulacion)/10);
+                    progressBar->setValue((int) ((timeElapsed.elapsed())/tiempoSimulacion)/10);
                 }
                 if(timeElapsed.elapsed()%10==0)
                     QCoreApplication::processEvents();
             }
 
-            progressBar->setValue(0);
-            displayNumber->display(tiempoSimulacion);
-
+            progressBar->setValue(100);
             autosFifo.cerrar();
             autosFifo.eliminar();
             semaforoFifo.eliminar();
