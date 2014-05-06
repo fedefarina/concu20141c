@@ -16,6 +16,7 @@
 #include "Semaforo.h"
 #include "SigUnusedHandler.h"
 #include "EventHandler.h"
+#include "FifoLectura.h"
 #include "SignalHandler.h"
 #include <sys/wait.h>
 
@@ -48,11 +49,14 @@ public:
         if(surtidores>0 && empleados>0){
 
             restartUI(false);
-
-            EstacionDeServicio::getInstance().setSurtidores(surtidores);
-            QProgressBar* progressBar=mainWindow->findChild<QProgressBar*>("progressBar");
+            EstacionDeServicio estacion=EstacionDeServicio::getInstance();
             JefeDeEstacion jefe;
-            jefe.setEmpleados(empleados);
+            estacion.setSurtidores(surtidores);
+            estacion.setEmpleados(empleados);
+            estacion.setJefeDeEstacion(jefe);
+
+
+            QProgressBar* progressBar=mainWindow->findChild<QProgressBar*>("progressBar");
             Logger::debug(getpid(), "Inicio de simulacion\n");
 
             pid_t pid = fork ();
@@ -74,14 +78,13 @@ public:
                     if(bytesLeidos>0){
                         std::string mensaje = buffer;
                         mensaje.resize (bytesLeidos);
-
                         Auto unAuto=marshaller.fromString(mensaje);
                         jefe.recibirAuto(unAuto);
                     }
                 }
                 canal.cerrar();
                 canal.eliminar();
-                //cout << "Hijo: Termine" << endl;
+                cout << "Hijo: Termine" << endl;
                 exit (0);
             }
 
@@ -113,7 +116,6 @@ public:
 
 private:
     void onFinished(){
-        //EstacionDeServicio::destruirInstancia();
         restartUI(true);
         Logger::debug(getpid(), string("Fin de simulacion\n"));
     }

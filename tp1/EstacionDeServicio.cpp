@@ -1,36 +1,65 @@
 #include "EstacionDeServicio.h"
 
+#define SEMAFORO_SURTIDOR "EstacionDeServicio.h"
+#define SEMAFORO_CAJA "Empleado.h"
+
 EstacionDeServicio EstacionDeServicio::instance;
 
 EstacionDeServicio::EstacionDeServicio() {
-
+    this->caja.crear((char*)"/bin/ls", 'C');
+    this->caja.escribir(0);
+    Semaforo semaforoCaja((char*)SEMAFORO_CAJA,0);
+    this->semaforoCaja=semaforoCaja;
 }
 
-EstacionDeServicio::~EstacionDeServicio() {
-    this->surtidores.liberar();
-}
+
 
 EstacionDeServicio& EstacionDeServicio::getInstance() {
-    //if (instancia == NULL)
-        //instancia = new EstacionDeServicio();
-    return instance;
+   return instance;
 }
-/*
-void EstacionDeServicio::destruirInstancia() {
-    if (instancia != NULL){
-        delete (instancia);
-        instancia=NULL;
-    }
+
+void EstacionDeServicio::setEmpleados(unsigned int empleados) {
+    this->empleados=empleados;
 }
-*/
+
 void EstacionDeServicio::setSurtidores(unsigned int surtidores) {
-    this->surtidores.crear((char*)"/bin/ls", 34, surtidores);
-
-    for(unsigned int i = 0; i < surtidores; i++) {
-        this->surtidores.escribir(true, i);
-    }
+    this->surtidores=surtidores;
+    Semaforo semaforoSurtidores((char*)SEMAFORO_SURTIDOR,surtidores-1);
+    this->surtidoresSemaforo=semaforoSurtidores;
 }
 
-unsigned int EstacionDeServicio::getSurtidores() {
-    return this->surtidores.cantidad();
+void EstacionDeServicio::setJefeDeEstacion(const JefeDeEstacion& jefeEstacion){
+    this->jefeDeEstacion=jefeEstacion;
 }
+
+void EstacionDeServicio::guardarEnCaja(unsigned int monto){
+    this->semaforoCaja.p();
+    unsigned int saldo=this->caja.leer();
+    this->caja.escribir(saldo+monto);
+    this->semaforoCaja.v();
+}
+
+JefeDeEstacion EstacionDeServicio::getJefeDeEstacion() const{
+    return this->jefeDeEstacion;
+}
+
+void EstacionDeServicio::usarSurtidor(){
+    this->surtidoresSemaforo.p();
+}
+
+void EstacionDeServicio::liberarSurtidor(){
+    this->surtidoresSemaforo.v();
+}
+
+unsigned int EstacionDeServicio::getEmpleados() const{
+    return this->empleados;
+}
+
+
+EstacionDeServicio::~EstacionDeServicio() {
+    this->surtidoresSemaforo.eliminar();
+    this->caja.liberar();
+    this->semaforoCaja.eliminar();
+}
+
+

@@ -2,24 +2,36 @@
 #define ESTACIONDESERVICIO_H
 
 #include <iostream>
-#include "MemoriaCompartida.h"
+#include "Semaforo.h"
+#include "JefeDeEstacion.h"
+
 using namespace std;
 
 class EstacionDeServicio {
 
 private:
-    MemoriaCompartida<bool> surtidores;
     static EstacionDeServicio instance;
+    MemoriaCompartida<float> caja;
+    Semaforo surtidoresSemaforo;
+    Semaforo semaforoCaja;
 
+    unsigned int empleados;
+    unsigned int surtidores;
     EstacionDeServicio();
 
 public:    
+    JefeDeEstacion jefeDeEstacion;
+    static EstacionDeServicio& getInstance();
+    void setSurtidores(unsigned int surtidores);
+    void setEmpleados(unsigned int empleados);
+    void setJefeDeEstacion(const JefeDeEstacion& jefeEstacion);
+    void guardarEnCaja(unsigned int monto);
+    void liberarSurtidor();
+    void usarSurtidor();
+    JefeDeEstacion getJefeDeEstacion() const;
+    unsigned int getEmpleados() const;
     ~EstacionDeServicio();
 
-    static EstacionDeServicio& getInstance();
-    //static void destruirInstancia();
-    void setSurtidores(unsigned int surtidores);
-    unsigned int getSurtidores();
 };
 
 #endif // ESTACIONDESERVICIO_H
