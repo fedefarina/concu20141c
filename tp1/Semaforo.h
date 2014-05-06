@@ -8,19 +8,18 @@
 class Semaforo {
 
 private:
-	int id;
-	int valorInicial;
-
-	int inicializar ();
+    int id;
+    int inicializar (int valorInicial);
 
 public:
     Semaforo();
-    Semaforo ( char* nombre,int valorInicial );
-	virtual ~Semaforo();
+    explicit Semaforo (char* nombre);
+    explicit Semaforo ( char* nombre,int valorInicial );
+    virtual ~Semaforo();
 
-	int p (); // decrementa
-	int v (); // incrementa
-	void eliminar ();
+    int p (); // decrementa
+    int v (); // incrementa
+    void eliminar ();
 };
 
 #endif /* SEMAFORO_H_ */

@@ -19,48 +19,35 @@ private:
 
 public:
 
-    JefeDeEstacion(){
+    JefeDeEstacion(unsigned int empleados){
+        this->empleados.crear("/bin/ls", 'E', empleados);
     }
 
     void recibirAuto(Auto unAuto) {
 
         Logger::debug(getpid(), "Evento > Un nuevo auto entra a la estacion de servicio\n");
-        Empleado empleado;
-        empleado.atenderAuto(unAuto);
-        //        int pos = -1;
+        int pos = -1;
 
-        //        //Busco un empleado libre
-        //        for(unsigned int i = 0; i < this->empleados.cantidad(); i++) {
-        //            if (this->empleados.leer(i) == true) {
-        //                pos = i;
-        //                break;
-        //            }
-        //        }
-        //        //Si hay empleados libres.
-        //        if (pos >= 0) {
-        //            pid_t pid = fork();
-        //            if (pid == 0) {
-        //                this->empleados.escribir(false, pos);
-
-        //                Empleado* empleado = new Empleado();
-        //                empleado->atenderAuto(unAuto);
-
-        //                this->empleados.escribir(true, pos);
-        //                delete(empleado);
-
-        //                exit(0);
-        //            }
-        //        } else {
-        //            Logger::debug(getpid(), "Evento > No hay empleados disponibles\n");
-        //        }
-    }
-
-    void setEmpleados(unsigned int empleados) {
-        this->empleados.crear("/bin/ls", 40, empleados);
-
-        for (unsigned int i = 0; i < empleados; i++)
-            this->empleados.escribir(true, i);
-
+        //Busco un empleado libre
+        for(unsigned int i = 0; i < this->empleados.cantidad(); i++) {
+            if (this->empleados.leer(i) == true) {
+                pos = i;
+                break;
+            }
+        }
+        //Si hay empleados libres.
+        if (pos >= 0) {
+            pid_t pid = fork();
+            if (pid == 0) {
+                this->empleados.escribir(false, pos);
+                Empleado empleado;
+                empleado.atenderAuto(unAuto);
+                this->empleados.escribir(true, pos);
+                exit(0);
+            }
+        } else {
+            Logger::debug(getpid(), "Evento > No hay empleados disponibles\n");
+        }
     }
 
     ~JefeDeEstacion() {

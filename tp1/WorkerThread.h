@@ -49,12 +49,8 @@ public:
         if(surtidores>0 && empleados>0){
 
             restartUI(false);
-            EstacionDeServicio estacion=EstacionDeServicio::getInstance();
-            JefeDeEstacion jefe;
-            estacion.setSurtidores(surtidores);
-            estacion.setEmpleados(empleados);
-            estacion.setJefeDeEstacion(jefe);
-
+            EstacionDeServicio estacion(empleados,surtidores);
+            JefeDeEstacion jefe(empleados);
 
             QProgressBar* progressBar=mainWindow->findChild<QProgressBar*>("progressBar");
             Logger::debug(getpid(), "Inicio de simulacion\n");
