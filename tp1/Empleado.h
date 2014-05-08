@@ -30,16 +30,16 @@ public:
         Logger::debug(getpid(), "Evento -> Atendiendo auto\n");
         float tiempoDeCarga = a.getCapacidad();
 
-        cout<<"<<-Surtidor Value: "<<semaforoSurtidor.getValue()<<endl;
+        //cout<<"<<-Surtidor Value: "<<semaforoSurtidor.getValue()<<endl;
         semaforoSurtidor.p();
-        cout<<"Surtidor Value: "<<semaforoSurtidor.getValue()<<"->>"<<endl;
+        //cout<<"Surtidor Value: "<<semaforoSurtidor.getValue()<<"->>"<<endl;
         sleep(tiempoDeCarga);
         semaforoSurtidor.v();
 
         semaforoCaja.p();
         unsigned int saldo=caja.leer();
         caja.escribir(saldo+tiempoDeCarga);
-        cout << "Caja: " << saldo << endl;
+        //cout << "Caja: " << saldo << endl;
         semaforoCaja.v();
 
         Logger::debug(getpid(), "Auto atendido\n");

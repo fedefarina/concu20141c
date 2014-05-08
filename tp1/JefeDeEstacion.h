@@ -15,45 +15,58 @@ using namespace std;
 class JefeDeEstacion {
 
 private:
-    MemoriaCompartida<bool> empleados;
+    MemoriaCompartida<unsigned int> empleados;
+    Semaforo semaforoEmpleados;
 
 public:
 
-    JefeDeEstacion(unsigned int empleados){
-        this->empleados.crear("/bin/ls", 'E', empleados);
-        for(unsigned int i = 0; i < this->empleados.cantidad(); i++)
-            this->empleados.escribir(true,i);
+    JefeDeEstacion(){
+        this->empleados.crear("/bin/ls", 'E');
+        Semaforo semaforoEmpleados((char*)SEMAFORO_EMPLEADOS,1);
+        this->semaforoEmpleados=semaforoEmpleados;
+    }
+
+    void setEmpleados(unsigned int empleados) {
+        this->empleados.escribir(empleados);
     }
 
     void recibirAuto(Auto unAuto) {
 
         Logger::debug(getpid(), "Evento > Un nuevo auto entra a la estacion de servicio\n");
-        int pos = -1;
 
         //Busco un empleado libre
-        for(unsigned int i = 0; i < this->empleados.cantidad(); i++) {
-            if (this->empleados.leer(i) == true) {
-                pos = i;
-                break;
-            }
-        }
+        semaforoEmpleados.p();
+        unsigned int empleadosLibres = this->empleados.leer();
+        semaforoEmpleados.v();
+
         //Si hay empleados libres.
-        if (pos >= 0) {
+        if (empleadosLibres > 0) {
             pid_t pid = fork();
             if (pid == 0) {
-                this->empleados.escribir(false, pos);
+                semaforoEmpleados.p();
+                empleadosLibres=empleados.leer();
+                this->empleados.escribir(empleadosLibres-1);
+                semaforoEmpleados.v();
+
                 Empleado empleado;
                 empleado.atenderAuto(unAuto);
-                this->empleados.escribir(true, pos);
+
+                semaforoEmpleados.p();
+                empleadosLibres=empleados.leer();
+                this->empleados.escribir(empleadosLibres+1);
+                semaforoEmpleados.v();
+
                 exit(0);
             }
         } else {
             Logger::debug(getpid(), "Evento > No hay empleados disponibles\n");
+            Logger::debug(getpid(), "Evento > El auto se retira de la estación de servicio\n");
         }
     }
 
     ~JefeDeEstacion() {
         this->empleados.liberar();
+        this->semaforoEmpleados.eliminar();
     }
 
 };

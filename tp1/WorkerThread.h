@@ -50,7 +50,9 @@ public:
 
             restartUI(false);
             EstacionDeServicio estacion(empleados,surtidores);
-            JefeDeEstacion jefe(empleados);
+            JefeDeEstacion jefe;
+            jefe.setEmpleados(empleados);
+
 
             QProgressBar* progressBar=mainWindow->findChild<QProgressBar*>("progressBar");
             Logger::debug(getpid(), "Inicio de simulacion\n");

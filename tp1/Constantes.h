@@ -5,5 +5,6 @@
 #define SEMAFORO_FIFO "/bin/cp"
 #define SEMAFORO_SURTIDOR "/bin/chmod"
 #define SEMAFORO_CAJA "/bin/mv"
+#define SEMAFORO_EMPLEADOS "/bin/chown"
 
 #endif // CONSTANTES_H
