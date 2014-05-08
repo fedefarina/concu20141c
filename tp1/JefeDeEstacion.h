@@ -21,6 +21,8 @@ public:
 
     JefeDeEstacion(unsigned int empleados){
         this->empleados.crear("/bin/ls", 'E', empleados);
+        for(unsigned int i = 0; i < this->empleados.cantidad(); i++)
+            this->empleados.escribir(true,i);
     }
 
     void recibirAuto(Auto unAuto) {

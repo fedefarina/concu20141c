@@ -19,8 +19,7 @@ private:
 public:
 
     Empleado() {
-        this->caja.crear((char*)"/bin/ls", 'C');
-        this->caja.escribir(0);
+        this->caja.crear((char*)"/bin/ls", 'C');        
         Semaforo semaforoCaja((char*)SEMAFORO_CAJA);
         Semaforo semaforoSurtidor((char*)SEMAFORO_SURTIDOR);
         this->semaforoCaja=semaforoCaja;
@@ -31,13 +30,16 @@ public:
         Logger::debug(getpid(), "Evento -> Atendiendo auto\n");
         float tiempoDeCarga = a.getCapacidad();
 
+        cout<<"<<-Surtidor Value: "<<semaforoSurtidor.getValue()<<endl;
         semaforoSurtidor.p();
-        sleep(tiempoDeCarga*10);
+        cout<<"Surtidor Value: "<<semaforoSurtidor.getValue()<<"->>"<<endl;
+        sleep(tiempoDeCarga);
         semaforoSurtidor.v();
 
         semaforoCaja.p();
         unsigned int saldo=caja.leer();
         caja.escribir(saldo+tiempoDeCarga);
+        cout << "Caja: " << saldo << endl;
         semaforoCaja.v();
 
         Logger::debug(getpid(), "Auto atendido\n");

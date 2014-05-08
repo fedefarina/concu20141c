@@ -20,6 +20,7 @@ public:
     int p (); // decrementa
     int v (); // incrementa
     void eliminar ();
+    int getValue() const;
 };
 
 #endif /* SEMAFORO_H_ */

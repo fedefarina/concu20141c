@@ -44,6 +44,10 @@ int Semaforo :: inicializar (int valorInicial) {
     return resultado;
 }
 
+int Semaforo::getValue() const{
+    return semctl (this->id,0,GETVAL,0);
+}
+
 /**
  * @brief Semaforo::p Sumo uno al contador, esperar(wait)
  * @return valor del contador

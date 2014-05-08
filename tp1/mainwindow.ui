@@ -260,6 +260,9 @@
         </item>
         <item>
          <widget class="QCommandLinkButton" name="nuevoAuto">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
           <property name="font">
            <font>
             <family>Abyssinica SIL</family>

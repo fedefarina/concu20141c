@@ -1,9 +1,9 @@
 #ifndef CONSTANTES_H
 #define CONSTANTES_H
 
-#define FIFO_AUTOS "/tmp/fifos_autos"
-#define SEMAFORO_FIFO "WorkerThread.h"
-#define SEMAFORO_SURTIDOR "EstacionDeServicio.h"
-#define SEMAFORO_CAJA "Empleado.h"
+#define FIFO_AUTOS "Auto.h"
+#define SEMAFORO_FIFO "/bin/cp"
+#define SEMAFORO_SURTIDOR "/bin/chmod"
+#define SEMAFORO_CAJA "/bin/mv"
 
 #endif // CONSTANTES_H
