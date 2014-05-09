@@ -16,18 +16,33 @@ class JefeDeEstacion {
 
 private:
     MemoriaCompartida<unsigned int> empleados;
+    MemoriaCompartida<unsigned int> caja;
     Semaforo semaforoEmpleados;
+    Semaforo semaforoCaja;
 
 public:
 
     JefeDeEstacion(){
-        this->empleados.crear("/bin/ls", 'E');
+        this->empleados.crear((char*) MEMORIA_EMPLEADOS, 'E');
+        this->caja.crear((char*) MEMORIA_CAJA,'C');
+
+        Semaforo semaforoCaja((char*) SEMAFORO_CAJA);
         Semaforo semaforoEmpleados((char*)SEMAFORO_EMPLEADOS,1);
+
+        this->semaforoCaja=semaforoCaja;
         this->semaforoEmpleados=semaforoEmpleados;
     }
 
     void setEmpleados(unsigned int empleados) {
         this->empleados.escribir(empleados);
+    }
+
+    unsigned int getSaldo(){
+        semaforoCaja.p();
+        unsigned int saldo=this->caja.leer();
+        cout<<"Saldo: "<<saldo<<endl;
+        semaforoCaja.v();
+        return saldo;
     }
 
     void recibirAuto(Auto unAuto) {
@@ -55,6 +70,7 @@ public:
                 empleadosLibres=empleados.leer();
                 this->empleados.escribir(empleadosLibres+1);
                 semaforoEmpleados.v();
+                getSaldo();
 
                 exit(0);
             }

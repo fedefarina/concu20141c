@@ -49,7 +49,7 @@ public:
         if(surtidores>0 && empleados>0){
 
             restartUI(false);
-            EstacionDeServicio estacion(empleados,surtidores);
+            EstacionDeServicio estacion(surtidores);
             JefeDeEstacion jefe;
             jefe.setEmpleados(empleados);
 

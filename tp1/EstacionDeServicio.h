@@ -15,7 +15,7 @@ private:
     Semaforo semaforoCaja;
 
 public:    
-    EstacionDeServicio(unsigned int empleados, unsigned int surtidores);
+    EstacionDeServicio(unsigned int surtidores);
     ~EstacionDeServicio();
 
 };
