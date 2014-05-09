@@ -83,6 +83,7 @@ public:
     ~JefeDeEstacion() {
         this->empleados.liberar();
         this->semaforoEmpleados.eliminar();
+        this->caja.liberar();
     }
 
 };

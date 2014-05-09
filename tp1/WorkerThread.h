@@ -56,6 +56,8 @@ public:
 
             QProgressBar* progressBar=mainWindow->findChild<QProgressBar*>("progressBar");
             Logger::debug(getpid(), "Inicio de simulacion\n");
+            QTime timeElapsed;
+            timeElapsed.start();
 
             pid_t pid = fork ();
             if ( pid == 0 ) {
@@ -77,7 +79,13 @@ public:
                         std::string mensaje = buffer;
                         mensaje.resize (bytesLeidos);
                         Auto unAuto=marshaller.fromString(mensaje);
-                        jefe.recibirAuto(unAuto);
+
+                        if(unAuto.getCapacidad()<(tiempoSimulacion-timeElapsed.elapsed()/1000)){
+                            jefe.recibirAuto(unAuto);
+                        }else{
+                            Logger::debug(getpid(), "La capacidad del auto supera el tiempo de simulación disponible.\n");
+                            Logger::debug(getpid(), "Evento > El auto se retira de la estación de servicio\n");
+                        }
                     }
                 }
                 canal.cerrar();
@@ -90,8 +98,6 @@ public:
             FifoEscritura autosFifo(FIFO_AUTOS);
             autosFifo.abrir();
             mainWindow->setAutosFifo(autosFifo);
-            QTime timeElapsed;
-            timeElapsed.start();
 
             while (tiempoSimulacion > timeElapsed.elapsed()/1000) {
                 if(timeElapsed.elapsed()%1000==0){
