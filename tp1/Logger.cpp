@@ -9,11 +9,9 @@ LockFile Logger::lf((char*)"logger");
 bool Logger::isDebugMode;
 
 Logger::Logger() {
-
 }
 
 Logger::~Logger() {
-
 }
 
 void Logger::setDebugMode(bool debugMode){

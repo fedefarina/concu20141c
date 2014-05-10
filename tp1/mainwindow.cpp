@@ -75,7 +75,7 @@ void MainWindow::getSaldo(){
     saldoEdit->setEnabled(false);
     this->semaforoCaja.p();
     unsigned int saldo=this->caja.leer();
-    this->semaforoFifo.v();
+    this->semaforoCaja.v();
     Utils<unsigned int> utils;
     saldoEdit->setText(utils.toString(saldo).c_str());
     saldoEdit->setEnabled(true);
