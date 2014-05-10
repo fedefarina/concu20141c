@@ -1,0 +1,88 @@
+
+\documentclass[12pt,a4paper,titlepage,oneside]{article}
+\usepackage[top=2.5cm, bottom=2cm, left=2.5cm, right=1cm]{geometry} 
+% Font, accents
+\usepackage[utf8]{inputenc}
+\usepackage{fancyhdr}
+\usepackage[T1]{fontenc}
+\usepackage{times}     
+% Interactive index
+\usepackage{hyperref}
+% Spanish titles
+\usepackage[spanish]{babel}
+% Attached files
+\usepackage{attachfile}
+\attachfilesetup{
+  icon = Paperclip
+}
+% Fix curly verbatim apostrophes
+\usepackage{upquote,textcomp}
+% Make lists without bullets
+\renewenvironment{itemize}{
+ \begin{list}{}{
+  \setlength{\leftmargin}{1.5em}
+ }
+}{
+ \end{list}
+}
+
+
+
+%Customize things
+\usepackage[margin=0pt,font=small,labelfont=bf]{caption}
+\usepackage{graphicx}
+\usepackage[usenames,dvipsnames]{xcolor}
+
+% Sections and subsections colors
+\usepackage{titlesec}
+\titleformat{\section}
+{\color{Blue}\normalfont\Large\bfseries}
+{\color{Blue}\thesection}{1em}{}
+\newcommand{\sectionbreak}{\clearpage}
+
+
+% Document properties
+\title{Facultad de Ingeniería\\Técnicas de Programación Concurrente I [75.59]}
+\date{\today}
+\hypersetup{
+  colorlinks = true,
+  urlcolor=blue,
+  pdflang = es,
+  pdfauthor = {Federico Farina},
+  pdfproducer = {Federico Farina},
+  pdfcreator = Texmaker,
+  pdftitle = {TP1},
+}
+
+\begin{document}
+   % code start
+    \fancyhead[LE]{\leftmark} 
+    \fancyhead[RO]{\rightmark} 
+    \fancyhead[L]{Técnicas de Programación Concurrente I}
+    \fancyhead[R]{TP1}    
+    \renewcommand{\headrulewidth}{0.4pt} 
+    \renewcommand{\footrulewidth}{0pt}
+    % code end
+
+    % set pagestyle to use fancy header and footer
+    \pagestyle{fancy}
+
+
+ \maketitle
+  \setcounter{page}{1}
+  \pagenumbering{roman}
+  \tableofcontents
+
+\newpage{}
+\pagenumbering{arabic}
+\setcounter{page}{1}
+
+\section{Enunciado}
+
+
+\section{Casos de uso}
+
+
+ 
+
+\end{document}
