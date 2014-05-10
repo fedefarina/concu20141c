@@ -6,6 +6,7 @@
  */
 
 LockFile Logger::lf((char*)"logger");
+bool Logger::isDebugMode;
 
 Logger::Logger() {
 
@@ -15,7 +16,14 @@ Logger::~Logger() {
 
 }
 
+void Logger::setDebugMode(bool debugMode){
+    Logger::isDebugMode=debugMode;
+}
+
 void Logger::debug(pid_t pid, const string& msg) {
+
+    if(!Logger::isDebugMode)
+        return;
 
     cout<<msg<<endl;
     stringstream ss;

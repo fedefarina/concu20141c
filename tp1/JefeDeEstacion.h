@@ -37,13 +37,6 @@ public:
         this->empleados.escribir(empleados);
     }
 
-    unsigned int getSaldo(){
-        semaforoCaja.p();
-        unsigned int saldo=this->caja.leer();
-        semaforoCaja.v();
-        return saldo;
-    }
-
     void recibirAuto(Auto unAuto) {
 
         Logger::debug(getpid(), "Evento > Un nuevo auto entra a la estacion de servicio\n");
@@ -69,8 +62,6 @@ public:
                 empleadosLibres=empleados.leer();
                 this->empleados.escribir(empleadosLibres+1);
                 semaforoEmpleados.v();
-                getSaldo();
-
                 exit(0);
             }
         } else {

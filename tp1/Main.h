@@ -18,6 +18,7 @@
 #include "EventHandler.h"
 #include "FifoLectura.h"
 #include "SignalHandler.h"
+#include "QCheckBox"
 #include <sys/wait.h>
 
 
@@ -47,6 +48,8 @@ public:
         if(surtidores>0 && empleados>0){
 
             restartUI(false);
+            QCheckBox* debugCheckBox=mainWindow->findChild<QCheckBox*>("debugCheckBox");
+            Logger::setDebugMode(debugCheckBox->isChecked());
             EstacionDeServicio estacion(surtidores);
             JefeDeEstacion jefe;
             jefe.setEmpleados(empleados);

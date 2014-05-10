@@ -11,13 +11,14 @@ class Logger {
 
 private:
     static LockFile lf;
+    static bool isDebugMode;
 
 public:
     Logger();
     ~Logger();
 
+    static void setDebugMode(bool isDebugMode);
     static void debug(pid_t pid, const string& msg);
-
 };
 
 #endif // LOGGER_H
