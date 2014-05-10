@@ -40,7 +40,6 @@ public:
     unsigned int getSaldo(){
         semaforoCaja.p();
         unsigned int saldo=this->caja.leer();
-        cout<<"Saldo: "<<saldo<<endl;
         semaforoCaja.v();
         return saldo;
     }

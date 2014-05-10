@@ -120,7 +120,7 @@ private:
     void restartUI(bool enabled){
         MainWindow* mainWindow=MainWindow::getInstance();
         QPushButton *ejecutarButton = mainWindow->findChild<QPushButton*>("iniciarButton");
-        QPushButton *nuevoAutoButton = mainWindow->findChild<QPushButton*>("nuevoAuto");
+        QPushButton *nuevoAutoButton = mainWindow->findChild<QPushButton*>("nuevoAutoButton");
         QPushButton *saldoButton = mainWindow->findChild<QPushButton*>("saldoButton");
         QProgressBar* progressBar=mainWindow->findChild<QProgressBar*>("progressBar");
         progressBar->setValue(100);

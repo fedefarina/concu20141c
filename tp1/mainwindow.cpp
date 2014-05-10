@@ -6,7 +6,6 @@
 #include "mainwindow.h"
 #include "Main.h"
 #include "Constantes.h"
-#include "QCommandLinkButton"
 #include <sys/wait.h>
 
 MainWindow* MainWindow::instance = NULL;
@@ -22,8 +21,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
     ui->setupUi(this);
     QPushButton *ejecutarButton = this->findChild<QPushButton*>("iniciarButton");
-    QCommandLinkButton *nuevoAutoButton = this->findChild<QCommandLinkButton*>("nuevoAuto");
-    QCommandLinkButton *saldoButton = this->findChild<QCommandLinkButton*>("saldoButton");
+    QPushButton *nuevoAutoButton = this->findChild<QPushButton*>("nuevoAutoButton");
+    QPushButton *saldoButton = this->findChild<QPushButton*>("saldoButton");
 
     QLineEdit* capacidadEdit=this->findChild<QLineEdit*>("capacidadEdit");
     capacidadEdit->setValidator(new QIntValidator(this));

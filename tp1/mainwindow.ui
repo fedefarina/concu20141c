@@ -10,7 +10,7 @@
     <x>0</x>
     <y>0</y>
     <width>521</width>
-    <height>254</height>
+    <height>280</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -209,34 +209,19 @@
          <number>0</number>
         </property>
         <property name="bottomMargin">
-         <number>10</number>
+         <number>0</number>
         </property>
-        <item alignment="Qt::AlignVCenter">
-         <widget class="QLabel" name="label_4">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="minimumSize">
-           <size>
-            <width>0</width>
-            <height>40</height>
-           </size>
-          </property>
-          <property name="font">
-           <font>
-            <family>Abyssinica SIL</family>
-            <pointsize>10</pointsize>
-           </font>
+        <item>
+         <widget class="QPushButton" name="saldoButton">
+          <property name="enabled">
+           <bool>false</bool>
           </property>
           <property name="text">
-           <string>Saldo</string>
+           <string>Consultar Saldo</string>
           </property>
          </widget>
         </item>
-        <item alignment="Qt::AlignRight|Qt::AlignVCenter">
+        <item>
          <widget class="QLineEdit" name="saldoEdit">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -258,55 +243,7 @@
           </property>
          </widget>
         </item>
-        <item>
-         <widget class="QCommandLinkButton" name="saldoButton">
-          <property name="enabled">
-           <bool>false</bool>
-          </property>
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="minimumSize">
-           <size>
-            <width>50</width>
-            <height>50</height>
-           </size>
-          </property>
-          <property name="text">
-           <string>Consultar Saldo</string>
-          </property>
-         </widget>
-        </item>
        </layout>
-      </item>
-      <item row="7" column="0">
-       <widget class="QLabel" name="label_3">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Fixed" vsizetype="Expanding">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="maximumSize">
-         <size>
-          <width>2150</width>
-          <height>16777215</height>
-         </size>
-        </property>
-        <property name="font">
-         <font>
-          <family>Abyssinica SIL</family>
-          <pointsize>10</pointsize>
-          <strikeout>false</strikeout>
-         </font>
-        </property>
-        <property name="text">
-         <string>Nuevo Auto</string>
-        </property>
-       </widget>
       </item>
       <item row="7" column="1">
        <layout class="QHBoxLayout" name="horizontalLayout">
@@ -317,23 +254,12 @@
          <number>0</number>
         </property>
         <item>
-         <widget class="Line" name="line">
-          <property name="orientation">
-           <enum>Qt::Vertical</enum>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QLabel" name="label_2">
-          <property name="font">
-           <font>
-            <family>Abyssinica SIL</family>
-            <pointsize>10</pointsize>
-            <strikeout>false</strikeout>
-           </font>
+         <widget class="QPushButton" name="nuevoAutoButton">
+          <property name="enabled">
+           <bool>false</bool>
           </property>
           <property name="text">
-           <string>Capacidad</string>
+           <string>Nuevo Auto</string>
           </property>
          </widget>
         </item>
@@ -344,6 +270,12 @@
             <horstretch>0</horstretch>
             <verstretch>0</verstretch>
            </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>30</height>
+           </size>
           </property>
           <property name="maximumSize">
            <size>
@@ -356,36 +288,6 @@
           </property>
           <property name="maxLength">
            <number>10</number>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="Line" name="line_2">
-          <property name="orientation">
-           <enum>Qt::Vertical</enum>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QCommandLinkButton" name="nuevoAuto">
-          <property name="enabled">
-           <bool>false</bool>
-          </property>
-          <property name="font">
-           <font>
-            <family>Abyssinica SIL</family>
-            <pointsize>10</pointsize>
-           </font>
-          </property>
-          <property name="text">
-           <string>Simular Entrada</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="Line" name="line_4">
-          <property name="orientation">
-           <enum>Qt::Vertical</enum>
           </property>
          </widget>
         </item>
