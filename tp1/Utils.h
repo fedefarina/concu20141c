@@ -6,7 +6,7 @@ template <class T> class Utils {
 public:
     Utils();
     ~Utils();
-    std::string tostr(const T& t);
+    std::string toString(const T& t);
     T fromString(const std::string& s);
 
 };
@@ -14,7 +14,7 @@ public:
 template <class T> Utils<T> :: Utils (){}
 template <class T> Utils<T> :: ~Utils (){}
 
-template <class T> std::string Utils<T>::tostr(const T& t){
+template <class T> std::string Utils<T>::toString(const T& t){
     ostringstream os;
     os<<t;
     return os.str();

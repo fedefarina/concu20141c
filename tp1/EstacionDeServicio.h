@@ -13,6 +13,7 @@ private:
     MemoriaCompartida<float> caja;
     Semaforo surtidoresSemaforo;
     Semaforo semaforoCaja;
+    Semaforo semaforoFifo;
 
 public:    
     EstacionDeServicio(unsigned int surtidores);

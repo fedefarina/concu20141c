@@ -26,17 +26,15 @@
  * Maneja el loop principal de la simulacion.
  */
 
-class WorkerThread{
+class Main{
 
 public:
-    WorkerThread(){}
-    ~WorkerThread(){}
+    Main(){}
+    ~Main(){}
 
     void run(){
 
         MainWindow* mainWindow=MainWindow::getInstance();
-        Semaforo semaforoFifo ( (char*)SEMAFORO_FIFO,0 );
-        mainWindow->setSemaforoFifo(semaforoFifo);
 
         int surtidores=mainWindow->getNumeroSurtidores();
         int empleados=mainWindow->getNumeroEmpleados();
@@ -53,6 +51,7 @@ public:
             JefeDeEstacion jefe;
             jefe.setEmpleados(empleados);
 
+            Semaforo semaforoFifo ((char*) SEMAFORO_FIFO);
 
             QProgressBar* progressBar=mainWindow->findChild<QProgressBar*>("progressBar");
             Logger::debug(getpid(), "Inicio de simulacion\n");
@@ -62,8 +61,8 @@ public:
             pid_t pid = fork ();
             if ( pid == 0 ) {
 
-                FifoLectura canal (FIFO_AUTOS);
-                canal.abrir();
+                FifoLectura fifoLectura ((char*) FIFO_AUTOS);
+                fifoLectura.abrir();
 
                 Marshaller marshaller;
                 const int BUFFSIZE=100;
@@ -73,7 +72,7 @@ public:
                 SignalHandler :: getInstance()->registrarHandler ( SIGUNUSED,&sigint_handler );
                 while (sigint_handler.getGracefulQuit() == 0 ){
                     semaforoFifo.p();
-                    ssize_t bytesLeidos = canal.leer(static_cast<void*>(buffer),BUFFSIZE);
+                    ssize_t bytesLeidos = fifoLectura.leer(static_cast<void*>(buffer),BUFFSIZE);
 
                     if(bytesLeidos>0){
                         std::string mensaje = buffer;
@@ -88,16 +87,12 @@ public:
                         }
                     }
                 }
-                canal.cerrar();
-                canal.eliminar();
-                cout << "Hijo: Termine" << endl;
+                fifoLectura.cerrar();
+                fifoLectura.eliminar();
                 exit (0);
             }
 
-
-            FifoEscritura autosFifo(FIFO_AUTOS);
-            autosFifo.abrir();
-            mainWindow->setAutosFifo(autosFifo);
+            mainWindow->iniciarSimulacion();
 
             while (tiempoSimulacion > timeElapsed.elapsed()/1000) {
                 if(timeElapsed.elapsed()%1000==0){
@@ -108,9 +103,7 @@ public:
             }
 
             progressBar->setValue(100);
-            autosFifo.cerrar();
-            autosFifo.eliminar();
-            semaforoFifo.eliminar();
+            mainWindow->finalizarSimulacion();
             kill(pid, SIGUNUSED);
             int estado;
             wait ((void *) &estado);
@@ -128,9 +121,11 @@ private:
         MainWindow* mainWindow=MainWindow::getInstance();
         QPushButton *ejecutarButton = mainWindow->findChild<QPushButton*>("iniciarButton");
         QPushButton *nuevoAutoButton = mainWindow->findChild<QPushButton*>("nuevoAuto");
+        QPushButton *saldoButton = mainWindow->findChild<QPushButton*>("saldoButton");
         QProgressBar* progressBar=mainWindow->findChild<QProgressBar*>("progressBar");
         progressBar->setValue(100);
         ejecutarButton->setEnabled(enabled);
+        saldoButton->setEnabled(!enabled);
         nuevoAutoButton->setEnabled(!enabled);
     }
 

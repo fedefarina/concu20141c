@@ -10,10 +10,11 @@
 #include <stdio.h>
 #include <string>
 #include "FifoEscritura.h"
+#include "MemoriaCompartida.h"
 #include "Semaforo.h"
 
 namespace Ui {
-    class MainWindow;
+class MainWindow;
 }
 
 using namespace std;
@@ -26,20 +27,23 @@ public:
     int getNumeroSurtidores();
     int getNumeroEmpleados();
     int getTiempoSimulacion();
-    void setAutosFifo(const FifoEscritura& fifoAutos);
-    void setSemaforoFifo(const Semaforo& semaforoFifo);
     void cleanInputVariables();
     bool event(QEvent *event);
+    void iniciarSimulacion();
+    void finalizarSimulacion();
     ~MainWindow();
 
 public slots:
     void nuevoAuto();
     void ejecutarComando();
+    void getSaldo();
 
 private:
     int nSurtidores, nEmpleados, tiempoSimulacion;
     FifoEscritura fifoAutos;
     Semaforo semaforoFifo;
+    Semaforo semaforoCaja;
+    MemoriaCompartida<unsigned int> caja;
     Ui::MainWindow *ui;
     explicit MainWindow(QWidget *parent = 0);
     static MainWindow* instance;

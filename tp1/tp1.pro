@@ -3,7 +3,6 @@ QT       += widgets
 
 HEADERS += \
     MemoriaCompartida.h \
-    WorkerThread.h \
     mainwindow.h \
     Logger.h \
     LockFile.h \
@@ -20,7 +19,8 @@ HEADERS += \
     Semaforo.h \
     SignalHandler.h \
     EventHandler.h \
-    SigUnusedHandler.h
+    SigUnusedHandler.h \
+    Main.h
 
 SOURCES += \
     main.cpp \

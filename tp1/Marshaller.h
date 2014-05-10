@@ -31,7 +31,7 @@ public:
     std::string toString(Auto unAuto){
         std::string buffer;
         Utils<float> utils;
-        buffer.append(utils.tostr(unAuto.getCapacidad()));
+        buffer.append(utils.toString(unAuto.getCapacidad()));
         return buffer;
     }
 

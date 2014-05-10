@@ -7,12 +7,16 @@ EstacionDeServicio::EstacionDeServicio(unsigned int surtidores) {
 
     Semaforo semaforoCaja((char*)SEMAFORO_CAJA,1);
     Semaforo semaforoSurtidores((char*)SEMAFORO_SURTIDOR,surtidores);
+    Semaforo semaforoFifo ( (char*)SEMAFORO_FIFO,0 );
+
+    this->semaforoFifo=semaforoFifo;
     this->semaforoCaja=semaforoCaja;
     this->surtidoresSemaforo=semaforoSurtidores;
 }
 
 EstacionDeServicio::~EstacionDeServicio() {
     this->surtidoresSemaforo.eliminar();
+    this->semaforoFifo.eliminar();
     this->semaforoCaja.eliminar();
     this->caja.liberar();
 }

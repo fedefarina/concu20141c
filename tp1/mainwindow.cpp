@@ -4,7 +4,7 @@
 #include <QFileDialog>
 #include "ui_mainwindow.h"
 #include "mainwindow.h"
-#include "WorkerThread.h"
+#include "Main.h"
 #include "Constantes.h"
 #include "QCommandLinkButton"
 #include <sys/wait.h>
@@ -23,12 +23,14 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     ui->setupUi(this);
     QPushButton *ejecutarButton = this->findChild<QPushButton*>("iniciarButton");
     QCommandLinkButton *nuevoAutoButton = this->findChild<QCommandLinkButton*>("nuevoAuto");
+    QCommandLinkButton *saldoButton = this->findChild<QCommandLinkButton*>("saldoButton");
 
     QLineEdit* capacidadEdit=this->findChild<QLineEdit*>("capacidadEdit");
     capacidadEdit->setValidator(new QIntValidator(this));
 
     //sender, signal, receiver, slot (callback similar)
     QObject::connect(ejecutarButton, SIGNAL(clicked()), this, SLOT(ejecutarComando()));
+    QObject::connect(saldoButton, SIGNAL(clicked()), this, SLOT(getSaldo()));
     QObject::connect(nuevoAutoButton, SIGNAL(clicked()), this, SLOT(nuevoAuto()));
 }
 
@@ -44,17 +46,40 @@ void MainWindow::ejecutarComando(){
     nEmpleados=empleados.toInt();
     tiempoSimulacion=tSimulacion.toInt();
 
-    WorkerThread *workerThread = new WorkerThread();
+    Main *workerThread = new Main();
     workerThread->run();
 }
 
-void MainWindow::setAutosFifo(const FifoEscritura& fifoAutos){
-    this->fifoAutos=fifoAutos;
 
+void MainWindow::iniciarSimulacion(){
+
+    FifoEscritura fifoEscritura(FIFO_AUTOS);
+    fifoEscritura.abrir();
+    this->caja.crear((char*)"/bin/ls", 'C');
+
+    Semaforo semaforoFifo((char*) SEMAFORO_FIFO);
+    Semaforo semaforoCaja((char*) SEMAFORO_CAJA);
+
+    this->semaforoFifo=semaforoFifo;
+    this->semaforoCaja=semaforoCaja;
+    this->fifoAutos=fifoEscritura;
 }
 
-void MainWindow::setSemaforoFifo(const Semaforo& semaforoFifo){
-    this->semaforoFifo=semaforoFifo;
+void MainWindow::finalizarSimulacion(){
+    this->fifoAutos.cerrar();
+    this->fifoAutos.eliminar();
+    this->caja.liberar();
+}
+
+void MainWindow::getSaldo(){
+    QLineEdit* saldoEdit=this->findChild<QLineEdit*>("saldoEdit");
+    saldoEdit->setEnabled(false);
+    this->semaforoCaja.p();
+    unsigned int saldo=this->caja.leer();
+    this->semaforoFifo.v();
+    Utils<unsigned int> utils;
+    saldoEdit->setText(utils.toString(saldo).c_str());
+    saldoEdit->setEnabled(true);
 }
 
 void MainWindow::nuevoAuto(){
@@ -65,7 +90,7 @@ void MainWindow::nuevoAuto(){
     unAuto.setCapacidad(capacidad);
     std::string mensaje=marshaller.toString(unAuto);
     pid_t pid = fork ();
-    if ( pid == 0 ) {//Hijo
+    if ( pid == 0 ) {
         fifoAutos.escribir ( static_cast<const void*>(mensaje.c_str()),mensaje.length() );
         semaforoFifo.v();
         exit(0);
