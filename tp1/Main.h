@@ -23,7 +23,7 @@
 
 
 /**
- * @brief The WorkerThread class
+ * @brief The Main class
  * Maneja el loop principal de la simulacion.
  */
 
@@ -52,6 +52,7 @@ public:
             Logger::setDebugMode(debugCheckBox->isChecked());
             EstacionDeServicio estacion(surtidores);
             JefeDeEstacion jefe;
+            estacion.setJefeDeEstacion(jefe);
             jefe.setEmpleados(empleados);
 
             Semaforo semaforoFifo ((char*) SEMAFORO_FIFO);

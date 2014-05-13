@@ -14,6 +14,10 @@ EstacionDeServicio::EstacionDeServicio(unsigned int surtidores) {
     this->surtidoresSemaforo=semaforoSurtidores;
 }
 
+void EstacionDeServicio::setJefeDeEstacion(JefeDeEstacion& jefe){
+    this->jefeDeEstacion=jefe;
+}
+
 EstacionDeServicio::~EstacionDeServicio() {
     this->surtidoresSemaforo.eliminar();
     this->semaforoFifo.eliminar();

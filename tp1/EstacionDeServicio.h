@@ -14,9 +14,11 @@ private:
     Semaforo surtidoresSemaforo;
     Semaforo semaforoCaja;
     Semaforo semaforoFifo;
+    JefeDeEstacion jefeDeEstacion;
 
 public:    
     EstacionDeServicio(unsigned int surtidores);
+    void setJefeDeEstacion(JefeDeEstacion& jefe);
     ~EstacionDeServicio();
 
 };
