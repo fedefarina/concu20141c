@@ -5,7 +5,6 @@
 \usepackage[utf8]{inputenc}
 \usepackage{fancyhdr}
 \usepackage[T1]{fontenc}
-\usepackage{float}
 \usepackage{times}     
 % Interactive index
 \usepackage{hyperref}
@@ -225,21 +224,36 @@ Se identificaron los siguientes casos de uso:
 Flujo principal
 Post condiciones: 
 \end{enumerate}
-
-
-
+\newpage
 
 \section{Diagrama de estado}
 
+A continuación mostramos el diagrama de estados correspondiente a las acciones del jefe de estación.
+\bigskip
 
-
-\begin{figure}
-\begin{center}
+\begin{figure}[hbtp]
+\centering
 \includegraphics[scale=0.5]{diagrama_estado_jefe.png}
-\end{center}
 \caption[Long caption]{Diagrama de estado del jefe de estación}
 \end{figure}
 
+
+\section{Mapeo a problemas conocidos de concurrencia}
+
+\bigskip
+
+
+\begin{center}
+   \begin{tabular}[1.5\textwidth]{| l | c |}
+     \hline
+     Dominio & Problema de Concurrencia  \\ \hline
+     Entrada y atencion de autos & Productor-Consumidor  \\ \hline
+     7 & 8  \\
+     \hline
+   \end{tabular}
+ \end{center}
+ 
+  
 
 \section{Tareas realizadas}
 
