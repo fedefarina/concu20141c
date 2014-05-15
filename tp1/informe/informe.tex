@@ -5,7 +5,7 @@
 \usepackage[utf8]{inputenc}
 \usepackage{fancyhdr}
 \usepackage[T1]{fontenc}
-\usepackage{times}     
+\usepackage{float}    
 % Interactive index
 \usepackage{hyperref}
 % Spanish titles
@@ -43,6 +43,8 @@
 
 % Document properties
 \title{Facultad de Ingeniería\\Técnicas de Programación Concurrente I [75.59]}
+\author{Federico Farina \texttt{<federicofarina22{@}gmail.com>}\\
+Nicolás Vazquez \texttt{<nickva1988@gmail.com>}}
 \date{\today}
 \hypersetup{
   colorlinks = true,
@@ -202,60 +204,29 @@ Para el análisis del problema, se identificaron los actores que intervienen en 
 Se identificaron los siguientes casos de uso:
 
 \begin{enumerate}
-\item[•] Recibir auto
-\item[•] Asignar empleado
-\item[•] Atender auto
-\item[•] Almacenar recaudación
-\item[•] Consultar recaudación
+\item[•] Recibir auto: El jefe de estación recibe un nuevo auto que ingresa a la estación de servicio.
+\item[•] Asignar empleado: El jefe de estación asigna un empleado disponible para atender el auto que ha ingresado a la estación de servicio.
+\item[•] Atender auto: El empleado atiende un auto asignado previamente por el jefe de estación.
+\item[•] Almacenar recaudación: El empleado almacena la recaudación obtenida al atender un auto en la caja de la estación de servicio.
+\item[•] Consultar recaudación: El administrador de la estación de servicio consulta la recaudación contenida en la caja.
 \end{enumerate}
-
-\begin{figure}[hbtp]
-\centering
-\includegraphics[scale=0.6]{diagramaDeCasosDeUso.png} 
-\caption{Diagrama de Casos de Uso}
-\end{figure}
 
 \subsection{Caso de uso: Atender auto}
+
 \begin{enumerate}
-\item Descripción: El empleado atiende el auto asignado por el jefe de estación y almacena la recaudación en la caja.
-\item Actores participantes: Empleado
-\item Pre-condiciones: El auto a atender debe ser previamente asignado por el jefe de estación. Debe haber al menos un surtidor libre y el empleado no puede estar ocupado atendiendo otro auto. El tiempo de carga debe ser menor al tiempo de simulación restante.
-\item Flujos
-Flujo principal
-Post condiciones: 
+\item \textbf{Descripción:} El empleado atiende el auto asignado por el jefe de estación y almacena la recaudación en la caja.
+\item \textbf{Actores participantes}: Empleado
+\item \textbf{Pre-condiciones}: El auto a atender debe ser previamente asignado por el jefe de estación. El empleado no puede estar ocupado atendiendo otro auto. El tiempo de carga debe ser menor al tiempo de simulación restante.
+\item \textbf{Flujo principal}
+\begin{enumerate}
+\item El empleado busca un surtidor libre para atender el auto
+\item El empleado determina el tiempo de carga según la capacidad del tanque de nafta del auto
+\item El empleado carga nafta en el auto
+\item El empleado almacena la recaudación resultante en la caja de la estación de servicio
+\item Fin del caso de uso
 \end{enumerate}
-\newpage
-
-\section{Diagrama de estado}
-
-A continuación mostramos el diagrama de estados correspondiente a las acciones del jefe de estación.
-\bigskip
-
-\begin{figure}[hbtp]
-\centering
-\includegraphics[scale=0.5]{diagrama_estado_jefe.png}
-\caption[Long caption]{Diagrama de estado del jefe de estación}
-\end{figure}
-
-
-\section{Mapeo a problemas conocidos de concurrencia}
-
-\bigskip
-
-
-\begin{center}
-   \begin{tabular}[1.5\textwidth]{| l | c |}
-     \hline
-     Dominio & Problema de Concurrencia  \\ \hline
-     Entrada y atención de autos & Lector-Escritor  \\ \hline
-     Caja & Exclusiòn mutua\\ \hline
-     Empleados disponibles & Productor-Consumidor\\ \hline
-     Nuevos autos & Productor-consumidor\\ 
-     \hline
-   \end{tabular}
- \end{center}
- 
-  
+\textbf{Post-condiciones:} La recaudación es almacenada en la caja y el empleado se encuentra disponible para atender un nuevo auto
+\end{enumerate}
 
 \section{Tareas realizadas}
 
@@ -280,6 +251,20 @@ NOTA: Si la capacidad del auto que ingresa a la estación de servicio es mayor a
 
 \item Tratar de mapear la comunicación entre los procesos a los problemas conocidos de concurrencia.
 
+\bigskip
+\begin{center}
+   \begin{tabular}[1.5\textwidth]{| l | c |}
+     \hline
+     \textbf{Dominio} & \textbf{Problema de Concurrencia}  \\ \hline
+     Entrada y atención de autos & Lector-Escritor  \\ \hline
+     Caja & Exclusiòn mutua\\ \hline
+     Empleados disponibles & Productor-Consumidor\\ \hline
+     Nuevos autos & Productor-consumidor\\ 
+     \hline
+   \end{tabular}
+ \end{center}
+ 
+\newpage
 \item Determinar los mecanismos de concurrencia a utilizar para cada una de las comunicaciones entre procesos que fueron detectadas en el ítem 2. No se requiere la utilización de algún mecanismo específico, la elección en cada caso queda a cargo del grupo y debe estar debidamente justificada.
 
 \begin{itemize}
@@ -289,11 +274,27 @@ NOTA: Si la capacidad del auto que ingresa a la estación de servicio es mayor a
 \end{itemize}
 \end{enumerate}
 
-\section{Diagrama de Clases}
+\section{Diagrama de casos de uso}
+\begin{figure}[hbtp]
+\begin{center}
+\includegraphics[scale=0.5]{diagramaDeCasosDeUso.png} 
+\end{center}
+\caption{Diagrama de casos de uso}
+\end{figure}
+
+\section{Diagrama de clases}
 \begin{figure}[hbtp]
 \centering
-\includegraphics[scale=0.62]{diagramaDeClases.png}
-\caption{Diagrama de Clases}
+\includegraphics[scale=0.5]{diagramaDeClases.png}
+\caption{Diagrama de clases}
+\end{figure}
+
+\section{Diagrama de estado}
+\begin{figure}[hbtp]
+\begin{center}
+\includegraphics[scale=0.5]{diagrama_estado_jefe.png}
+\end{center}
+\caption[Long caption]{Diagrama de estado del jefe de estación}
 \end{figure}
 
 \end{document}
