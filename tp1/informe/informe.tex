@@ -5,6 +5,7 @@
 \usepackage[utf8]{inputenc}
 \usepackage{fancyhdr}
 \usepackage[T1]{fontenc}
+\usepackage{float}
 \usepackage{times}     
 % Interactive index
 \usepackage{hyperref}
@@ -30,7 +31,7 @@
 
 %Customize things
 \usepackage[margin=0pt,font=small,labelfont=bf]{caption}
-\usepackage{graphicx}
+\usepackage[pdftex]{graphicx}
 \usepackage[usenames,dvipsnames]{xcolor}
 
 % Sections and subsections colors
@@ -225,7 +226,23 @@ Flujo principal
 Post condiciones: 
 \end{enumerate}
 
+
+
+
+\section{Diagrama de estado}
+
+
+
+\begin{figure}
+\begin{center}
+\includegraphics[scale=0.5]{diagrama_estado_jefe.png}
+\end{center}
+\caption[Long caption]{Diagrama de estado del jefe de estación}
+\end{figure}
+
+
 \section{Tareas realizadas}
+
 \begin{enumerate}
 \item Dividir el programa en procesos. El objetivo es lograr que cada programa participante este conformado por un conjunto de procesos que sean lo más sencillos posible.
 
