@@ -183,14 +183,84 @@ Diagramas de clases realizados.
 Diagrama de transición de estados del jefe de estación.
 \end{enumerate}
 
+\section{Objetivo}
+El objetivo de este proyecto es el desarrollo de una aplicación conocida como ConcuStation.
+Esta aplicación permitirá simular el funcionamiento de una estación de servicio. Al iniciar la aplicación, el usuario podrá decidir el número de empleados y surtidores que desee.
+Los empleados atienden un auto por vez y almacenan la recaudación en una caja común. En todo momento se podrá consultar el saldo disponible en la caja.
+
+\section{Análisis del problema}
+Para el análisis del problema, se identificaron los actores que intervienen en el sistema. A continuación se presenta una breve descripción de cada uno.
+
+\subsection{Actores}
+\begin{enumerate}
+\item[•] Jefe de estación: Encargado de recibir los autos que ingresan en la estación de servicio y asignar un empleado para su atención.
+\item[•] Empleado: Encargado de atender los autos y almacenar la recaudación en la caja.
+\item[•] Administrador: Consulta la recaudación disponible en la caja.
+\end{enumerate}
+
+\subsection{Casos de uso}
+Se identificaron los siguientes casos de uso:
+
+\begin{enumerate}
+\item[•] Recibir auto
+\item[•] Asignar empleado
+\item[•] Atender auto
+\item[•] Almacenar recaudación
+\item[•] Consultar recaudación
+\end{enumerate}
+
+\begin{figure}[hbtp]
+\centering
+\includegraphics[scale=0.6]{diagramaDeCasosDeUso.png} 
+\caption{Diagrama de Casos de Uso}
+\end{figure}
+
+\subsection{Caso de uso: Atender auto}
+\begin{enumerate}
+\item Descripción: El empleado atiende el auto asignado por el jefe de estación y almacena la recaudación en la caja.
+\item Actores participantes: Empleado
+\item Pre-condiciones: El auto a atender debe ser previamente asignado por el jefe de estación. Debe haber al menos un surtidor libre y el empleado no puede estar ocupado atendiendo otro auto. El tiempo de carga debe ser menor al tiempo de simulación restante.
+\item Flujos
+Flujo principal
+Post condiciones: 
+\end{enumerate}
+
+\section{Tareas realizadas}
+\begin{enumerate}
+\item Dividir el programa en procesos. El objetivo es lograr que cada programa participante este conformado por un conjunto de procesos que sean lo más sencillos posible.
+
+\begin{itemize}
+\item[•] Se crean dos procesos principales: Un proceso asociado a la vista (interfaz gráfica de usuario) y un proceso que controla el flujo de ejecución de la simulación.
+\item[•] Se crea un proceso cada vez que entra un auto a la estación de servicio: Al ingresar es recibido por el jefe de estación, el cual busca algún empleado que se encuentre disponible para ser asignado a atender el auto. Si hay algún empleado disponible, se crea un nuevo proceso para atender el auto. La duración de la atención está determinada por la capacidad en litros del tanque de nafta del auto.
+\end{itemize}
+
+NOTA: Si la capacidad del auto que ingresa a la estación de servicio es mayor al tiempo de simulación disponible, no es posible atender el auto y el mismo se retira de la estación de servicio; al igual que en el caso de no haber empleados disponibles.
+
+\item Una vez obtenida la división en procesos, establecer un esquema de comunicación entre ellos teniendo en cuenta los requerimientos de la aplicación. ¿Qué procesos se comunican entre sí? ¿Qué datos necesitan compartir para poder trabajar?
+
+\begin{itemize}
+\item[•] El proceso principal se comunica con la vista por medio de un canal de comunicación. Al ingresar un nuevo auto, se puede determinar su capacidad mediante la interfaz gráfica de usuario. La vista escribe en el canal dicha capacidad y el proceso principal la lee para determinar el tiempo que necesita el auto en ser atendido.
+\item[•] El proceso principal y los procesos responsables de atender los autos que ingresan en la estación de servicio dejan el registro de su actividad en un único archivo de texto si el programa es ejecutado en modo debug. Este archivo debe ser compartido por todos los procesos.
+\item[•] Cada vez que se lanza un proceso para atender un nuevo auto, el proceso escribe la recaudación resultante en una caja común. Esta caja es compartida por todos los procesos y por el administrador de la estación de servicio, el cual en todo momento puede consultar la recaudación contenida en la caja.
+\item[•] La vista debe comunicar al proceso principal la finalización del tiempo de simulación. Este tiempo es controlado por la vista mediante un timer.
+\end{itemize}
+
+\item Tratar de mapear la comunicación entre los procesos a los problemas conocidos de concurrencia.
+
+\item Determinar los mecanismos de concurrencia a utilizar para cada una de las comunicaciones entre procesos que fueron detectadas en el ítem 2. No se requiere la utilización de algún mecanismo específico, la elección en cada caso queda a cargo del grupo y debe estar debidamente justificada.
+
+\begin{itemize}
+\item[•] Si el programa es ejecutado en modo debug, se utiliza un Lock File para sincronizar correctamente la escritura de los procesos en el archivo de texto.
+\item[•] Para determinar la cantidad de surtidores libres, se utiliza un semáforo inicializado en la cantidad de surtidores disponibles. Cada vez que ingresa un nuevo auto, el proceso lanzado intenta entrar en el semáforo, lo cual decrementa el valor del mismo. Si no hay surtidores libres, es decir, si el valor del semáforo es igual a 0, el proceso queda en espera hasta tanto algún otro proceso libere el semáforo incrementando su valor. Esta situación ocurre cuando ingresa un nuevo auto y el empleado asignado para su atención no encuentra un surtidor libre.
+\item[•] La caja es una memoria compartida por todos los procesos que se lanzan cada vez que ingresa un nuevo auto. Dado que estos procesos pueden ejecutarse concurrentemente, se utiliza un semáforo de exclusión mutua para la sincronización de la lectura y escritura en la memoria compartida.
+\end{itemize}
+\end{enumerate}
+
 \section{Diagrama de Clases}
 \begin{figure}[hbtp]
 \centering
 \includegraphics[scale=0.5]{diagramaDeClases.png}
 \caption{Diagrama de Clases}
 \end{figure}
-
-\section{Casos de Uso}
-
 
 \end{document}
