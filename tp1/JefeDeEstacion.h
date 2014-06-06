@@ -16,20 +16,13 @@ class JefeDeEstacion {
 
 private:
     MemoriaCompartida<unsigned int> empleados;
-    MemoriaCompartida<unsigned int> caja;
     Semaforo semaforoEmpleados;
-    Semaforo semaforoCaja;
 
 public:
 
     JefeDeEstacion(){
         this->empleados.crear((char*) MEMORIA_EMPLEADOS, 'E');
-        this->caja.crear((char*) MEMORIA_CAJA,'C');
-
-        Semaforo semaforoCaja((char*) SEMAFORO_CAJA);
         Semaforo semaforoEmpleados((char*)SEMAFORO_EMPLEADOS,1);
-
-        this->semaforoCaja=semaforoCaja;
         this->semaforoEmpleados=semaforoEmpleados;
     }
 
@@ -39,7 +32,7 @@ public:
 
     void recibirAuto(Auto unAuto) {
 
-        Logger::debug(getpid(), "Evento > Un nuevo auto entra a la estacion de servicio\n");
+//        Logger::debug(getpid(), "Evento > Un nuevo auto entra a la estacion de servicio\n");
 
         //Busco un empleado libre
         semaforoEmpleados.p();
@@ -55,8 +48,9 @@ public:
                 this->empleados.escribir(empleadosLibres-1);
                 semaforoEmpleados.v();
 
-                Empleado empleado;
-                empleado.atenderAuto(unAuto);
+                Empleado* empleado=new Empleado();
+                empleado->atenderAuto(unAuto);
+                delete(empleado);
 
                 semaforoEmpleados.p();
                 empleadosLibres=empleados.leer();
@@ -65,15 +59,16 @@ public:
                 exit(0);
             }
         } else {
-            Logger::debug(getpid(), "Evento > No hay empleados disponibles\n");
-            Logger::debug(getpid(), "Evento > El auto se retira de la estación de servicio\n");
+//            Logger::debug(getpid(), "Evento > No hay empleados disponibles\n");
+//            Logger::debug(getpid(), "Evento > El auto se retira de la estación de servicio\n");
         }
     }
 
     ~JefeDeEstacion() {
+        Logger::debug(getpid(), "Murio jefe\n");
+//        cout<<"Murio jefe"<<endl;
         this->empleados.liberar();
         this->semaforoEmpleados.eliminar();
-        this->caja.liberar();
     }
 
 };

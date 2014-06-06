@@ -52,7 +52,6 @@ public:
             Logger::setDebugMode(debugCheckBox->isChecked());
             EstacionDeServicio estacion(surtidores);
             JefeDeEstacion jefe;
-            estacion.setJefeDeEstacion(jefe);
             jefe.setEmpleados(empleados);
 
             Semaforo semaforoFifo ((char*) SEMAFORO_FIFO);

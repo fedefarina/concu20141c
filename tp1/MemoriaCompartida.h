@@ -10,6 +10,8 @@
 #include	<sys/ipc.h>
 #include	<sys/shm.h>
 #include	<string>
+#include "Logger.h"
+#include "Utils.h"
 
 
 template <class T> class MemoriaCompartida {
@@ -60,7 +62,7 @@ template <class T> int MemoriaCompartida<T> :: crear ( std::string archivo, char
 
             if ( ptrTemporal == (void *) -1 ) {
                 return ERROR_SHMAT;
-            } else {                
+            } else {
                 this->ptrDatos = (T *) ptrTemporal;
                 this->numero = numero;
                 return SHM_OK;
@@ -74,9 +76,17 @@ template <class T> void MemoriaCompartida<T> :: liberar () {
     // detach del bloque de memoria
     shmdt ( (void *) this->ptrDatos );
 
+
+    Utils<int> utils;
+    string str = utils.toString(this->cantidadProcesosAdosados());
+    str += "\n";
+    Logger::debug(getpid(), str);
     int procAdosados = this->cantidadProcesosAdosados ();
+    std::cout << "Proc Adosados: "<<procAdosados<<std::endl;
 
     if ( procAdosados == 0 ) {
+        std::cout << "Termino bien: "<<procAdosados<<std::endl;
+        Logger::debug(getpid(), "Termino bien\n");
         shmctl ( this->shmId,IPC_RMID,NULL );
     }
 }
