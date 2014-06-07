@@ -8,70 +8,88 @@
 #include "Logger.h"
 #include "mainwindow.h"
 #include "FifoLectura.h"
-
+#include <sys/wait.h>
 using namespace std;
-
 
 class JefeDeEstacion {
 
 private:
-    MemoriaCompartida<unsigned int> empleados;
+    MemoriaCompartida<bool> empleados;
     Semaforo semaforoEmpleados;
 
 public:
 
-    JefeDeEstacion(){
-        this->empleados.crear((char*) MEMORIA_EMPLEADOS, 'E');
-        Semaforo semaforoEmpleados((char*)SEMAFORO_EMPLEADOS,1);
-        this->semaforoEmpleados=semaforoEmpleados;
-    }
+    JefeDeEstacion() {
+        unsigned int empleados = EstacionDeServicio::getInstancia()->getEmpleados();
+        this->empleados.crear((char*) MEMORIA_EMPLEADOS, 'E', empleados);
+        Semaforo semaforoEmpleados((char*)SEMAFORO_EMPLEADOS,1,empleados);
+        this->semaforoEmpleados = semaforoEmpleados;
 
-    void setEmpleados(unsigned int empleados) {
-        this->empleados.escribir(empleados);
+        for (unsigned int i = 0; i < empleados; i++)
+            this->empleados.escribir(true, i);
+
     }
 
     void recibirAuto(Auto unAuto) {
-
-//        Logger::debug(getpid(), "Evento > Un nuevo auto entra a la estacion de servicio\n");
+        int id = -1;
+        unsigned int empleados = EstacionDeServicio::getInstancia()->getEmpleados();
+        Logger::debug(getpid(), "Evento > Un nuevo auto entra a la estacion de servicio\n");
 
         //Busco un empleado libre
-        semaforoEmpleados.p();
-        unsigned int empleadosLibres = this->empleados.leer();
-        semaforoEmpleados.v();
+        for (unsigned int i = 0; i < empleados; i++) {
+            semaforoEmpleados.p(i);
+            if(this->empleados.leer(i) == true) {
+                id = i;
+                semaforoEmpleados.v(i);
+                break;
+            }
+            semaforoEmpleados.v(i);
+        }
 
         //Si hay empleados libres.
-        if (empleadosLibres > 0) {
+        if (id >= 0) {
             pid_t pid = fork();
             if (pid == 0) {
-                semaforoEmpleados.p();
-                empleadosLibres=empleados.leer();
-                this->empleados.escribir(empleadosLibres-1);
-                semaforoEmpleados.v();
+                cout << "El auto es atendido por el empleado " << id << endl;
+                semaforoEmpleados.p(id);
+                this->empleados.escribir(false, id);
+                semaforoEmpleados.v(id);
 
-                Empleado* empleado=new Empleado();
+                Empleado* empleado = new Empleado();
                 empleado->atenderAuto(unAuto);
                 delete(empleado);
 
-                semaforoEmpleados.p();
-                empleadosLibres=empleados.leer();
-                this->empleados.escribir(empleadosLibres+1);
-                semaforoEmpleados.v();
+                semaforoEmpleados.p(id);
+                this->empleados.escribir(true,id);
+                semaforoEmpleados.v(id);
                 exit(0);
             }
         } else {
-//            Logger::debug(getpid(), "Evento > No hay empleados disponibles\n");
-//            Logger::debug(getpid(), "Evento > El auto se retira de la estación de servicio\n");
+            Logger::debug(getpid(), "Evento > No hay empleados disponibles\n");
+            Logger::debug(getpid(), "Evento > El auto se retira de la estación de servicio\n");
         }
+    }
+
+    unsigned int getEmpleadosOcupados() {
+        unsigned int ocupados = 0;
+        for (unsigned int i = 0; i < empleados.cantidad(); i++) {
+            semaforoEmpleados.p(i);
+            if (this->empleados.leer(i) == false) {
+                ocupados++;
+                semaforoEmpleados.v(i);
+            }
+            else {
+                semaforoEmpleados.v(i);
+            }
+        }
+        return ocupados;
     }
 
     ~JefeDeEstacion() {
         Logger::debug(getpid(), "Murio jefe\n");
-//        cout<<"Murio jefe"<<endl;
         this->empleados.liberar();
-        this->semaforoEmpleados.eliminar();
     }
 
 };
 
 #endif // JEFEDEESTACION_H
-

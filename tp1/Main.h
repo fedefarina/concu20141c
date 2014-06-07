@@ -50,9 +50,9 @@ public:
             restartUI(false);
             QCheckBox* debugCheckBox=mainWindow->findChild<QCheckBox*>("debugCheckBox");
             Logger::setDebugMode(debugCheckBox->isChecked());
-            EstacionDeServicio estacion(surtidores);
-            JefeDeEstacion jefe;
-            jefe.setEmpleados(empleados);
+
+            EstacionDeServicio::getInstancia()->setEmpleados(empleados);
+            EstacionDeServicio::getInstancia()->setSurtidores(surtidores);
 
             Semaforo semaforoFifo ((char*) SEMAFORO_FIFO);
 
@@ -61,8 +61,10 @@ public:
             QTime timeElapsed;
             timeElapsed.start();
 
+            JefeDeEstacion* jefe = new JefeDeEstacion();
+
             pid_t pid = fork ();
-            if ( pid == 0 ) {
+            if ( pid == 0 ) {                
 
                 FifoLectura fifoLectura ((char*) FIFO_AUTOS);
                 fifoLectura.abrir();
@@ -74,7 +76,7 @@ public:
                 SIGUNUSED_Handler sigint_handler;
                 SignalHandler :: getInstance()->registrarHandler ( SIGUNUSED,&sigint_handler );
                 while (sigint_handler.getGracefulQuit() == 0 ){
-                    semaforoFifo.p();
+                    semaforoFifo.p(0);
                     ssize_t bytesLeidos = fifoLectura.leer(static_cast<void*>(buffer),BUFFSIZE);
 
                     if(bytesLeidos>0){
@@ -83,7 +85,7 @@ public:
                         Auto unAuto=marshaller.fromString(mensaje);
 
                         if(unAuto.getCapacidad()<(tiempoSimulacion-timeElapsed.elapsed()/1000)){
-                            jefe.recibirAuto(unAuto);
+                            jefe->recibirAuto(unAuto);
                         }else{
                             Logger::debug(getpid(), "La capacidad del auto supera el tiempo de simulación disponible.\n");
                             Logger::debug(getpid(), "Evento > El auto se retira de la estación de servicio\n");
@@ -91,7 +93,8 @@ public:
                     }
                 }
                 fifoLectura.cerrar();
-                fifoLectura.eliminar();
+                fifoLectura.eliminar();                
+                delete(jefe);
                 exit (0);
             }
 
@@ -111,6 +114,10 @@ public:
             int estado;
             wait ((void *) &estado);
             onFinished();
+            while(jefe->getEmpleadosOcupados()>0);
+            delete(jefe);
+            sleep(1);
+            EstacionDeServicio::destruirInstancia();
         }
     }
 

@@ -77,15 +77,15 @@ template <class T> void MemoriaCompartida<T> :: liberar () {
     shmdt ( (void *) this->ptrDatos );
 
 
-    Utils<int> utils;
-    string str = utils.toString(this->cantidadProcesosAdosados());
-    str += "\n";
-    Logger::debug(getpid(), str);
+//    Utils<int> utils;
+//    string str = utils.toString(this->cantidadProcesosAdosados());
+//    str += "\n";
+//    Logger::debug(getpid(), str);
     int procAdosados = this->cantidadProcesosAdosados ();
-    std::cout << "Proc Adosados: "<<procAdosados<<std::endl;
+//    std::cout << "Proc Adosados: "<<procAdosados<<std::endl;
 
     if ( procAdosados == 0 ) {
-        std::cout << "Termino bien: "<<procAdosados<<std::endl;
+//        std::cout << "Termino bien: "<<procAdosados<<std::endl;
         Logger::debug(getpid(), "Termino bien\n");
         shmctl ( this->shmId,IPC_RMID,NULL );
     }

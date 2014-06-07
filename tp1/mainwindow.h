@@ -43,7 +43,7 @@ private:
     FifoEscritura fifoAutos;
     Semaforo semaforoFifo;
     Semaforo semaforoCaja;
-    MemoriaCompartida<unsigned int> caja;
+//    MemoriaCompartida<short int> caja;
     Ui::MainWindow *ui;
     explicit MainWindow(QWidget *parent = 0);
     static MainWindow* instance;

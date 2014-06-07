@@ -1,8 +1,9 @@
 #ifndef CONSTANTES_H
 #define CONSTANTES_H
 
-#define MEMORIA_EMPLEADOS "/bin/rm"
 #define MEMORIA_CAJA "/bin/ls"
+#define MEMORIA_EMPLEADOS "/bin/rm"
+#define MEMORIA_SURTIDORES "/bin/pwd"
 
 #define FIFO_AUTOS "Auto.h"
 #define SEMAFORO_FIFO "/bin/cp"
