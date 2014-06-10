@@ -13,12 +13,12 @@ private:
 
 public:
     Semaforo();
-    explicit Semaforo (char* nombre);
-    explicit Semaforo (char* nombre, int valorInicial, unsigned int cantidad);
+    explicit Semaforo (char* nombre,unsigned int cantidad=1);
+    explicit Semaforo (char* nombre, int valorInicial, unsigned int cantidad=1);
     virtual ~Semaforo();
 
-    int p (unsigned int posicion); // decrementa
-    int v (unsigned int posicion); // incrementa
+    int p (unsigned int posicion=0); // decrementa
+    int v (unsigned int posicion=0); // incrementa
 
     void eliminar ();
     int getValue(unsigned int posicion) const;

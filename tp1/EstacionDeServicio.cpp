@@ -6,7 +6,7 @@ EstacionDeServicio::EstacionDeServicio() {
     this->caja.crear((char*)MEMORIA_CAJA, 'C');
     this->caja.escribir(0);
     Semaforo semaforoCaja((char*)SEMAFORO_CAJA,1,1);
-    Semaforo semaforoFifo ( (char*)SEMAFORO_FIFO,1,1);
+    Semaforo semaforoFifo ( (char*)SEMAFORO_FIFO,0,1);
     this->semaforoFifo=semaforoFifo;
     this->semaforoCaja=semaforoCaja;
 }

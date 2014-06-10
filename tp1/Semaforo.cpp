@@ -24,9 +24,9 @@ Semaforo :: Semaforo (char* nombre, int valorInicial, unsigned int cantidad) {
         this->inicializar (valorInicial, i);
 }
 
-Semaforo :: Semaforo ( char* nombre) {
+Semaforo :: Semaforo ( char* nombre,unsigned int cantidad) {
     key_t clave = ftok ( nombre,'a' );
-    this->id = semget ( clave,1,0666 | IPC_CREAT );
+    this->id = semget ( clave,cantidad,0666 | IPC_CREAT );
 }
 
 int Semaforo :: inicializar (int valorInicial, unsigned int posicion) {

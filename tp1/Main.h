@@ -94,6 +94,7 @@ public:
                 }
                 fifoLectura.cerrar();
                 fifoLectura.eliminar();                
+                while(jefe->getEmpleadosOcupados()>0);
                 delete(jefe);
                 exit (0);
             }
@@ -114,9 +115,7 @@ public:
             int estado;
             wait ((void *) &estado);
             onFinished();
-            while(jefe->getEmpleadosOcupados()>0);
             delete(jefe);
-            sleep(1);
             EstacionDeServicio::destruirInstancia();
         }
     }

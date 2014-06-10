@@ -56,8 +56,8 @@ void MainWindow::iniciarSimulacion(){
     fifoEscritura.abrir();
 //    this->caja.crear((char*)"/bin/ls", 'C');cout << "Creo caja mainwindow" << endl;
 
-    Semaforo semaforoFifo((char*) SEMAFORO_FIFO,1,1);
-    Semaforo semaforoCaja((char*) SEMAFORO_CAJA,1,1);
+    Semaforo semaforoFifo((char*) SEMAFORO_FIFO);
+    Semaforo semaforoCaja((char*) SEMAFORO_CAJA);
 
     this->semaforoFifo=semaforoFifo;
     this->semaforoCaja=semaforoCaja;

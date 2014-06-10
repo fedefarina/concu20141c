@@ -22,7 +22,7 @@ public:
     JefeDeEstacion() {
         unsigned int empleados = EstacionDeServicio::getInstancia()->getEmpleados();
         this->empleados.crear((char*) MEMORIA_EMPLEADOS, 'E', empleados);
-        Semaforo semaforoEmpleados((char*)SEMAFORO_EMPLEADOS,1,empleados);
+        Semaforo semaforoEmpleados((char*)SEMAFORO_EMPLEADOS);
         this->semaforoEmpleados = semaforoEmpleados;
 
         for (unsigned int i = 0; i < empleados; i++)
@@ -76,11 +76,8 @@ public:
             semaforoEmpleados.p(i);
             if (this->empleados.leer(i) == false) {
                 ocupados++;
-                semaforoEmpleados.v(i);
             }
-            else {
-                semaforoEmpleados.v(i);
-            }
+            semaforoEmpleados.v(i);
         }
         return ocupados;
     }
