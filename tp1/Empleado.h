@@ -42,20 +42,23 @@ public:
                     semaforoSurtidores.v(i);
 
                     Logger::debug(getpid(), "Evento -> Atendiendo auto\n");
-                    cout << "Usando surtidor " << i << endl;
+
+                    Utils<int> utils;
+                    Logger::debug(getpid(),"Usando surtidor "  + utils.toString(i) +"\n");
 
                     sleep(tiempoDeCarga);
-
-                    semaforoSurtidores.p(i);
-                    this->surtidores.escribir(true, i);
-                    semaforoSurtidores.v(i);
 
                     semaforoCaja.p(0);
                     unsigned int saldo = caja.leer();
                     caja.escribir(saldo + tiempoDeCarga);
                     semaforoCaja.v(0);
 
+                    Logger::debug(getpid(),"Saldo de caja: "  + utils.toString(saldo + tiempoDeCarga) +"\n");
                     Logger::debug(getpid(), "Auto atendido\n");
+
+                    semaforoSurtidores.p(i);
+                    this->surtidores.escribir(true, i);
+                    semaforoSurtidores.v(i);
                     return;
                 }
                 semaforoSurtidores.v(i);

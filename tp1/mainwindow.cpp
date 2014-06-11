@@ -34,9 +34,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 }
 
 
-
 void MainWindow::ejecutarComando(){
-
     QString surtidores=this->findChild<QSpinBox*>("nSurtidores")->text();
     QString empleados=this->findChild<QSpinBox*>("nEmpleados")->text();
     QTimeEdit *timeEdit=this->findChild<QTimeEdit*>("timeEdit");
@@ -82,7 +80,6 @@ void MainWindow::getSaldo(){
 }
 
 void MainWindow::nuevoAuto(){
-
     Marshaller marshaller;
     Auto unAuto;
     int capacidad=this->findChild<QLineEdit*>("capacidadEdit")->text().toInt();

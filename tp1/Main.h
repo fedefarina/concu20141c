@@ -64,7 +64,7 @@ public:
             JefeDeEstacion* jefe = new JefeDeEstacion();
 
             pid_t pid = fork ();
-            if ( pid == 0 ) {                
+            if ( pid == 0 ) {
 
                 FifoLectura fifoLectura ((char*) FIFO_AUTOS);
                 fifoLectura.abrir();
@@ -93,7 +93,7 @@ public:
                     }
                 }
                 fifoLectura.cerrar();
-                fifoLectura.eliminar();                
+                fifoLectura.eliminar();
                 while(jefe->getEmpleadosOcupados()>0);
                 delete(jefe);
                 exit (0);
@@ -110,10 +110,16 @@ public:
             }
 
             progressBar->setValue(100);
-            mainWindow->finalizarSimulacion();
+            MainWindow* mainWindow=MainWindow::getInstance();
+            disableAutoButton();
+
             kill(pid, SIGUNUSED);
+            while (jefe->getEmpleadosOcupados()>0)
+                QCoreApplication::processEvents();
+
             int estado;
             wait ((void *) &estado);
+            mainWindow->finalizarSimulacion();
             onFinished();
             delete(jefe);
             EstacionDeServicio::destruirInstancia();
@@ -126,15 +132,21 @@ private:
         Logger::debug(getpid(), string("Fin de simulacion\n"));
     }
 
+    void disableAutoButton(){
+        MainWindow* mainWindow=MainWindow::getInstance();
+        QPushButton *nuevoAutoButton = mainWindow->findChild<QPushButton*>("nuevoAutoButton");
+        nuevoAutoButton->setEnabled(false);
+    }
+
     void restartUI(bool enabled){
         MainWindow* mainWindow=MainWindow::getInstance();
         QPushButton *ejecutarButton = mainWindow->findChild<QPushButton*>("iniciarButton");
         QPushButton *nuevoAutoButton = mainWindow->findChild<QPushButton*>("nuevoAutoButton");
-        QPushButton *saldoButton = mainWindow->findChild<QPushButton*>("saldoButton");
         QProgressBar* progressBar=mainWindow->findChild<QProgressBar*>("progressBar");
+        QPushButton *saldoButton = mainWindow->findChild<QPushButton*>("saldoButton");
+        saldoButton->setEnabled(!enabled);
         progressBar->setValue(100);
         ejecutarButton->setEnabled(enabled);
-        saldoButton->setEnabled(!enabled);
         nuevoAutoButton->setEnabled(!enabled);
     }
 

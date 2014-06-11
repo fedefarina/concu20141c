@@ -50,7 +50,10 @@ public:
         if (id >= 0) {
             pid_t pid = fork();
             if (pid == 0) {
-                cout << "El auto es atendido por el empleado " << id << endl;
+
+                Utils<int> utils;
+                Logger::debug(getpid(),"El auto es atendido por el empleado " + utils.toString(id)+"\n");
+
                 semaforoEmpleados.p(id);
                 this->empleados.escribir(false, id);
                 semaforoEmpleados.v(id);
