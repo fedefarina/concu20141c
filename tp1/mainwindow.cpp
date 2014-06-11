@@ -54,7 +54,7 @@ void MainWindow::iniciarSimulacion(){
 
     FifoEscritura fifoEscritura(FIFO_AUTOS);
     fifoEscritura.abrir();
-//    this->caja.crear((char*)"/bin/ls", 'C');cout << "Creo caja mainwindow" << endl;
+    this->caja.crear((char*)MEMORIA_CAJA, 'C');
 
     Semaforo semaforoFifo((char*) SEMAFORO_FIFO);
     Semaforo semaforoCaja((char*) SEMAFORO_CAJA);
@@ -67,18 +67,18 @@ void MainWindow::iniciarSimulacion(){
 void MainWindow::finalizarSimulacion(){
     this->fifoAutos.cerrar();
     this->fifoAutos.eliminar();
-//    this->caja.liberar();
+    this->caja.liberar();
 }
 
 void MainWindow::getSaldo(){
-//    QLineEdit* saldoEdit=this->findChild<QLineEdit*>("saldoEdit");
-//    saldoEdit->setEnabled(false);
-//    this->semaforoCaja.p();
-//    unsigned int saldo=this->caja.leer();
-//    this->semaforoCaja.v();
-//    Utils<unsigned int> utils;
-//    saldoEdit->setText(utils.toString(saldo).c_str());
-//    saldoEdit->setEnabled(true);
+    QLineEdit* saldoEdit=this->findChild<QLineEdit*>("saldoEdit");
+    saldoEdit->setEnabled(false);
+    this->semaforoCaja.p();
+    unsigned int saldo=this->caja.leer();
+    this->semaforoCaja.v();
+    Utils<unsigned int> utils;
+    saldoEdit->setText(utils.toString(saldo).c_str());
+    saldoEdit->setEnabled(true);
 }
 
 void MainWindow::nuevoAuto(){
