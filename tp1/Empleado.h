@@ -39,7 +39,7 @@ public:
         this->cola=cola;
     }
 
-    void atenderAuto(Auto a) {
+    void atenderAuto(Auto& a) {
         float tiempoDeCarga = a.getCapacidad();
         for (unsigned int i = 0; i < surtidores.cantidad(); i++) {
             semaforoSurtidores.p(i);
@@ -48,7 +48,6 @@ public:
                 semaforoSurtidores.v(i);
 
                 Logger::debug(getpid(), "Evento -> Atendiendo auto\n");
-
                 Utils<int> utils;
                 Logger::debug(getpid(),"Usando surtidor "  + utils.toString(i) +"\n");
 
@@ -65,6 +64,7 @@ public:
                 semaforoSurtidores.p(i);
                 this->surtidores.escribir(true, i);
                 semaforoSurtidores.v(i);
+                a.setAtendido(true);
                 return;
             }
             semaforoSurtidores.v(i);

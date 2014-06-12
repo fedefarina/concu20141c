@@ -66,9 +66,9 @@ public:
             if ( pid == 0 ) {
                 SIGUNUSED_Handler sigint_handler;
                 SignalHandler :: getInstance()->registrarHandler ( SIGUNUSED,&sigint_handler );
-                while (sigint_handler.getGracefulQuit() == 0 )
+                while (sigint_handler.getGracefulQuit() == 0 ){
                     jefe->recibirAuto();
-
+                }
                 while(jefe->getEmpleadosOcupados()>0);
                 delete(jefe);
                 exit (0);
@@ -90,9 +90,6 @@ public:
 
             kill(pid, SIGUNUSED);
 
-            mensaje msj;
-            msj.mtype=3;
-            cola->escribir(msj);
             while (jefe->getEmpleadosOcupados()>0)
                 QCoreApplication::processEvents();
 

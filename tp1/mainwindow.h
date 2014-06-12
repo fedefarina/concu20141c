@@ -36,7 +36,6 @@ public:
 
 public slots:
     void nuevoAuto();
-    void nuevoAutoVip();
     void ejecutarComando();
     void getSaldo();
 

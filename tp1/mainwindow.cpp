@@ -78,34 +78,14 @@ void MainWindow::getSaldo(){
 }
 
 void MainWindow::nuevoAuto(){
-    Marshaller marshaller;
-    Auto unAuto;
     int capacidad=this->findChild<QLineEdit*>("capacidadEdit")->text().toInt();
-    unAuto.setCapacidad(capacidad);
     mensaje msg;
-    msg.mtype=1;
-    msg.capacidad=unAuto.getCapacidad();
-    std::cout<<"mainwindows p value"<<semaforoCola.getValue()<<std::endl;
-
-    //semaforoCola.p();
-    colaAutos->escribir(msg);
-    semaforoCola.v2();
-    std::cout<<"Agregue un nuevo auto"<<std::endl;
-}
-
-void MainWindow::nuevoAutoVip(){
-    Marshaller marshaller;
-    Auto unAuto;
-    int capacidad=this->findChild<QLineEdit*>("capacidadEdit")->text().toInt();
-    unAuto.setCapacidad(capacidad);
-    mensaje msg;
-    msg.mtype=0;
-    msg.capacidad=unAuto.getCapacidad();
-    //semaforoCola.p();
+    msg.mtype=AUTO;
+    msg.capacidad=capacidad;
+    semaforoCola.p();
     colaAutos->escribir(msg);
     semaforoCola.v2();
 }
-
 
 bool MainWindow::event(QEvent *event){
     if (event->type() == QEvent::KeyPress){

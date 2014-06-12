@@ -10,11 +10,13 @@ class Auto {
 private:
     float capacidad;
     unsigned int tipo;
+    bool atendido;
 
 public:
     Auto() {
         srand(time(NULL));
         this->capacidad = rand() % 10 + 10;
+        this->atendido=false;
     }
 
     float getCapacidad() {
@@ -31,6 +33,14 @@ public:
 
     void setTipo(unsigned int value){
         tipo = value;
+    }
+
+    void setAtendido(bool isAtendido){
+        atendido=isAtendido;
+    }
+
+    bool isAtendido() const{
+        return atendido;
     }
 
     ~Auto() {
