@@ -50,22 +50,20 @@ void MainWindow::ejecutarComando(){
 
 void MainWindow::iniciarSimulacion(){
 
-    FifoEscritura fifoEscritura(FIFO_AUTOS);
-    fifoEscritura.abrir();
+    Cola<mensaje> *cola =new Cola<mensaje>( COLA_MENSAJES,'C');
+    this->colaAutos=cola;
+
     this->caja.crear((char*)MEMORIA_CAJA, 'C');
 
-    Semaforo semaforoFifo((char*) SEMAFORO_FIFO);
+    Semaforo semaforoCola((char*) SEMAFORO_COLA);
     Semaforo semaforoCaja((char*) SEMAFORO_CAJA);
-
-    this->semaforoFifo=semaforoFifo;
+    this->semaforoCola=semaforoCola;
     this->semaforoCaja=semaforoCaja;
-    this->fifoAutos=fifoEscritura;
 }
 
 void MainWindow::finalizarSimulacion(){
-    this->fifoAutos.cerrar();
-    this->fifoAutos.eliminar();
     this->caja.liberar();
+    delete(colaAutos);
 }
 
 void MainWindow::getSaldo(){
@@ -84,17 +82,30 @@ void MainWindow::nuevoAuto(){
     Auto unAuto;
     int capacidad=this->findChild<QLineEdit*>("capacidadEdit")->text().toInt();
     unAuto.setCapacidad(capacidad);
-    std::string mensaje=marshaller.toString(unAuto);
-    pid_t pid = fork ();
-    if ( pid == 0 ) {
-        fifoAutos.escribir ( static_cast<const void*>(mensaje.c_str()),mensaje.length() );
-        semaforoFifo.v(0);
-        exit(0);
-    }else{
-        int estado;
-        wait ( (void*) &estado );
-    }
+    mensaje msg;
+    msg.mtype=1;
+    msg.capacidad=unAuto.getCapacidad();
+    std::cout<<"mainwindows p value"<<semaforoCola.getValue()<<std::endl;
+
+    //semaforoCola.p();
+    colaAutos->escribir(msg);
+    semaforoCola.v2();
+    std::cout<<"Agregue un nuevo auto"<<std::endl;
 }
+
+void MainWindow::nuevoAutoVip(){
+    Marshaller marshaller;
+    Auto unAuto;
+    int capacidad=this->findChild<QLineEdit*>("capacidadEdit")->text().toInt();
+    unAuto.setCapacidad(capacidad);
+    mensaje msg;
+    msg.mtype=0;
+    msg.capacidad=unAuto.getCapacidad();
+    //semaforoCola.p();
+    colaAutos->escribir(msg);
+    semaforoCola.v2();
+}
+
 
 bool MainWindow::event(QEvent *event){
     if (event->type() == QEvent::KeyPress){

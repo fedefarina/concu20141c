@@ -13,13 +13,14 @@ class Empleado {
 private:    
     MemoriaCompartida<short int> caja;
     MemoriaCompartida<bool> surtidores;
-
+    Cola<mensaje>* cola;
     Semaforo semaforoCaja;
     Semaforo semaforoSurtidores;
+    Semaforo semaforoCola;
 
 public:
 
-    Empleado() {        
+    Empleado() {
         unsigned int surtidores = EstacionDeServicio::getInstancia()->getSurtidores();
 
         this->caja.crear((char*)MEMORIA_CAJA, 'C');
@@ -30,45 +31,58 @@ public:
 
         this->semaforoCaja=semaforoCaja;
         this->semaforoSurtidores=semaforoSurtidores;
+
+        Semaforo semaforoCola((char*) SEMAFORO_COLA);
+        this->semaforoCola=semaforoCola;
+
+        Cola<mensaje> *cola= new Cola<mensaje>( COLA_MENSAJES,'C');
+        this->cola=cola;
     }
 
-    void atenderAuto(Auto a) {        
+    void atenderAuto(Auto a) {
         float tiempoDeCarga = a.getCapacidad();
-        while (true){
-            for (unsigned int i = 0; i < surtidores.cantidad(); i++) {
-                semaforoSurtidores.p(i);
-                if (this->surtidores.leer(i) == true) {
-                    this->surtidores.escribir(false, i);
-                    semaforoSurtidores.v(i);
-
-                    Logger::debug(getpid(), "Evento -> Atendiendo auto\n");
-
-                    Utils<int> utils;
-                    Logger::debug(getpid(),"Usando surtidor "  + utils.toString(i) +"\n");
-
-                    sleep(tiempoDeCarga);
-
-                    semaforoCaja.p(0);
-                    unsigned int saldo = caja.leer();
-                    caja.escribir(saldo + tiempoDeCarga);
-                    semaforoCaja.v(0);
-
-                    Logger::debug(getpid(),"Saldo de caja: "  + utils.toString(saldo + tiempoDeCarga) +"\n");
-                    Logger::debug(getpid(), "Auto atendido\n");
-
-                    semaforoSurtidores.p(i);
-                    this->surtidores.escribir(true, i);
-                    semaforoSurtidores.v(i);
-                    return;
-                }
+        for (unsigned int i = 0; i < surtidores.cantidad(); i++) {
+            semaforoSurtidores.p(i);
+            if (this->surtidores.leer(i) == true) {
+                this->surtidores.escribir(false, i);
                 semaforoSurtidores.v(i);
+
+                Logger::debug(getpid(), "Evento -> Atendiendo auto\n");
+
+                Utils<int> utils;
+                Logger::debug(getpid(),"Usando surtidor "  + utils.toString(i) +"\n");
+
+                sleep(tiempoDeCarga);
+
+                semaforoCaja.p(0);
+                unsigned int saldo = caja.leer();
+                caja.escribir(saldo + tiempoDeCarga);
+                semaforoCaja.v(0);
+
+                Logger::debug(getpid(),"Saldo de caja: "  + utils.toString(saldo + tiempoDeCarga) +"\n");
+                Logger::debug(getpid(), "Auto atendido\n");
+
+                semaforoSurtidores.p(i);
+                this->surtidores.escribir(true, i);
+                semaforoSurtidores.v(i);
+                return;
             }
+            semaforoSurtidores.v(i);
         }
+
+        mensaje msg;
+        msg.capacidad=a.getCapacidad();
+        msg.mtype=a.getTipo();
+
+        semaforoCola.p();
+        cola->escribir(msg);
+        semaforoCola.v2();
     }
 
     ~Empleado() {
         this->caja.liberar();
         this->surtidores.liberar();
+        delete(this->cola);
     }
 
 };

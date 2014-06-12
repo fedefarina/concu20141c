@@ -20,7 +20,9 @@ HEADERS += \
     SignalHandler.h \
     EventHandler.h \
     SigUnusedHandler.h \
-    Main.h
+    Main.h \
+    Cola.h \
+    Mensajes.h
 
 SOURCES += \
     main.cpp \

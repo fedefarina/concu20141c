@@ -6,19 +6,27 @@ EstacionDeServicio::EstacionDeServicio() {
     this->caja.crear((char*)MEMORIA_CAJA, 'C');
     this->caja.escribir(0);
     Semaforo semaforoCaja((char*)SEMAFORO_CAJA,1,1);
-    Semaforo semaforoFifo ( (char*)SEMAFORO_FIFO,0,1);
-    this->semaforoFifo=semaforoFifo;
+    Semaforo semaforoCola ( (char*)SEMAFORO_COLA,1,1);
+
+    this->semaforoCola=semaforoCola;
+    std::cout<<"estacion p value"<<this->semaforoCola.getValue()<<std::endl;
     this->semaforoCaja=semaforoCaja;
+
+    Cola<mensaje> *cola=new Cola<mensaje>( COLA_MENSAJES,'C');
+    this->colaAutos=cola;
 }
 
 EstacionDeServicio::~EstacionDeServicio() {
+    this->colaAutos->destruir();
     this->semaforoSurtidores.eliminar();
     this->semaforoEmpleados.eliminar();
-    this->semaforoFifo.eliminar();
     this->semaforoCaja.eliminar();
+    this->semaforoCola.eliminar();
     this->caja.liberar();
     this->empleados.liberar();
     this->surtidores.liberar();
+    colaAutos->destruir();
+    delete(this->colaAutos);
 }
 
 EstacionDeServicio *EstacionDeServicio::getInstancia() {

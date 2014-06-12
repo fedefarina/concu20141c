@@ -81,6 +81,25 @@ int Semaforo :: v (unsigned int posicion) {
     return resultado;
 }
 
+/**
+ * @brief Semaforo::v Resto uno al contador, signal
+ * @return valor del contador
+ */
+int Semaforo :: v2 (unsigned int posicion) {
+
+    if(getValue()==1)
+        return -1;
+
+    struct sembuf operacion;
+
+    operacion.sem_num = posicion;	// numero de semaforo
+    operacion.sem_op  = 1;	// sumar 1 al semaforo
+    operacion.sem_flg = SEM_UNDO;
+
+    int resultado = semop ( this->id,&operacion,1 );
+    return resultado;
+}
+
 Semaforo::~Semaforo() {
 }
 

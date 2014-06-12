@@ -13,10 +13,8 @@
 #include "Constantes.h"
 #include "Marshaller.h"
 #include "QProgressBar"
-#include "Semaforo.h"
 #include "SigUnusedHandler.h"
 #include "EventHandler.h"
-#include "FifoLectura.h"
 #include "SignalHandler.h"
 #include "QCheckBox"
 #include <sys/wait.h>
@@ -54,7 +52,8 @@ public:
             EstacionDeServicio::getInstancia()->setEmpleados(empleados);
             EstacionDeServicio::getInstancia()->setSurtidores(surtidores);
 
-            Semaforo semaforoFifo ((char*) SEMAFORO_FIFO);
+            Cola<mensaje> *cola =new Cola<mensaje>( COLA_MENSAJES,'C');
+
 
             QProgressBar* progressBar=mainWindow->findChild<QProgressBar*>("progressBar");
             Logger::debug(getpid(), "Inicio de simulacion\n");
@@ -65,35 +64,11 @@ public:
 
             pid_t pid = fork ();
             if ( pid == 0 ) {
-
-                FifoLectura fifoLectura ((char*) FIFO_AUTOS);
-                fifoLectura.abrir();
-
-                Marshaller marshaller;
-                const int BUFFSIZE=100;
-                char buffer[BUFFSIZE];
-
                 SIGUNUSED_Handler sigint_handler;
                 SignalHandler :: getInstance()->registrarHandler ( SIGUNUSED,&sigint_handler );
-                while (sigint_handler.getGracefulQuit() == 0 ){
-                    semaforoFifo.p(0);
-                    ssize_t bytesLeidos = fifoLectura.leer(static_cast<void*>(buffer),BUFFSIZE);
+                while (sigint_handler.getGracefulQuit() == 0 )
+                    jefe->recibirAuto();
 
-                    if(bytesLeidos>0){
-                        std::string mensaje = buffer;
-                        mensaje.resize (bytesLeidos);
-                        Auto unAuto=marshaller.fromString(mensaje);
-
-                        if(unAuto.getCapacidad()<(tiempoSimulacion-timeElapsed.elapsed()/1000)){
-                            jefe->recibirAuto(unAuto);
-                        }else{
-                            Logger::debug(getpid(), "La capacidad del auto supera el tiempo de simulación disponible.\n");
-                            Logger::debug(getpid(), "Evento > El auto se retira de la estación de servicio\n");
-                        }
-                    }
-                }
-                fifoLectura.cerrar();
-                fifoLectura.eliminar();
                 while(jefe->getEmpleadosOcupados()>0);
                 delete(jefe);
                 exit (0);
@@ -114,6 +89,10 @@ public:
             disableAutoButton();
 
             kill(pid, SIGUNUSED);
+
+            mensaje msj;
+            msj.mtype=3;
+            cola->escribir(msj);
             while (jefe->getEmpleadosOcupados()>0)
                 QCoreApplication::processEvents();
 
@@ -122,6 +101,7 @@ public:
             mainWindow->finalizarSimulacion();
             onFinished();
             delete(jefe);
+            delete(cola);
             EstacionDeServicio::destruirInstancia();
         }
     }

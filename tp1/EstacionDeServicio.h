@@ -5,6 +5,8 @@
 #include "Semaforo.h"
 #include "MemoriaCompartida.h"
 #include "Constantes.h"
+#include "Mensajes.h"
+#include "Cola.h"
 
 using namespace std;
 
@@ -18,7 +20,9 @@ private:
     Semaforo semaforoSurtidores;
     Semaforo semaforoEmpleados;
     Semaforo semaforoCaja;
-    Semaforo semaforoFifo;
+    Semaforo semaforoCola;
+
+    Cola<mensaje> *colaAutos;
 
     static EstacionDeServicio* instancia;
 

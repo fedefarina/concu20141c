@@ -9,9 +9,10 @@
 #include <QMainWindow>
 #include <stdio.h>
 #include <string>
-#include "FifoEscritura.h"
 #include "MemoriaCompartida.h"
 #include "Semaforo.h"
+#include "Cola.h"
+#include "Mensajes.h"
 
 namespace Ui {
 class MainWindow;
@@ -35,13 +36,14 @@ public:
 
 public slots:
     void nuevoAuto();
+    void nuevoAutoVip();
     void ejecutarComando();
     void getSaldo();
 
 private:
     int nSurtidores, nEmpleados, tiempoSimulacion;
-    FifoEscritura fifoAutos;
-    Semaforo semaforoFifo;
+    Cola<mensaje> *colaAutos;
+    Semaforo semaforoCola;
     Semaforo semaforoCaja;
     MemoriaCompartida<short int> caja;
     Ui::MainWindow *ui;

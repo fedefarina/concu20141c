@@ -9,6 +9,7 @@ class Auto {
 
 private:
     float capacidad;
+    unsigned int tipo;
 
 public:
     Auto() {
@@ -24,11 +25,22 @@ public:
         this->capacidad = capacidad;
     }
 
+    unsigned int getTipo()const{
+        return tipo;
+    }
+
+    void setTipo(unsigned int value){
+        tipo = value;
+    }
+
     ~Auto() {
 
     }
 };
 
-
-
 #endif // AUTO_H
+
+
+
+
+
