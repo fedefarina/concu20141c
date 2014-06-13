@@ -13,6 +13,5 @@
 
 #define AUTO_VIP 0
 #define AUTO 1
-#define SALIDA 2
 
 #endif // CONSTANTES_H

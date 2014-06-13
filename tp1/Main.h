@@ -11,7 +11,6 @@
 #include "JefeDeEstacion.h"
 #include "Logger.h"
 #include "Constantes.h"
-#include "Marshaller.h"
 #include "QProgressBar"
 #include "SigUnusedHandler.h"
 #include "EventHandler.h"
@@ -119,11 +118,12 @@ private:
         MainWindow* mainWindow=MainWindow::getInstance();
         QPushButton *ejecutarButton = mainWindow->findChild<QPushButton*>("iniciarButton");
         QPushButton *nuevoAutoButton = mainWindow->findChild<QPushButton*>("nuevoAutoButton");
-        QProgressBar* progressBar=mainWindow->findChild<QProgressBar*>("progressBar");
+        QPushButton *nuevoAutoVipButton = mainWindow->findChild<QPushButton*>("nuevoAutoVipButton");
         QPushButton *saldoButton = mainWindow->findChild<QPushButton*>("saldoButton");
         saldoButton->setEnabled(!enabled);
         ejecutarButton->setEnabled(enabled);
         nuevoAutoButton->setEnabled(!enabled);
+        nuevoAutoVipButton->setEnabled(!enabled);
     }
 
 };

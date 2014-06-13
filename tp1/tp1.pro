@@ -13,7 +13,6 @@ HEADERS += \
     FifoLectura.h \
     FifoEscritura.h \
     Fifo.h \
-    Marshaller.h \
     Utils.h \
     Constantes.h \
     Semaforo.h \

@@ -22,15 +22,20 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     ui->setupUi(this);
     QPushButton *ejecutarButton = this->findChild<QPushButton*>("iniciarButton");
     QPushButton *nuevoAutoButton = this->findChild<QPushButton*>("nuevoAutoButton");
+    QPushButton *nuevoAutoVipButton = this->findChild<QPushButton*>("nuevoAutoVipButton");
     QPushButton *saldoButton = this->findChild<QPushButton*>("saldoButton");
 
     QLineEdit* capacidadEdit=this->findChild<QLineEdit*>("capacidadEdit");
     capacidadEdit->setValidator(new QIntValidator(this));
 
+    QLineEdit* capacidadVipEdit=this->findChild<QLineEdit*>("capacidadVipEdit");
+    capacidadVipEdit->setValidator(new QIntValidator(this));
+
     //sender, signal, receiver, slot (callback similar)
     QObject::connect(ejecutarButton, SIGNAL(clicked()), this, SLOT(ejecutarComando()));
     QObject::connect(saldoButton, SIGNAL(clicked()), this, SLOT(getSaldo()));
-    QObject::connect(nuevoAutoButton, SIGNAL(clicked()), this, SLOT(nuevoAuto()));
+    QObject::connect(nuevoAutoButton, SIGNAL(clicked()), this, SLOT(recibirAuto()));
+    QObject::connect(nuevoAutoVipButton, SIGNAL(clicked()), this, SLOT(recibirAutoVip()));
 }
 
 
@@ -77,10 +82,27 @@ void MainWindow::getSaldo(){
     saldoEdit->setEnabled(true);
 }
 
-void MainWindow::nuevoAuto(){
-    int capacidad=this->findChild<QLineEdit*>("capacidadEdit")->text().toInt();
+
+void MainWindow::recibirAuto(){
+    nuevoAuto(AUTO);
+}
+
+void MainWindow::recibirAutoVip(){
+    nuevoAuto(AUTO_VIP);
+}
+
+
+void MainWindow::nuevoAuto(unsigned int tipo){
+    int capacidad;
+
+    if(tipo==AUTO){
+        capacidad=this->findChild<QLineEdit*>("capacidadEdit")->text().toInt();
+    }else{
+        capacidad=this->findChild<QLineEdit*>("capacidadVipEdit")->text().toInt();
+    }
+
     mensaje msg;
-    msg.mtype=AUTO;
+    msg.mtype=tipo;
     msg.capacidad=capacidad;
     semaforoCola.p();
     colaAutos->escribir(msg);

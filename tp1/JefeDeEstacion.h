@@ -54,10 +54,12 @@ public:
 
         if(!leerCola(AUTO_VIP,msg)){
             if(leerCola(AUTO,msg)){
+                Logger::debug(getpid(), "Evento > Un nuevo auto entra a la estacion de servicio\n");
                 unAuto.setTipo(AUTO);
                 autoLeido=true;
             }
         }else{
+            Logger::debug(getpid(), "Evento > Un nuevo auto VIP entra a la estacion de servicio\n");
             autoLeido=true;
             unAuto.setTipo(AUTO_VIP);
         }
@@ -76,14 +78,13 @@ public:
 
         if(leerAuto(unAuto)){
 
-            Logger::debug(getpid(), "Evento > Un nuevo auto entra a la estacion de servicio\n");
+
 
             int id = -1;
             //Busco un empleado libre
             for (unsigned int i = 0; i < empleados.cantidad(); i++) {
                 semaforoEmpleados.p(i);
                 if(this->empleados.leer(i) == true) {
-                    Logger::debug(getpid(), "Evento > Guola\n");
                     this->empleados.escribir(false, i);
                     id = i;
                     semaforoEmpleados.v(i);

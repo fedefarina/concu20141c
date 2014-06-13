@@ -59,8 +59,8 @@ public:
                 semaforoCaja.v(0);
 
                 Logger::debug(getpid(),"Saldo de caja: "  + utils.toString(saldo + tiempoDeCarga) +"\n");
-                Logger::debug(getpid(), "Auto atendido\n");
-
+                string tipo=((a.getTipo()==AUTO_VIP)?"VIP":" ");
+                Logger::debug(getpid(), "Auto " + tipo + " atendido\n");
                 semaforoSurtidores.p(i);
                 this->surtidores.escribir(true, i);
                 semaforoSurtidores.v(i);

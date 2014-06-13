@@ -35,7 +35,9 @@ public:
     ~MainWindow();
 
 public slots:
-    void nuevoAuto();
+    void recibirAuto();
+    void recibirAutoVip();
+    void nuevoAuto(unsigned int tipo);
     void ejecutarComando();
     void getSaldo();
 
