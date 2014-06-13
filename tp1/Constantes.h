@@ -11,7 +11,7 @@
 #define SEMAFORO_CAJA "/bin/mv"
 #define SEMAFORO_EMPLEADOS "/bin/chown"
 
-#define AUTO_VIP 0
-#define AUTO 1
+#define AUTO_VIP 1
+#define AUTO 2
 
 #endif // CONSTANTES_H

@@ -74,12 +74,9 @@ public:
 
         Auto unAuto;
         unAuto.setCapacidad(0);
-        unAuto.setTipo(0);
+        unAuto.setTipo(AUTO);
 
         if(leerAuto(unAuto)){
-
-
-
             int id = -1;
             //Busco un empleado libre
             for (unsigned int i = 0; i < empleados.cantidad(); i++) {
@@ -104,7 +101,7 @@ public:
 
                     while(!unAuto.isAtendido()){
                         empleado->atenderAuto(unAuto);
-                        if(!unAuto.isAtendido()){
+                        if(unAuto.getTipo()!=AUTO_VIP && !unAuto.isAtendido()){
                             mensaje msg;
                             if(leerCola(AUTO_VIP,msg)){
                                 Auto autoVip;
