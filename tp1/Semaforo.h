@@ -19,7 +19,6 @@ public:
 
     int p (unsigned int posicion=0); // decrementa
     int v (unsigned int posicion=0); // incrementa
-    int v2 (unsigned int posicion=0); // incrementa
 
     void eliminar ();
     int getValue(unsigned int posicion=0) const;

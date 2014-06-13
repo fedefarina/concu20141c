@@ -69,14 +69,6 @@ public:
             }
             semaforoSurtidores.v(i);
         }
-
-        mensaje msg;
-        msg.capacidad=a.getCapacidad();
-        msg.mtype=a.getTipo();
-
-        semaforoCola.p();
-        cola->escribir(msg);
-        semaforoCola.v2();
     }
 
     ~Empleado() {

@@ -122,7 +122,6 @@ private:
         QProgressBar* progressBar=mainWindow->findChild<QProgressBar*>("progressBar");
         QPushButton *saldoButton = mainWindow->findChild<QPushButton*>("saldoButton");
         saldoButton->setEnabled(!enabled);
-        progressBar->setValue(100);
         ejecutarButton->setEnabled(enabled);
         nuevoAutoButton->setEnabled(!enabled);
     }

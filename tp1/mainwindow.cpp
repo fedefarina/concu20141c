@@ -84,7 +84,7 @@ void MainWindow::nuevoAuto(){
     msg.capacidad=capacidad;
     semaforoCola.p();
     colaAutos->escribir(msg);
-    semaforoCola.v2();
+    semaforoCola.v();
 }
 
 bool MainWindow::event(QEvent *event){

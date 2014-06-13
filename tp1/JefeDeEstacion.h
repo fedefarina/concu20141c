@@ -40,7 +40,7 @@ public:
     bool leerCola(unsigned int tipo,mensaje &msg){
         semaforoCola.p();
         ssize_t bytesLeidos =cola->leer(tipo,&msg);
-        semaforoCola.v2();
+        semaforoCola.v();
         return bytesLeidos>0;
     }
 
@@ -62,10 +62,8 @@ public:
             unAuto.setTipo(AUTO_VIP);
         }
 
-        if(autoLeido){
+        if(autoLeido)
             unAuto.setCapacidad(msg.capacidad);
-            std::cout<<"Leo un auto: "<<unAuto.getCapacidad()<<" tipo "<<unAuto.getTipo()<<std::endl;
-        }
 
         return autoLeido;
     }
