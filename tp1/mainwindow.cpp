@@ -43,10 +43,11 @@ void MainWindow::ejecutarComando(){
     QString surtidores=this->findChild<QSpinBox*>("nSurtidores")->text();
     QString empleados=this->findChild<QSpinBox*>("nEmpleados")->text();
     QTimeEdit *timeEdit=this->findChild<QTimeEdit*>("timeEdit");
-    QString tSimulacion=timeEdit->text();
+    QTime time=timeEdit->time();
+    tiempoSimulacion=time.minute()*60+time.second();
+
     nSurtidores=surtidores.toInt();
     nEmpleados=empleados.toInt();
-    tiempoSimulacion=tSimulacion.toInt();
 
     Main *workerThread = new Main();
     workerThread->run();

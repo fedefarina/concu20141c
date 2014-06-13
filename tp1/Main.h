@@ -37,6 +37,8 @@ public:
         int surtidores=mainWindow->getNumeroSurtidores();
         int empleados=mainWindow->getNumeroEmpleados();
         int tiempoSimulacion=mainWindow->getTiempoSimulacion();
+
+
         if(surtidores<=0)
             cout<<"Debe haber al menos 1 surtidor."<<endl;
         if(empleados<=0)

@@ -10,7 +10,7 @@
     <x>0</x>
     <y>0</y>
     <width>521</width>
-    <height>280</height>
+    <height>317</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -143,10 +143,10 @@
          </date>
         </property>
         <property name="currentSection">
-         <enum>QDateTimeEdit::SecondSection</enum>
+         <enum>QDateTimeEdit::MinuteSection</enum>
         </property>
         <property name="displayFormat">
-         <string>ss</string>
+         <string>mm:ss</string>
         </property>
         <property name="currentSectionIndex">
          <number>0</number>
