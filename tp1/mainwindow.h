@@ -42,7 +42,7 @@ public slots:
     void getSaldo();
 
 private:
-    int nSurtidores, nEmpleados, tiempoSimulacion;
+    unsigned int nSurtidores, nEmpleados, tiempoSimulacion;
     Cola<mensaje> *colaAutos;
     Semaforo semaforoCola;
     Semaforo semaforoCaja;

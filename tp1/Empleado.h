@@ -39,15 +39,16 @@ public:
         this->cola=cola;
     }
 
-    void atenderAuto(Auto& a) {
-        float tiempoDeCarga = a.getCapacidad();
+    void atenderAuto(Auto& unAuto) {
+        float tiempoDeCarga = unAuto.getCapacidad();
         for (unsigned int i = 0; i < surtidores.cantidad(); i++) {
             semaforoSurtidores.p(i);
             if (this->surtidores.leer(i) == true) {
                 this->surtidores.escribir(false, i);
                 semaforoSurtidores.v(i);
 
-                Logger::debug(getpid(), "Evento -> Atendiendo auto\n");
+                string tipo=(unAuto.getTipo()==AUTO_VIP?" VIP":"");
+                Logger::debug(getpid(), "Evento -> Atendiendo auto"+tipo+"\n");
                 Utils<int> utils;
                 Logger::debug(getpid(),"Usando surtidor "  + utils.toString(i) +"\n");
 
@@ -59,12 +60,11 @@ public:
                 semaforoCaja.v(0);
 
                 Logger::debug(getpid(),"Saldo de caja: "  + utils.toString(saldo + tiempoDeCarga) +"\n");
-                string tipo=((a.getTipo()==AUTO_VIP)?"VIP":" ");
-                Logger::debug(getpid(), "Auto " + tipo + " atendido\n");
+                Logger::debug(getpid(), "Auto" + tipo + " atendido\n");
                 semaforoSurtidores.p(i);
                 this->surtidores.escribir(true, i);
                 semaforoSurtidores.v(i);
-                a.setAtendido(true);
+                unAuto.setAtendido(true);
                 return;
             }
             semaforoSurtidores.v(i);

@@ -94,6 +94,15 @@ void MainWindow::recibirAutoVip(){
 
 
 void MainWindow::nuevoAuto(unsigned int tipo){
+
+    JefeDeEstacion jefe;
+    if(jefe.getEmpleadosOcupados()==nEmpleados){
+        string tipoAuto=(tipo==AUTO_VIP)?" VIP":"";
+        Logger::debug(getpid(), "Evento > No hay empleados disponibles\n");
+        Logger::debug(getpid(), "Evento > El auto"+ tipoAuto +" se retira de la estación de servicio\n");
+        return;
+    }
+
     int capacidad;
 
     if(tipo==AUTO){

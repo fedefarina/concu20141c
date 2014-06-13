@@ -54,8 +54,6 @@ public:
             EstacionDeServicio::getInstancia()->setSurtidores(surtidores);
 
             Cola<mensaje> *cola =new Cola<mensaje>( COLA_MENSAJES,'C');
-
-
             QProgressBar* progressBar=mainWindow->findChild<QProgressBar*>("progressBar");
             Logger::debug(getpid(), "Inicio de simulacion\n");
             QTime timeElapsed;

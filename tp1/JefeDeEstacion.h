@@ -36,14 +36,12 @@ public:
         this->cola=cola;
     }
 
-
     bool leerCola(unsigned int tipo,mensaje &msg){
         semaforoCola.p();
         ssize_t bytesLeidos =cola->leer(tipo,&msg);
         semaforoCola.v();
         return bytesLeidos>0;
     }
-
 
     bool leerAuto(Auto &unAuto){
 
@@ -54,12 +52,12 @@ public:
 
         if(!leerCola(AUTO_VIP,msg)){
             if(leerCola(AUTO,msg)){
-                Logger::debug(getpid(), "Evento > Un nuevo auto entra a la estacion de servicio\n");
+                Logger::debug(getpid(),"\nEvento > Un nuevo auto entra a la estacion de servicio\n");
                 unAuto.setTipo(AUTO);
                 autoLeido=true;
             }
         }else{
-            Logger::debug(getpid(), "Evento > Un nuevo auto VIP entra a la estacion de servicio\n");
+            Logger::debug(getpid(), "\nEvento > Un nuevo auto VIP entra a la estacion de servicio\n");
             autoLeido=true;
             unAuto.setTipo(AUTO_VIP);
         }
@@ -77,25 +75,15 @@ public:
         unAuto.setTipo(AUTO);
 
         if(leerAuto(unAuto)){
-            int id = -1;
-            //Busco un empleado libre
-            for (unsigned int i = 0; i < empleados.cantidad(); i++) {
-                semaforoEmpleados.p(i);
-                if(this->empleados.leer(i) == true) {
-                    this->empleados.escribir(false, i);
-                    id = i;
-                    semaforoEmpleados.v(i);
-                    break;
-                }
-                semaforoEmpleados.v(i);
-            }
+            unsigned int id = getEmpleadoLibre();
 
-            //Si hay empleados libres.
-            if (id >= 0) {
+            //Busco un empleado libre
+            if(id > 0){
                 pid_t pid = fork();
                 if (pid == 0) {
                     Utils<int> utils;
-                    Logger::debug(getpid(),"El auto es atendido por el empleado " + utils.toString(id)+"\n");
+                    string tipo=(unAuto.getTipo()==AUTO_VIP?" VIP":"");
+                    Logger::debug(getpid(),"El auto"+ tipo +" es atendido por el empleado " + utils.toString(id)+"\n");
 
                     Empleado* empleado = new Empleado();
 
@@ -114,14 +102,11 @@ public:
                     }
 
                     delete(empleado);
-                    semaforoEmpleados.p(id);
-                    this->empleados.escribir(true,id);
-                    semaforoEmpleados.v(id);
+                    semaforoEmpleados.p(id-1);
+                    this->empleados.escribir(true,id-1);
+                    semaforoEmpleados.v(id-1);
                     exit(0);
                 }
-            } else {
-                Logger::debug(getpid(), "Evento > No hay empleados disponibles\n");
-                Logger::debug(getpid(), "Evento > El auto se retira de la estación de servicio\n");
             }
         }
     }
@@ -139,8 +124,23 @@ public:
         return ocupados;
     }
 
+    unsigned int getEmpleadoLibre() {
+        unsigned int id = 0;
+        for (unsigned int i = 0; i < empleados.cantidad(); i++) {
+            semaforoEmpleados.p(i);
+            if(this->empleados.leer(i) == true) {
+                this->empleados.escribir(false, i);
+                id = i+1;
+                semaforoEmpleados.v(i);
+                break;
+            }
+            semaforoEmpleados.v(i);
+        }
+
+        return id;
+    }
+
     ~JefeDeEstacion() {
-        Logger::debug(getpid(), "Murio jefe\n");
         this->empleados.liberar();
         delete(this->cola);
     }
