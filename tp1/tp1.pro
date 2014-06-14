@@ -21,7 +21,8 @@ HEADERS += \
     SigUnusedHandler.h \
     Main.h \
     Cola.h \
-    Mensajes.h
+    Mensajes.h \
+    Caja.h
 
 SOURCES += \
     main.cpp \

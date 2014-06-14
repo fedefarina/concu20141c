@@ -13,6 +13,7 @@
 #include "Semaforo.h"
 #include "Cola.h"
 #include "Mensajes.h"
+#include "Caja.h"
 
 namespace Ui {
 class MainWindow;
@@ -32,6 +33,7 @@ public:
     bool event(QEvent *event);
     void iniciarSimulacion();
     void finalizarSimulacion();
+    void mostrarSaldo();
     ~MainWindow();
 
 public slots:
@@ -44,9 +46,8 @@ public slots:
 private:
     unsigned int nSurtidores, nEmpleados, tiempoSimulacion;
     Cola<mensaje> *colaAutos;
-    Semaforo semaforoCola;
-    Semaforo semaforoCaja;
-    MemoriaCompartida<short int> caja;
+    Semaforo semaforoColaAutos;
+    Caja* caja;
     Ui::MainWindow *ui;
     explicit MainWindow(QWidget *parent = 0);
     static MainWindow* instance;

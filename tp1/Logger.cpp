@@ -18,14 +18,18 @@ void Logger::setDebugMode(bool debugMode){
     Logger::isDebugMode=debugMode;
 }
 
-void Logger::debug(pid_t pid, const string& msg) {
+void Logger::debug(pid_t pid, const string& msg,bool newLine) {
 
     if(!Logger::isDebugMode)
         return;
 
-    cout<<msg<<endl;
     stringstream ss;
-    ss << pid;
+
+    if(newLine)
+        ss <<"\n";
+
+    ss<<pid;
+
     string str = ss.str();
     str += ": ";
 
@@ -35,4 +39,6 @@ void Logger::debug(pid_t pid, const string& msg) {
     Logger::lf.escribir((char*) msg.c_str(), msg.size());
 
     Logger::lf.liberarLock();
+
 }
+

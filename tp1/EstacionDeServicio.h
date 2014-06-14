@@ -7,21 +7,21 @@
 #include "Constantes.h"
 #include "Mensajes.h"
 #include "Cola.h"
+#include "Caja.h"
 
 using namespace std;
 
 class EstacionDeServicio {
 
 private:
-    MemoriaCompartida<short int> caja;
+    Caja* caja;
     MemoriaCompartida<bool> empleados;
     MemoriaCompartida<bool> surtidores;
 
     Semaforo semaforoSurtidores;
     Semaforo semaforoEmpleados;
     Semaforo semaforoCaja;
-    Semaforo semaforoCola;
-
+    Semaforo semaforoColaAutos;
     Cola<mensaje> *colaAutos;
 
     static EstacionDeServicio* instancia;

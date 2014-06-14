@@ -56,31 +56,23 @@ void MainWindow::ejecutarComando(){
 
 void MainWindow::iniciarSimulacion(){
 
-    Cola<mensaje> *cola =new Cola<mensaje>( COLA_MENSAJES,'C');
-    this->colaAutos=cola;
-
-    this->caja.crear((char*)MEMORIA_CAJA, 'C');
-
-    Semaforo semaforoCola((char*) SEMAFORO_COLA);
-    Semaforo semaforoCaja((char*) SEMAFORO_CAJA);
-    this->semaforoCola=semaforoCola;
-    this->semaforoCaja=semaforoCaja;
+    Cola<mensaje> *colaAutos = new Cola<mensaje>( COLA_AUTOS,'C');
+    this->colaAutos=colaAutos;
+    this->caja = new Caja();
+    Semaforo semaforoCola((char*) SEMAFORO_COLA_AUTOS);
+    this->semaforoColaAutos=semaforoCola;
 }
 
 void MainWindow::finalizarSimulacion(){
-    this->caja.liberar();
     delete(colaAutos);
+    delete(caja);
 }
 
 void MainWindow::getSaldo(){
     QLineEdit* saldoEdit=this->findChild<QLineEdit*>("saldoEdit");
-    saldoEdit->setEnabled(false);
-    this->semaforoCaja.p();
-    unsigned int saldo=this->caja.leer();
-    this->semaforoCaja.v();
+    unsigned int saldo=this->caja->getSaldo();
     Utils<unsigned int> utils;
     saldoEdit->setText(utils.toString(saldo).c_str());
-    saldoEdit->setEnabled(true);
 }
 
 
@@ -96,11 +88,13 @@ void MainWindow::recibirAutoVip(){
 void MainWindow::nuevoAuto(unsigned int tipo){
 
     JefeDeEstacion jefe;
+    string tipoAuto=(tipo==AUTO_VIP)?" VIP":"";
     if(jefe.getEmpleadosOcupados()==nEmpleados){
-        string tipoAuto=(tipo==AUTO_VIP)?" VIP":"";
         Logger::debug(getpid(), "Evento > No hay empleados disponibles\n");
         Logger::debug(getpid(), "Evento > El auto"+ tipoAuto +" se retira de la estación de servicio\n");
         return;
+    }else{
+        Logger::debug(getpid(),"Evento > Un nuevo auto"+tipoAuto+" entra a la estacion de servicio\n",true);
     }
 
     int capacidad;
@@ -114,9 +108,9 @@ void MainWindow::nuevoAuto(unsigned int tipo){
     mensaje msg;
     msg.mtype=tipo;
     msg.capacidad=capacidad;
-    semaforoCola.p();
+    semaforoColaAutos.p();
     colaAutos->escribir(msg);
-    semaforoCola.v();
+    semaforoColaAutos.v();
 }
 
 bool MainWindow::event(QEvent *event){

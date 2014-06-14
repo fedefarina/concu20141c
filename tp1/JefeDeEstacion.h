@@ -29,10 +29,10 @@ public:
         Semaforo semaforoEmpleados((char*)SEMAFORO_EMPLEADOS);
         this->semaforoEmpleados = semaforoEmpleados;
 
-        Semaforo semaforoCola((char*) SEMAFORO_COLA);
+        Semaforo semaforoCola((char*) SEMAFORO_COLA_AUTOS);
         this->semaforoCola=semaforoCola;
 
-        Cola<mensaje> *cola =new Cola<mensaje>( COLA_MENSAJES,'C');
+        Cola<mensaje> *cola =new Cola<mensaje>( COLA_AUTOS,'C');
         this->cola=cola;
     }
 
@@ -52,12 +52,10 @@ public:
 
         if(!leerCola(AUTO_VIP,msg)){
             if(leerCola(AUTO,msg)){
-                Logger::debug(getpid(),"\nEvento > Un nuevo auto entra a la estacion de servicio\n");
                 unAuto.setTipo(AUTO);
                 autoLeido=true;
             }
         }else{
-            Logger::debug(getpid(), "\nEvento > Un nuevo auto VIP entra a la estacion de servicio\n");
             autoLeido=true;
             unAuto.setTipo(AUTO_VIP);
         }
@@ -75,15 +73,16 @@ public:
         unAuto.setTipo(AUTO);
 
         if(leerAuto(unAuto)){
-            unsigned int id = getEmpleadoLibre();
+            int idEmpleado = getEmpleadoLibre();
 
             //Busco un empleado libre
-            if(id > 0){
+            if(idEmpleado >= 0){
+                unsigned int id=idEmpleado;
                 pid_t pid = fork();
                 if (pid == 0) {
                     Utils<int> utils;
                     string tipo=(unAuto.getTipo()==AUTO_VIP?" VIP":"");
-                    Logger::debug(getpid(),"El auto"+ tipo +" es atendido por el empleado " + utils.toString(id)+"\n");
+                    Logger::debug(getpid(),"El auto"+ tipo +" es atendido por el empleado " + utils.toString(id+1)+"\n");
 
                     Empleado* empleado = new Empleado();
 
@@ -102,9 +101,9 @@ public:
                     }
 
                     delete(empleado);
-                    semaforoEmpleados.p(id-1);
-                    this->empleados.escribir(true,id-1);
-                    semaforoEmpleados.v(id-1);
+                    semaforoEmpleados.p(id);
+                    this->empleados.escribir(true,id);
+                    semaforoEmpleados.v(id);
                     exit(0);
                 }
             }
@@ -124,13 +123,13 @@ public:
         return ocupados;
     }
 
-    unsigned int getEmpleadoLibre() {
-        unsigned int id = 0;
+    int getEmpleadoLibre() {
+        int id = -1;
         for (unsigned int i = 0; i < empleados.cantidad(); i++) {
             semaforoEmpleados.p(i);
             if(this->empleados.leer(i) == true) {
                 this->empleados.escribir(false, i);
-                id = i+1;
+                id = i;
                 semaforoEmpleados.v(i);
                 break;
             }

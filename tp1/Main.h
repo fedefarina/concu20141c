@@ -53,7 +53,7 @@ public:
             EstacionDeServicio::getInstancia()->setEmpleados(empleados);
             EstacionDeServicio::getInstancia()->setSurtidores(surtidores);
 
-            Cola<mensaje> *cola =new Cola<mensaje>( COLA_MENSAJES,'C');
+            Cola<mensaje> *cola =new Cola<mensaje>( COLA_AUTOS,'C');
             QProgressBar* progressBar=mainWindow->findChild<QProgressBar*>("progressBar");
             Logger::debug(getpid(), "Inicio de simulacion\n");
             QTime timeElapsed;
@@ -111,7 +111,9 @@ private:
     void disableAutoButton(){
         MainWindow* mainWindow=MainWindow::getInstance();
         QPushButton *nuevoAutoButton = mainWindow->findChild<QPushButton*>("nuevoAutoButton");
+        QPushButton *nuevoAutoVipButton = mainWindow->findChild<QPushButton*>("nuevoAutoVipButton");
         nuevoAutoButton->setEnabled(false);
+        nuevoAutoVipButton->setEnabled(false);
     }
 
     void restartUI(bool enabled){

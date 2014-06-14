@@ -7,36 +7,34 @@
 #include "MemoriaCompartida.h"
 #include "Logger.h"
 #include "Semaforo.h"
+#include "Caja.h"
+#include "mainwindow.h"
 
 class Empleado {
 
 private:    
-    MemoriaCompartida<short int> caja;
     MemoriaCompartida<bool> surtidores;
-    Cola<mensaje>* cola;
-    Semaforo semaforoCaja;
+    Caja* caja;
+    Cola<mensaje>* colaAutos;
     Semaforo semaforoSurtidores;
-    Semaforo semaforoCola;
+    Semaforo semaforoColaAutos;
 
 public:
 
     Empleado() {
         unsigned int surtidores = EstacionDeServicio::getInstancia()->getSurtidores();
 
-        this->caja.crear((char*)MEMORIA_CAJA, 'C');
         this->surtidores.crear((char*)MEMORIA_SURTIDORES, 'S', surtidores);
 
-        Semaforo semaforoCaja((char*)SEMAFORO_CAJA);
         Semaforo semaforoSurtidores((char*)SEMAFORO_SURTIDOR);
-
-        this->semaforoCaja=semaforoCaja;
         this->semaforoSurtidores=semaforoSurtidores;
 
-        Semaforo semaforoCola((char*) SEMAFORO_COLA);
-        this->semaforoCola=semaforoCola;
+        Semaforo semaforoCola((char*) SEMAFORO_COLA_AUTOS);
+        this->semaforoColaAutos=semaforoCola;
 
-        Cola<mensaje> *cola= new Cola<mensaje>( COLA_MENSAJES,'C');
-        this->cola=cola;
+        Cola<mensaje> *colaAutos= new Cola<mensaje>( COLA_AUTOS,'C');
+        this->colaAutos=colaAutos;
+        this->caja = new Caja();
     }
 
     void atenderAuto(Auto& unAuto) {
@@ -50,16 +48,11 @@ public:
                 string tipo=(unAuto.getTipo()==AUTO_VIP?" VIP":"");
                 Logger::debug(getpid(), "Evento -> Atendiendo auto"+tipo+"\n");
                 Utils<int> utils;
-                Logger::debug(getpid(),"Usando surtidor "  + utils.toString(i) +"\n");
-
+                Logger::debug(getpid(),"Usando surtidor "  + utils.toString(i+1) +"\n");
                 sleep(tiempoDeCarga);
 
-                semaforoCaja.p(0);
-                unsigned int saldo = caja.leer();
-                caja.escribir(saldo + tiempoDeCarga);
-                semaforoCaja.v(0);
-
-                Logger::debug(getpid(),"Saldo de caja: "  + utils.toString(saldo + tiempoDeCarga) +"\n");
+                caja->depositarMonto(tiempoDeCarga);
+                Logger::debug(getpid(),"Saldo de caja: "  + utils.toString(caja->getSaldo()) +"\n");
                 Logger::debug(getpid(), "Auto" + tipo + " atendido\n");
                 semaforoSurtidores.p(i);
                 this->surtidores.escribir(true, i);
@@ -72,9 +65,9 @@ public:
     }
 
     ~Empleado() {
-        this->caja.liberar();
         this->surtidores.liberar();
-        delete(this->cola);
+        delete(this->colaAutos);
+        delete(this->caja);
     }
 
 };

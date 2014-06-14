@@ -18,7 +18,7 @@ public:
     ~Logger();
 
     static void setDebugMode(bool isDebugMode);
-    static void debug(pid_t pid, const string& msg);
+    static void debug(pid_t pid, const string& msg,bool newLine=false);
 };
 
 #endif // LOGGER_H
