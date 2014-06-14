@@ -17,29 +17,49 @@ class JefeDeEstacion {
 
 private:
     MemoriaCompartida<bool> empleados;
+
+    MemoriaCompartida<unsigned int> contadorVIP;
+    Semaforo semaforoContadorVIP;
+
     Semaforo semaforoEmpleados;
-    Semaforo semaforoCola;
-    Cola<mensaje> *cola;
+    Semaforo semaforoColaAutos;
+    Cola<mensaje> *colaAutos;
+
+    Semaforo semaforoColaCaja;
+    Cola<mensaje> *colaCaja;
 
 public:
 
     JefeDeEstacion() {
         unsigned int empleados = EstacionDeServicio::getInstancia()->getEmpleados();
-        this->empleados.crear((char*) MEMORIA_EMPLEADOS, 'E', empleados);
+
+        this->empleados.crear((char*) MEMORIA_EMPLEADOS, 'E',empleados);
+
         Semaforo semaforoEmpleados((char*)SEMAFORO_EMPLEADOS);
         this->semaforoEmpleados = semaforoEmpleados;
 
-        Semaforo semaforoCola((char*) SEMAFORO_COLA_AUTOS);
-        this->semaforoCola=semaforoCola;
+        Semaforo semaforoColaAutos((char*) SEMAFORO_COLA_AUTOS);
+        this->semaforoColaAutos=semaforoColaAutos;
 
-        Cola<mensaje> *cola =new Cola<mensaje>( COLA_AUTOS,'C');
-        this->cola=cola;
+        Semaforo semaforoContadorVIP((char*) SEMAFORO_CONTADOR_VIP);
+        this->semaforoContadorVIP=semaforoContadorVIP;
+
+        this->contadorVIP.crear((char*) MEMORIA_CONTADOR_VIP, 'M');
+
+        Cola<mensaje> *colaAutos =new Cola<mensaje>( COLA_AUTOS,'C');
+        this->colaAutos=colaAutos;
+
+        Semaforo semaforoColaCaja((char*) SEMAFORO_COLA_CAJA);
+        this->semaforoColaCaja=semaforoColaCaja;
+
+        Cola<mensaje> *colaCaja =new Cola<mensaje>( COLA_CAJA,'C');
+        this->colaCaja=colaCaja;
     }
 
     bool leerCola(unsigned int tipo,mensaje &msg){
-        semaforoCola.p();
-        ssize_t bytesLeidos =cola->leer(tipo,&msg);
-        semaforoCola.v();
+        semaforoColaAutos.p();
+        ssize_t bytesLeidos =colaAutos->leer(tipo,&msg);
+        semaforoColaAutos.v();
         return bytesLeidos>0;
     }
 
@@ -56,6 +76,10 @@ public:
                 autoLeido=true;
             }
         }else{
+            semaforoContadorVIP.p();
+            unsigned int contador=contadorVIP.leer();
+            contadorVIP.escribir(++contador);
+            semaforoContadorVIP.v();
             autoLeido=true;
             unAuto.setTipo(AUTO_VIP);
         }
@@ -78,6 +102,7 @@ public:
             //Busco un empleado libre
             if(idEmpleado >= 0){
                 unsigned int id=idEmpleado;
+
                 pid_t pid = fork();
                 if (pid == 0) {
                     Utils<int> utils;
@@ -87,17 +112,20 @@ public:
                     Empleado* empleado = new Empleado();
 
                     while(!unAuto.isAtendido()){
-                        empleado->atenderAuto(unAuto);
-                        if(unAuto.getTipo()!=AUTO_VIP && !unAuto.isAtendido()){
-                            mensaje msg;
-                            if(leerCola(AUTO_VIP,msg)){
-                                Auto autoVip;
-                                autoVip.setCapacidad(msg.capacidad);
-                                autoVip.setTipo(AUTO_VIP);
-                                while(!autoVip.isAtendido())
-                                    empleado->atenderAuto(autoVip);
-                            }
+                        semaforoContadorVIP.p();
+                        unsigned int contador=contadorVIP.leer();
+                        semaforoContadorVIP.v();
+
+                        if(unAuto.getTipo()==AUTO_VIP || contador==0){
+                            empleado->atenderAuto(unAuto);
                         }
+                    }
+
+                    if(unAuto.getTipo()==AUTO_VIP){
+                        semaforoContadorVIP.p();
+                        unsigned int contador=contadorVIP.leer();
+                        contadorVIP.escribir(--contador);
+                        semaforoContadorVIP.v();
                     }
 
                     delete(empleado);
@@ -141,7 +169,9 @@ public:
 
     ~JefeDeEstacion() {
         this->empleados.liberar();
-        delete(this->cola);
+        this->contadorVIP.liberar();
+        delete(this->colaAutos);
+        delete(this->colaCaja);
     }
 
 };

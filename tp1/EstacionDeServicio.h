@@ -17,12 +17,16 @@ private:
     Caja* caja;
     MemoriaCompartida<bool> empleados;
     MemoriaCompartida<bool> surtidores;
+    MemoriaCompartida<unsigned int> contadorVIP;
 
     Semaforo semaforoSurtidores;
     Semaforo semaforoEmpleados;
     Semaforo semaforoCaja;
     Semaforo semaforoColaAutos;
+    Semaforo semaforoColaCaja;
+    Semaforo semaforoContadorVIP;
     Cola<mensaje> *colaAutos;
+    Cola<mensaje> *colaCaja;
 
     static EstacionDeServicio* instancia;
 
