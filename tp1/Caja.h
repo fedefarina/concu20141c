@@ -11,23 +11,27 @@ private:
     Semaforo semaforoCaja;
 
 public:
-    Caja() {        
+    Caja() {
         Semaforo semaforoCaja((char*)SEMAFORO_CAJA);
         this->semaforoCaja=semaforoCaja;
         this->caja.crear((char*)MEMORIA_CAJA, 'C');
     }
 
-    unsigned int getSaldo() {
+    unsigned int getSaldo(bool esperar=false) {
         semaforoCaja.p();
         unsigned int saldo = caja.leer();
         semaforoCaja.v();
+        if(esperar)
+            sleep(5);
         return saldo;
     }
 
-    void depositarMonto(unsigned int monto) {
+    void depositarMonto(unsigned int monto,bool esperar=true) {
         semaforoCaja.p();
         unsigned int saldo = caja.leer();
         caja.escribir(monto + saldo);
+        if(esperar)
+            sleep(5);
         semaforoCaja.v();
     }
 

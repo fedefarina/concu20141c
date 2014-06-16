@@ -20,7 +20,7 @@ EstacionDeServicio::EstacionDeServicio() {
     contadorVIP.escribir(0);
 
     this->caja = new Caja();
-    caja->depositarMonto(0);
+    caja->depositarMonto(0,false);
 
     Cola<mensaje> *colaAutos=new Cola<mensaje>( COLA_AUTOS,'C');
     this->colaAutos=colaAutos;

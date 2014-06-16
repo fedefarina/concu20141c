@@ -12,7 +12,7 @@
 #include "Logger.h"
 #include "Constantes.h"
 #include "QProgressBar"
-#include "SigUnusedHandler.h"
+#include "SignalEventHandler.h"
 #include "EventHandler.h"
 #include "SignalHandler.h"
 #include "QCheckBox"
@@ -61,31 +61,47 @@ public:
 
             JefeDeEstacion* jefe = new JefeDeEstacion();
 
+            SignalEventHandler sigUnusedHandler;
+            SignalHandler :: getInstance()->registrarHandler ( SIGUNUSED,&sigUnusedHandler );
+
             pid_t pid = fork ();
             if ( pid == 0 ) {
-                SIGUNUSED_Handler sigint_handler;
-                SignalHandler :: getInstance()->registrarHandler ( SIGUNUSED,&sigint_handler );
-                while (sigint_handler.getGracefulQuit() == 0 ){
+                while (sigUnusedHandler.getGracefulQuit() == 0 ){
                     jefe->recibirAuto();
+                    jefe->recibirPeticionesCaja();
                 }
+
                 while(jefe->getEmpleadosOcupados()>0);
                 delete(jefe);
                 exit (0);
             }
 
             mainWindow->iniciarSimulacion();
+            SignalEventHandler sigAbortHandler;
+            SignalHandler :: getInstance()->registrarHandler ( SIGABRT,&sigAbortHandler );
+
 
             while (tiempoSimulacion > timeElapsed.elapsed()/1000) {
+
                 if(timeElapsed.elapsed()%1000==0){
                     progressBar->setValue((int) ((timeElapsed.elapsed())/tiempoSimulacion)/10);
                 }
+
                 if(timeElapsed.elapsed()%10==0)
                     QCoreApplication::processEvents();
+
+                //Actualizo la vista cuando el administrador termina de consular la caja
+                if(sigAbortHandler.getGracefulQuit()==1){
+                    Logger::debug(getpid(), "Actualizando\n");
+                    sigAbortHandler.reset();
+                    mainWindow->mostrarSaldo();
+                }
             }
 
             progressBar->setValue(100);
             MainWindow* mainWindow=MainWindow::getInstance();
             disableAutoButton();
+
 
             kill(pid, SIGUNUSED);
 

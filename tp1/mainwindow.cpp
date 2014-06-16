@@ -33,7 +33,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
     //sender, signal, receiver, slot (callback similar)
     QObject::connect(ejecutarButton, SIGNAL(clicked()), this, SLOT(ejecutarComando()));
-    QObject::connect(saldoButton, SIGNAL(clicked()), this, SLOT(getSaldo()));
+    QObject::connect(saldoButton, SIGNAL(clicked()), this, SLOT(notificarPeticion()));
     QObject::connect(nuevoAutoButton, SIGNAL(clicked()), this, SLOT(recibirAuto()));
     QObject::connect(nuevoAutoVipButton, SIGNAL(clicked()), this, SLOT(recibirAutoVip()));
 }
@@ -61,17 +61,34 @@ void MainWindow::iniciarSimulacion(){
     this->caja = new Caja();
     Semaforo semaforoCola((char*) SEMAFORO_COLA_AUTOS);
     this->semaforoColaAutos=semaforoCola;
+
+    Semaforo semaforoColaCaja((char*) SEMAFORO_COLA_CAJA);
+    this->semaforoColaCaja=semaforoColaCaja;
+
+    Cola<mensaje> *colaCaja =new Cola<mensaje>( COLA_CAJA,'C');
+    this->colaCaja=colaCaja;
 }
 
 void MainWindow::finalizarSimulacion(){
     delete(colaAutos);
     delete(caja);
+    delete(colaCaja);
 }
 
-void MainWindow::getSaldo(){
-    QLineEdit* saldoEdit=this->findChild<QLineEdit*>("saldoEdit");
-    unsigned int saldo=this->caja->getSaldo();
+void MainWindow::notificarPeticion(){
+    Logger::debug(getpid(),"El administrador pide usar la caja\n");
+    mensaje msg;
+    msg.mtype=ADMINISTRADOR;
+    semaforoColaCaja.p();
+    colaCaja->escribir(msg);
+    semaforoColaCaja.v();
+}
+
+void MainWindow::mostrarSaldo(){
+    Logger::debug(getpid(),"Muestro el saldo\n");
     Utils<unsigned int> utils;
+    unsigned int saldo=this->caja->getSaldo();
+    QLineEdit* saldoEdit=this->findChild<QLineEdit*>("saldoEdit");
     saldoEdit->setText(utils.toString(saldo).c_str());
 }
 

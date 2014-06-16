@@ -18,11 +18,11 @@ HEADERS += \
     Semaforo.h \
     SignalHandler.h \
     EventHandler.h \
-    SigUnusedHandler.h \
     Main.h \
     Cola.h \
     Mensajes.h \
-    Caja.h
+    Caja.h \
+    SignalEventHandler.h
 
 SOURCES += \
     main.cpp \

@@ -10,7 +10,7 @@ typedef struct mensaje {
 	long mtype;
 	int id;
     float capacidad;
-    //char texto[TEXTO_SIZE];
+    unsigned int empleadoID;
 } mensaje;
 
 #endif /* MENSAJES_H_ */

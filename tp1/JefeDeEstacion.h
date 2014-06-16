@@ -17,14 +17,12 @@ class JefeDeEstacion {
 
 private:
     MemoriaCompartida<bool> empleados;
-
     MemoriaCompartida<unsigned int> contadorVIP;
+    Caja* caja;
     Semaforo semaforoContadorVIP;
-
     Semaforo semaforoEmpleados;
     Semaforo semaforoColaAutos;
     Cola<mensaje> *colaAutos;
-
     Semaforo semaforoColaCaja;
     Cola<mensaje> *colaCaja;
 
@@ -54,12 +52,20 @@ public:
 
         Cola<mensaje> *colaCaja =new Cola<mensaje>( COLA_CAJA,'C');
         this->colaCaja=colaCaja;
+        this->caja = new Caja();
     }
 
-    bool leerCola(unsigned int tipo,mensaje &msg){
+    bool leerColaAutos(unsigned int tipo,mensaje &msg){
         semaforoColaAutos.p();
         ssize_t bytesLeidos =colaAutos->leer(tipo,&msg);
         semaforoColaAutos.v();
+        return bytesLeidos>0;
+    }
+
+    bool leerColaCaja(unsigned int tipo,mensaje &msg){
+        semaforoColaCaja.p();
+        ssize_t bytesLeidos =colaCaja->leer(tipo,&msg);
+        semaforoColaCaja.v();
         return bytesLeidos>0;
     }
 
@@ -70,8 +76,8 @@ public:
         bool autoLeido=false;
         mensaje msg;
 
-        if(!leerCola(AUTO_VIP,msg)){
-            if(leerCola(AUTO,msg)){
+        if(!leerColaAutos(AUTO_VIP,msg)){
+            if(leerColaAutos(AUTO,msg)){
                 unAuto.setTipo(AUTO);
                 autoLeido=true;
             }
@@ -109,7 +115,7 @@ public:
                     string tipo=(unAuto.getTipo()==AUTO_VIP?" VIP":"");
                     Logger::debug(getpid(),"El auto"+ tipo +" es atendido por el empleado " + utils.toString(id+1)+"\n");
 
-                    Empleado* empleado = new Empleado();
+                    Empleado* empleado = new Empleado(id+1);
 
                     while(!unAuto.isAtendido()){
                         semaforoContadorVIP.p();
@@ -138,6 +144,43 @@ public:
         }
     }
 
+    void recibirPeticionesCaja(){
+        mensaje msg;
+
+        if(leerColaCaja(ADMINISTRADOR,msg)){
+            pid_t pid = fork ();
+            if ( pid == 0 ) {
+                Logger::debug(getpid(),"El administrador usa la caja\n");
+                Utils<unsigned int> utils;
+                unsigned int saldo=caja->getSaldo(true);
+                Logger::debug(getpid(),"Saldo:"+ utils.toString(saldo) +"\n");
+                //TODO: esta señal tampoco llega al padre y no puedo actualizar la vista desde aca.
+                kill(getppid(),SIGABRT);
+                Logger::debug(getpid(),"El administrador termino de usar la caja\n");
+                exit(0);
+            }
+        }else{
+            if(leerColaCaja(EMPLEADO,msg)){
+                pid_t pid = fork ();
+                if ( pid == 0 ) {
+                    __pid_t pid=msg.id;
+                    unsigned int empleadoID=msg.empleadoID;
+                    unsigned int monto=msg.capacidad;
+                    Utils<int> utils;
+                    Logger::debug(getpid(),"El empleado "+ utils.toString(empleadoID)
+                                  + " usa la caja pid:"+utils.toString(pid)+"\n");
+                    caja->depositarMonto(monto);
+                    //TODO: aca no se porque el kill(pid,SIGINT) y el handler no andaban
+                    // y tuve que poner esta garompa de mandar un tipo de mensaje distinto.
+                    msg.mtype=SENIAL;
+                    colaCaja->escribir(msg);
+                    Logger::debug(getpid(),"El empleado "+ utils.toString(empleadoID)
+                                  + " termino de usar la caja pid:"+utils.toString(pid)+"\n");
+                    exit(0);
+                }
+            }
+        }
+    }
 
     unsigned int getEmpleadosOcupados() {
         unsigned int ocupados = 0;
@@ -172,6 +215,7 @@ public:
         this->contadorVIP.liberar();
         delete(this->colaAutos);
         delete(this->colaCaja);
+        delete(caja);
     }
 
 };
