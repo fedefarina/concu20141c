@@ -8,16 +8,17 @@
 #include <string>
 
 template <class T> class Cola {
-    private:
-        key_t	clave;
-        int		id;
+private:
+    key_t	clave;
+    int		id;
 
-    public:
-        Cola ( const std::string& archivo,const char letra );
-        ~Cola();
-        int escribir ( const T& dato ) const;
-        int leer ( const int tipo,T* buffer ) const;
-        int destruir () const;
+public:
+    Cola ( const std::string& archivo,const char letra );
+    ~Cola();
+    int escribir ( const T& dato ) const;
+    int leer ( const int tipo,T* buffer ) const;
+    bool estaVacia () const;
+    int destruir () const;
 };
 
 template <class T> Cola<T> :: Cola ( const std::string& archivo,const char letra ) {
@@ -46,6 +47,12 @@ template <class T> int Cola<T> :: escribir ( const T& dato ) const {
 template <class T> int Cola<T> :: leer ( const int tipo,T* buffer ) const {
     int resultado = msgrcv ( this->id,static_cast<void *>(buffer),sizeof(T)-sizeof(long),tipo,IPC_NOWAIT);
     return resultado;
+}
+
+template <class T> bool Cola<T> :: estaVacia () const {
+    struct msqid_ds buf;
+    msgctl(this->id, IPC_STAT, &buf);
+    return  buf.msg_qnum==0;
 }
 
 #endif /* COLA_H_ */

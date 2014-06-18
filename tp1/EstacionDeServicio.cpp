@@ -7,6 +7,12 @@ EstacionDeServicio::EstacionDeServicio() {
     Semaforo semaforoCaja((char*)SEMAFORO_CAJA,1,1);
     this->semaforoCaja=semaforoCaja;
 
+    Semaforo semaforoCajaOcupada((char*)SEMAFORO_CAJA_OCUPADA,1,1);
+    this->semaforoCajaOcupada=semaforoCajaOcupada;
+
+    Semaforo semaforoCajaFinalizada((char*)SEMAFORO_CAJA_FINALIZADA,1,1);
+    this->semaforoCajaFinalizada=semaforoCajaFinalizada;
+
     Semaforo semaforoColaAutos ( (char*)SEMAFORO_COLA_AUTOS,1,1);
     this->semaforoColaAutos=semaforoColaAutos;
 
@@ -19,8 +25,12 @@ EstacionDeServicio::EstacionDeServicio() {
     this->contadorVIP.crear((char*) MEMORIA_CONTADOR_VIP, 'M');
     contadorVIP.escribir(0);
 
+    this->cajaFinalizada.crear((char*) MEMORIA_CAJA_FINALIZADA, 'M');
+    cajaFinalizada.escribir(false);
+
     this->caja = new Caja();
-    caja->depositarMonto(0);
+    caja->setMonto(0);
+    caja->setOcupada(false);
 
     Cola<mensaje> *colaAutos=new Cola<mensaje>( COLA_AUTOS,'C');
     this->colaAutos=colaAutos;
@@ -37,10 +47,13 @@ EstacionDeServicio::~EstacionDeServicio() {
     this->semaforoEmpleados.eliminar();
     this->semaforoColaAutos.eliminar();
     this->semaforoColaCaja.eliminar();
+    this->semaforoCajaFinalizada.eliminar();
     this->semaforoCaja.eliminar();
+    this->semaforoCajaOcupada.eliminar();
     this->empleados.liberar();
     this->surtidores.liberar();
     this->contadorVIP.liberar();
+    this->cajaFinalizada.liberar();
     delete(this->colaAutos);
     delete(this->colaCaja);
     delete(caja);

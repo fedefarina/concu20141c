@@ -41,12 +41,14 @@ public slots:
     void recibirAutoVip();
     void nuevoAuto(unsigned int tipo);
     void ejecutarComando();
-    void getSaldo();
+    void notificarPeticion();
 
 private:
     unsigned int nSurtidores, nEmpleados, tiempoSimulacion;
     Cola<mensaje> *colaAutos;
     Semaforo semaforoColaAutos;
+    Semaforo semaforoColaCaja;
+    Cola<mensaje> *colaCaja;
     Caja* caja;
     Ui::MainWindow *ui;
     explicit MainWindow(QWidget *parent = 0);

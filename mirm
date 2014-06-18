@@ -1,0 +1,18 @@
+ipcrm -M 0x4d030034
+ipcrm -M 0x43030052
+ipcrm -M 0x43030085
+ipcrm -M 0x4503008b
+ipcrm -M 0x53030086
+ipcrm -M 0x4d030025
+
+ipcrm -S 0x6103005e
+ipcrm -S 0x61030044
+ipcrm -S 0x6103001e
+ipcrm -S 0x61030091
+ipcrm -S 0x6103003a
+ipcrm -S 0x6103001c
+ipcrm -S 0x6103001b
+ipcrm -S 0x6103004f
+
+ipcrm -Q 0x4303004c
+ipcrm -Q 0x43030029

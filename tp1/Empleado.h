@@ -9,10 +9,13 @@
 #include "Semaforo.h"
 #include "Caja.h"
 #include "mainwindow.h"
+#include "SigUnusedHandler.h"
+#include "SignalHandler.h"
 
 class Empleado {
 
 private:    
+    unsigned int id;
     MemoriaCompartida<bool> surtidores;
     Caja* caja;
     Cola<mensaje>* colaAutos;
@@ -21,11 +24,11 @@ private:
     Semaforo semaforoColaAutos;
     Semaforo semaforoColaCaja;
 
-
 public:
 
-    Empleado() {
+    Empleado(unsigned int empleadoID) {
         unsigned int surtidores = EstacionDeServicio::getInstancia()->getSurtidores();
+        id=empleadoID;
 
         this->surtidores.crear((char*)MEMORIA_SURTIDORES, 'S', surtidores);
 
@@ -46,6 +49,13 @@ public:
         this->colaCaja=colaCaja;
     }
 
+    bool leerColaCaja(unsigned int tipo,mensaje &msg){
+        semaforoColaCaja.p();
+        ssize_t bytesLeidos =colaCaja->leer(tipo,&msg);
+        semaforoColaCaja.v();
+        return bytesLeidos>0;
+    }
+
     void atenderAuto(Auto& unAuto) {
         float tiempoDeCarga = unAuto.getCapacidad();
         for (unsigned int i = 0; i < surtidores.cantidad(); i++) {
@@ -60,9 +70,22 @@ public:
                 Logger::debug(getpid(),"Usando surtidor "  + utils.toString(i+1) +"\n");
                 sleep(tiempoDeCarga);
 
-                caja->depositarMonto(tiempoDeCarga);
+                mensaje msg;
+                msg.pid=getpid();
+                msg.capacidad=tiempoDeCarga;
+                msg.mtype=EMPLEADO;
+                msg.empleadoID=id;
+
+                semaforoColaCaja.p();
+                colaCaja->escribir(msg);
+                semaforoColaCaja.v();
+
+                Logger::debug(getpid(),"El empleado "+ utils.toString(id)+ " pide usar la caja\n");
+                while(!leerColaCaja(SENIAL,msg));
+
                 Logger::debug(getpid(),"Saldo de caja: "  + utils.toString(caja->getSaldo()) +"\n");
                 Logger::debug(getpid(), "Auto" + tipo + " atendido\n");
+
                 semaforoSurtidores.p(i);
                 this->surtidores.escribir(true, i);
                 semaforoSurtidores.v(i);

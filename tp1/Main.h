@@ -58,17 +58,30 @@ public:
             Logger::debug(getpid(), "Inicio de simulacion\n");
             QTime timeElapsed;
             timeElapsed.start();
+            Caja* caja = new Caja();
 
             JefeDeEstacion* jefe = new JefeDeEstacion();
 
             pid_t pid = fork ();
             if ( pid == 0 ) {
-                SIGUNUSED_Handler sigint_handler;
-                SignalHandler :: getInstance()->registrarHandler ( SIGUNUSED,&sigint_handler );
-                while (sigint_handler.getGracefulQuit() == 0 ){
+                SIGUNUSED_Handler sigUnusedHandler;
+                SignalHandler :: getInstance()->registrarHandler ( SIGUNUSED,&sigUnusedHandler );
+                while (sigUnusedHandler.getGracefulQuit() == 0 ){
                     jefe->recibirAuto();
+                    if(timeElapsed.elapsed()%100==0)
+                        jefe->recibirPeticionesCaja(false);
                 }
-                while(jefe->getEmpleadosOcupados()>0);
+
+                while(!jefe->isCajaFinalizada()){
+                    if(timeElapsed.elapsed()%100==0)
+                        jefe->recibirPeticionesCaja(true);
+                }
+
+                while (jefe->getEmpleadosOcupados()>0){
+                    if(timeElapsed.elapsed()%100==0)
+                        jefe->recibirPeticionesCaja(true);
+                }
+
                 delete(jefe);
                 exit (0);
             }
@@ -86,7 +99,6 @@ public:
             progressBar->setValue(100);
             MainWindow* mainWindow=MainWindow::getInstance();
             disableAutoButton();
-
             kill(pid, SIGUNUSED);
 
             while (jefe->getEmpleadosOcupados()>0)
@@ -98,6 +110,9 @@ public:
             onFinished();
             delete(jefe);
             delete(cola);
+            delete(caja);
+            SignalHandler::getInstance()->removerHandler(SIGUNUSED);
+            SignalHandler :: getInstance()->destruir();
             EstacionDeServicio::destruirInstancia();
         }
     }
