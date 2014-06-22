@@ -51,6 +51,7 @@ void MainWindow::ejecutarComando(){
 
     Main *workerThread = new Main();
     workerThread->run();
+    delete (workerThread);
 }
 
 
