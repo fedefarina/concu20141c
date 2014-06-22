@@ -1,7 +1,6 @@
 #ifndef JEFEDEESTACION_H
 #define JEFEDEESTACION_H
 
-#include <vector>
 #include "Auto.h"
 #include "Empleado.h"
 #include "Cola.h"

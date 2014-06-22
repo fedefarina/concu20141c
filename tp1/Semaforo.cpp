@@ -20,6 +20,9 @@ Semaforo :: Semaforo (char* nombre, int valorInicial, unsigned int cantidad) {
     //clave a partir de ftok,cantidad de semaforos, creo el semaforo si no existe
     this->id = semget ( clave,cantidad,0666 | IPC_CREAT );
 
+    if (this->id < 0)
+        Logger::debug(getpid(), "Error al crear semaforo\n");
+
     for (unsigned int i = 0; i < cantidad; i++)
         this->inicializar (valorInicial, i);
 }
@@ -27,6 +30,9 @@ Semaforo :: Semaforo (char* nombre, int valorInicial, unsigned int cantidad) {
 Semaforo :: Semaforo ( char* nombre,unsigned int cantidad) {
     key_t clave = ftok ( nombre,'a' );
     this->id = semget ( clave,cantidad,0666 | IPC_CREAT );
+
+    if (this->id < 0)
+        Logger::debug(getpid(), "Error al crear semaforo\n");
 }
 
 int Semaforo :: inicializar (int valorInicial, unsigned int posicion) {

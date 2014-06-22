@@ -3,7 +3,6 @@
 
 #include <iostream>
 #include <stdlib.h>
-#include <time.h>
 
 class Auto {
 
@@ -14,13 +13,12 @@ private:
 
 public:
     Auto() {
-        srand(time(NULL));
-        this->capacidad = rand() % 10 + 10;
-        this->atendido=false;
+        this->capacidad = 0;
+        this->atendido = false;
     }
 
     float getCapacidad() {
-        return this->capacidad;
+        return (this->capacidad);
     }
 
     void setCapacidad(float capacidad) {
@@ -28,19 +26,19 @@ public:
     }
 
     unsigned int getTipo()const{
-        return tipo;
+        return (this->tipo);
     }
 
-    void setTipo(unsigned int value){
-        tipo = value;
+    void setTipo(unsigned int tipo){
+        this->tipo = tipo;
     }
 
     void setAtendido(bool isAtendido){
-        atendido=isAtendido;
+        this->atendido = isAtendido;
     }
 
     bool isAtendido() const{
-        return atendido;
+        return (this->atendido);
     }
 
     ~Auto() {

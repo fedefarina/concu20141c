@@ -45,22 +45,29 @@ template <class T> MemoriaCompartida<T> :: ~MemoriaCompartida () {
 
 template <class T> int MemoriaCompartida<T> :: crear ( std::string archivo, char letra, int numero ) {
 
-
     // generacion de la clave
     key_t clave = ftok ( archivo.c_str(),letra );
-    if ( clave == -1 )
+    if ( clave == -1 ) {
+        Logger::debug(getpid(), "Error al generar la clave de memoria compartida\n");
+
         return ERROR_FTOK;
+    }
     else {
         // creacion de la memoria compartida
         this->shmId = shmget ( clave,sizeof(T)*numero,0644|IPC_CREAT );
 
-        if ( this->shmId == -1 )
+        if ( this->shmId == -1 ) {
+            Logger::debug(getpid(), "Error al crear memoria compartida\n");
+
             return ERROR_SHMGET;
+        }
         else {
             // attach del bloque de memoria al espacio de direcciones del proceso
             void* ptrTemporal = shmat ( this->shmId,NULL,0 );
 
             if ( ptrTemporal == (void *) -1 ) {
+                Logger::debug(getpid(), "Error al adosar bloque de memoria compartida\n");
+
                 return ERROR_SHMAT;
             } else {
                 this->ptrDatos = (T *) ptrTemporal;
@@ -76,17 +83,9 @@ template <class T> void MemoriaCompartida<T> :: liberar () {
     // detach del bloque de memoria
     shmdt ( (void *) this->ptrDatos );
 
-
-//    Utils<int> utils;
-//    string str = utils.toString(this->cantidadProcesosAdosados());
-//    str += "\n";
-//    Logger::debug(getpid(), str);
     int procAdosados = this->cantidadProcesosAdosados ();
-//    std::cout << "Proc Adosados: "<<procAdosados<<std::endl;
 
     if ( procAdosados == 0 ) {
-//        std::cout << "Termino bien: "<<procAdosados<<std::endl;
-        Logger::debug(getpid(), "Termino bien\n");
         shmctl ( this->shmId,IPC_RMID,NULL );
     }
 }
