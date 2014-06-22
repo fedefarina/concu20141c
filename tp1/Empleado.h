@@ -3,7 +3,6 @@
 
 #include "EstacionDeServicio.h"
 #include "Auto.h"
-#include "Constantes.h"
 #include "MemoriaCompartida.h"
 #include "Logger.h"
 #include "Semaforo.h"
@@ -12,21 +11,25 @@
 #include "SigUnusedHandler.h"
 #include "SignalHandler.h"
 
-class Empleado {
+class Empleado : public EventHandler{
 
 private:    
+
     unsigned int id;
-    MemoriaCompartida<bool> surtidores;
+    sig_atomic_t esperandoCaja;
+
     Caja* caja;
     Cola<mensaje>* colaCaja;
     Semaforo semaforoSurtidores;
     Semaforo semaforoColaCaja;
+    MemoriaCompartida<bool> surtidores;
 
 public:
 
     Empleado(unsigned int empleadoID) {
         unsigned int surtidores = EstacionDeServicio::getInstancia()->getSurtidores();
         id=empleadoID;
+        esperandoCaja=0;
 
         this->surtidores.crear((char*)MEMORIA_SURTIDORES, 'S', surtidores);
 
@@ -39,6 +42,8 @@ public:
 
         Cola<mensaje> *colaCaja =new Cola<mensaje>( COLA_CAJA,'C');
         this->colaCaja=colaCaja;
+
+        SignalHandler::getInstance()->registrarHandler( SIGALRM, this );
     }
 
     bool leerColaCaja(unsigned int tipo,mensaje &msg){
@@ -72,9 +77,11 @@ public:
                 colaCaja->escribir(msg);
                 semaforoColaCaja.v();
 
-
                 Logger::debug(getpid(),"El empleado "+ utils.toString(id)+ " pide usar la caja\n");
-                while(!leerColaCaja(SENIAL,msg));
+
+                while(esperandoCaja==0){
+                    sleep(0.001);
+                }
 
                 Logger::debug(getpid(),"Saldo de caja: "  + utils.toString(caja->getSaldo()) +"\n");
                 Logger::debug(getpid(), "Auto" + tipo + " atendido\n");
@@ -89,7 +96,15 @@ public:
         }
     }
 
+    int handleSignal( int signum ){
+        if ( signum == SIGALRM ){
+            esperandoCaja=1;
+        }
+        return 0;
+    }
+
     ~Empleado() {
+        SignalHandler::getInstance()->removerHandler(SIGALRM);
         this->surtidores.liberar();
         delete(this->colaCaja);
         delete(this->caja);

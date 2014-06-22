@@ -211,17 +211,18 @@ public:
             if(leerColaCaja(EMPLEADO,msg)){
                 pid_t pid = fork ();
                 if ( pid == 0 ) {
-                    pid_t pid=msg.pid;
+                    pid_t pidEmpleado=msg.pid;
                     unsigned int empleadoID=msg.empleadoID;
                     unsigned int monto=msg.capacidad;
                     Utils<int> utils;
                     Logger::debug(getpid(),"El empleado "+ utils.toString(empleadoID)
-                                  + " usa la caja pid:"+utils.toString(pid)+"\n");
+                                  + " usa la caja pid:"+utils.toString(pidEmpleado)+"\n");
                     caja->depositarMonto(monto);
-                    msg.mtype=SENIAL;
-                    colaCaja->escribir(msg);
+                    //msg.mtype=SENIAL;
+                    //colaCaja->escribir(msg);
+                    kill(pidEmpleado,SIGALRM);
                     Logger::debug(getpid(),"El empleado "+ utils.toString(empleadoID)
-                                  + " termino de usar la caja pid:"+utils.toString(pid)+"\n");
+                                  + " termino de usar la caja pid:"+utils.toString(pidEmpleado)+"\n");
                     exit(0);
                 }
             }

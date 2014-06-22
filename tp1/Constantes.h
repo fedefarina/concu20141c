@@ -23,6 +23,5 @@
 #define AUTO 2
 #define ADMINISTRADOR 3
 #define EMPLEADO 4
-#define SENIAL 5
 
 #endif // CONSTANTES_H
