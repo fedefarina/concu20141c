@@ -1,9 +1,9 @@
 #LatexFiles
-tp1/informe/*.aux
-tp1/informe/*.out
-tp1/informe/*.toc
-tp1/informe/*.log
-tp1/informe/*.gz
+*.aux
+*.out
+*.toc
+*.log
+*.gz
 
 #QtFiles project configuration
 *.user
