@@ -72,6 +72,7 @@ public:
                 colaCaja->escribir(msg);
                 semaforoColaCaja.v();
 
+
                 Logger::debug(getpid(),"El empleado "+ utils.toString(id)+ " pide usar la caja\n");
                 while(!leerColaCaja(SENIAL,msg));
 

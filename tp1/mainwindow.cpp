@@ -84,15 +84,6 @@ void MainWindow::notificarPeticion(){
     semaforoColaCaja.v();
 }
 
-void MainWindow::mostrarSaldo(){
-    Logger::debug(getpid(),"Muestro el saldo\n");
-    Utils<unsigned int> utils;
-    unsigned int saldo=this->caja->getSaldo();
-    QLineEdit* saldoEdit=this->findChild<QLineEdit*>("saldoEdit");
-    saldoEdit->setText(utils.toString(saldo).c_str());
-}
-
-
 void MainWindow::recibirAuto(){
     nuevoAuto(AUTO);
 }
@@ -100,7 +91,6 @@ void MainWindow::recibirAuto(){
 void MainWindow::recibirAutoVip(){
     nuevoAuto(AUTO_VIP);
 }
-
 
 void MainWindow::nuevoAuto(unsigned int tipo){
 
