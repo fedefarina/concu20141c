@@ -12,7 +12,6 @@
 #include "Logger.h"
 #include "Constantes.h"
 #include "QProgressBar"
-#include "SigUnusedHandler.h"
 #include "EventHandler.h"
 #include "SignalHandler.h"
 #include "QCheckBox"
@@ -24,11 +23,13 @@
  * Maneja el loop principal de la simulacion.
  */
 
-class Main{
+class Main : public EventHandler{
 
 public:
-    Main(){}
-    ~Main(){}
+
+    Main(): terminarSimulacion(0){
+        SignalHandler :: getInstance()->registrarHandler ( SIGUNUSED,this);
+    }
 
     void run(){
 
@@ -64,9 +65,8 @@ public:
 
             pid_t pid = fork ();
             if ( pid == 0 ) {
-                SIGUNUSED_Handler sigUnusedHandler;
-                SignalHandler :: getInstance()->registrarHandler ( SIGUNUSED,&sigUnusedHandler );
-                while (sigUnusedHandler.getGracefulQuit() == 0 ){
+
+                while (terminarSimulacion == 0 ){
                     jefe->recibirAuto();
                     if(timeElapsed.elapsed()%100==0)
                         jefe->recibirPeticionesCaja(false);
@@ -117,7 +117,19 @@ public:
         }
     }
 
+    int handleSignal( int signum ){
+        if ( signum == SIGUNUSED ){
+            terminarSimulacion=1;
+        }
+        return 0;
+    }
+
+    ~Main(){}
+
 private:
+
+    sig_atomic_t terminarSimulacion;
+
     void onFinished(){
         restartUI(true);
         Logger::debug(getpid(), string("Fin de simulacion\n"));
