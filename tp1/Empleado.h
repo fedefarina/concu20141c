@@ -18,10 +18,8 @@ private:
     unsigned int id;
     MemoriaCompartida<bool> surtidores;
     Caja* caja;
-    Cola<mensaje>* colaAutos;
     Cola<mensaje>* colaCaja;
     Semaforo semaforoSurtidores;
-    Semaforo semaforoColaAutos;
     Semaforo semaforoColaCaja;
 
 public:
@@ -35,13 +33,7 @@ public:
         Semaforo semaforoSurtidores((char*)SEMAFORO_SURTIDOR);
         this->semaforoSurtidores=semaforoSurtidores;
 
-        Semaforo semaforoColaAutos((char*) SEMAFORO_COLA_AUTOS);
-        this->semaforoColaAutos=semaforoColaAutos;
-
-        Cola<mensaje> *colaAutos= new Cola<mensaje>( COLA_AUTOS,'C');
-        this->colaAutos=colaAutos;
         this->caja = new Caja();
-
         Semaforo semaforoColaCaja((char*) SEMAFORO_COLA_CAJA);
         this->semaforoColaCaja=semaforoColaCaja;
 
@@ -98,7 +90,6 @@ public:
 
     ~Empleado() {
         this->surtidores.liberar();
-        delete(this->colaAutos);
         delete(this->colaCaja);
         delete(this->caja);
     }
