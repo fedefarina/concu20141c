@@ -79,16 +79,17 @@ public:
 
                 Logger::debug(getpid(),"El empleado "+ utils.toString(id)+ " pide usar la caja\n");
 
+                semaforoSurtidores.p(i);
+                this->surtidores.escribir(true, i);
+                semaforoSurtidores.v(i);
+
                 while(esperandoCaja==0){
                     sleep(0.001);
                 }
 
                 Logger::debug(getpid(),"Saldo de caja: "  + utils.toString(caja->getSaldo()) +"\n");
-                Logger::debug(getpid(), "Auto" + tipo + " atendido\n");
 
-                semaforoSurtidores.p(i);
-                this->surtidores.escribir(true, i);
-                semaforoSurtidores.v(i);
+                Logger::debug(getpid(), "Auto" + tipo + " atendido\n");
                 unAuto.setAtendido(true);
                 return;
             }
