@@ -12,7 +12,6 @@ typedef struct mensaje {
 	int id;
     pid_t pid;
     float capacidad;
-    unsigned int empleadoID;
 } mensaje;
 
 #endif /* MENSAJES_H_ */

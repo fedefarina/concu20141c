@@ -187,9 +187,8 @@ public:
 
     void recibirPeticionesCaja(bool finalizado){
 
-        if(caja->isOcupada()){
+        if(caja->isOcupada())
             return;
-        }
 
         if(finalizado)
             finalizarCaja();
@@ -211,23 +210,12 @@ public:
                 pid_t pid = fork ();
                 if ( pid == 0 ) {
                     pid_t pidEmpleado=msg.pid;
-                    unsigned int empleadoID=msg.empleadoID;
-                    unsigned int monto=msg.capacidad;
-                    Utils<int> utils;
-                    Logger::debug(getpid(),"El empleado "+ utils.toString(empleadoID)
-                                  + " usa la caja pid:"+utils.toString(pidEmpleado)+"\n");
-                    caja->depositarMonto(monto);
-                    //msg.mtype=SENIAL;
-                    //colaCaja->escribir(msg);
                     kill(pidEmpleado,SIGALRM);
-                    Logger::debug(getpid(),"El empleado "+ utils.toString(empleadoID)
-                                  + " termino de usar la caja pid:"+utils.toString(pidEmpleado)+"\n");
                     exit(0);
                 }
             }
         }
     }
-
 
     bool isCajaFinalizada(){
         semaforoCajaFinalizada.p();
