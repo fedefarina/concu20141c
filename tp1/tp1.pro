@@ -21,7 +21,9 @@ HEADERS += \
     Main.h \
     Cola.h \
     Mensajes.h \
-    Caja.h
+    Caja.h \
+    LectorCaja.h \
+    Administrador.h
 
 SOURCES += \
     main.cpp \
@@ -33,7 +35,8 @@ SOURCES += \
     FifoEscritura.cpp \
     Fifo.cpp \
     Semaforo.cpp \
-    SignalHandler.cpp
+    SignalHandler.cpp \
+    Administrador.cpp
 
 FORMS += \
     mainwindow.ui \

@@ -85,16 +85,14 @@ public:
                     sleep(0.001);
                 }
 
-                Logger::debug(getpid(),"El empleado "+ utils.toString(id)
-                              + " usa la caja pid:"+utils.toString(id)+"\n");
+                Logger::debug(getpid(),"El empleado "+ utils.toString(id) + " usa la caja\n");
                 caja->depositarMonto(tiempoDeCarga);
 
                 Logger::debug(getpid(),"Saldo de caja: "  + utils.toString(caja->getSaldo()) +"\n");
 
-                Logger::debug(getpid(),"El empleado "+ utils.toString(id)
-                              + " termino de usar la caja\n");
-
+                Logger::debug(getpid(),"El empleado "+ utils.toString(id) +" termino de usar la caja\n");
                 Logger::debug(getpid(), "Auto" + tipo + " atendido\n");
+
                 unAuto.setAtendido(true);
                 return;
             }

@@ -13,8 +13,6 @@ class JefeDeEstacion {
 
 private:
     MemoriaCompartida<bool> empleados;
-    MemoriaCompartida<bool> cajaFinalizada;
-    Semaforo semaforoCajaFinalizada;
 
     MemoriaCompartida<unsigned int> contadorVIP;
     Semaforo semaforoContadorVIP;
@@ -23,19 +21,6 @@ private:
     Semaforo semaforoColaAutos;
 
     Cola<mensaje> *colaAutos;
-    Caja* caja;
-
-    Semaforo semaforoColaCaja;
-    Cola<mensaje> *colaCaja;
-
-
-    void finalizarCaja(){
-        if(!hayPeticionesPendientes() && !isCajaFinalizada()){
-            semaforoCajaFinalizada.p();
-            cajaFinalizada.escribir(true);
-            semaforoCajaFinalizada.v();
-        }
-    }
 
     bool leerColaAutos(unsigned int tipo,mensaje &msg){
         semaforoColaAutos.p();
@@ -44,18 +29,8 @@ private:
         return bytesLeidos>0;
     }
 
-
-    bool leerColaCaja(unsigned int tipo,mensaje &msg){
-        semaforoColaCaja.p();
-        ssize_t bytesLeidos =colaCaja->leer(tipo,&msg);
-        semaforoColaCaja.v();
-        return bytesLeidos>0;
-    }
-
     bool leerAuto(Auto &unAuto){
 
-        //Vip 0
-        //Comun 1
         bool autoLeido=false;
         mensaje msg;
 
@@ -95,21 +70,12 @@ private:
         return id;
     }
 
-    bool hayPeticionesPendientes(){
-        semaforoColaCaja.p();
-        bool estaVacia=colaCaja->estaVacia();
-        semaforoColaCaja.v();
-        return !estaVacia;
-    }
-
 public:
 
     JefeDeEstacion() {
         unsigned int empleados = EstacionDeServicio::getInstancia()->getEmpleados();
 
         this->empleados.crear((char*) MEMORIA_EMPLEADOS, 'E',empleados);
-
-        this->cajaFinalizada.crear((char*) MEMORIA_CAJA_FINALIZADA, 'M');
 
         Semaforo semaforoEmpleados((char*)SEMAFORO_EMPLEADOS);
         this->semaforoEmpleados = semaforoEmpleados;
@@ -120,21 +86,10 @@ public:
         Semaforo semaforoContadorVIP((char*) SEMAFORO_CONTADOR_VIP);
         this->semaforoContadorVIP=semaforoContadorVIP;
 
-        Semaforo semaforoCajaFinalizada((char*) SEMAFORO_CAJA_FINALIZADA);
-        this->semaforoCajaFinalizada=semaforoCajaFinalizada;
-
         this->contadorVIP.crear((char*) MEMORIA_CONTADOR_VIP, 'M');
 
         Cola<mensaje> *colaAutos =new Cola<mensaje>( COLA_AUTOS,'C');
         this->colaAutos=colaAutos;
-
-        Semaforo semaforoColaCaja((char*) SEMAFORO_COLA_CAJA);
-        this->semaforoColaCaja=semaforoColaCaja;
-
-        Cola<mensaje> *colaCaja =new Cola<mensaje>( COLA_CAJA,'C');
-        this->colaCaja=colaCaja;
-
-        this->caja = new Caja();
     }
 
     void recibirAuto() {
@@ -185,46 +140,6 @@ public:
         }
     }
 
-    void recibirPeticionesCaja(bool finalizado){
-
-        if(caja->isOcupada())
-            return;
-
-        if(finalizado)
-            finalizarCaja();
-
-        mensaje msg;
-
-        if(leerColaCaja(ADMINISTRADOR,msg)){
-            pid_t pid = fork ();
-            if ( pid == 0 ) {
-                Logger::debug(getpid(),"El administrador usa la caja\n");
-                unsigned int saldo=caja->consultarSaldo();
-                Utils<unsigned int> utils;
-                Logger::debug(getpid(),"Saldo:"+ utils.toString(saldo) +"\n");
-                Logger::debug(getpid(),"El administrador termino de usar la caja\n");
-                exit(0);
-            }
-        }else{
-            if(leerColaCaja(EMPLEADO,msg)){
-                pid_t pid = fork ();
-                if ( pid == 0 ) {
-                    pid_t pidEmpleado=msg.pid;
-                    kill(pidEmpleado,SIGALRM);
-                    exit(0);
-                }
-            }
-        }
-    }
-
-    bool isCajaFinalizada(){
-        semaforoCajaFinalizada.p();
-        bool finalizada=cajaFinalizada.leer();
-        semaforoCajaFinalizada.v();
-        return finalizada;
-    }
-
-
     unsigned int getEmpleadosOcupados() {
         unsigned int ocupados = 0;
         for (unsigned int i = 0; i < empleados.cantidad(); i++) {
@@ -240,10 +155,7 @@ public:
     ~JefeDeEstacion() {
         this->empleados.liberar();
         this->contadorVIP.liberar();
-        this->cajaFinalizada.liberar();
         delete(this->colaAutos);
-        delete(this->colaCaja);
-        delete(caja);
     }
 
 };

@@ -15,6 +15,7 @@
 #include "EventHandler.h"
 #include "SignalHandler.h"
 #include "QCheckBox"
+#include "LectorCaja.h"
 #include <sys/wait.h>
 
 
@@ -59,30 +60,32 @@ public:
             Logger::debug(getpid(), "Inicio de simulacion\n");
             QTime timeElapsed;
             timeElapsed.start();
-            Caja* caja = new Caja();
 
             JefeDeEstacion* jefe = new JefeDeEstacion();
 
             pid_t pid = fork ();
             if ( pid == 0 ) {
 
+                LectorCaja* lectorCaja=new LectorCaja();
+
                 while (terminarSimulacion == 0 ){
                     jefe->recibirAuto();
                     if(timeElapsed.elapsed()%100==0)
-                        jefe->recibirPeticionesCaja(false);
+                        lectorCaja->recibirPeticionesCaja(false);
                 }
 
-                while(!jefe->isCajaFinalizada()){
+                while(!lectorCaja->isCajaFinalizada()){
                     if(timeElapsed.elapsed()%100==0)
-                        jefe->recibirPeticionesCaja(true);
+                        lectorCaja->recibirPeticionesCaja(true);
                 }
 
                 while (jefe->getEmpleadosOcupados()>0){
                     if(timeElapsed.elapsed()%100==0)
-                        jefe->recibirPeticionesCaja(true);
+                        lectorCaja->recibirPeticionesCaja(true);
                 }
 
                 delete(jefe);
+                delete(lectorCaja);
                 exit (0);
             }
 
@@ -110,7 +113,6 @@ public:
             onFinished();
             delete(jefe);
             delete(cola);
-            delete(caja);
             SignalHandler::getInstance()->removerHandler(SIGUNUSED);
             SignalHandler :: getInstance()->destruir();
             EstacionDeServicio::destruirInstancia();

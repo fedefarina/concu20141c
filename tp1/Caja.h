@@ -2,6 +2,7 @@
 #define CAJA_H
 
 #include "MemoriaCompartida.h"
+#include "Semaforo.h"
 #include "Constantes.h"
 
 class Caja {
