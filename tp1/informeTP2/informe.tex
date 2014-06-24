@@ -26,8 +26,6 @@
  \end{list}
 }
 
-
-
 %Customize things
 \usepackage[margin=0pt,font=small,labelfont=bf]{caption}
 \usepackage[pdftex]{graphicx}
@@ -43,8 +41,8 @@
 
 % Document properties
 \title{Facultad de Ingeniería\\Técnicas de Programación Concurrente I [75.59]}
-\author{Federico Farina \texttt{<federicofarina22{@}gmail.com>}\\
-Nicolás Vazquez \texttt{<nickva1988@gmail.com>}}
+\author{Federico Farina (90177) \\
+Nicolás Vazquez (89172)}
 \date{\today}
 \hypersetup{
   colorlinks = true,
@@ -212,86 +210,89 @@ Se identificaron los siguientes casos de uso:
 \subsection{Caso de uso: Recibir auto}
 
 \begin{enumerate}
-\item \textbf{Descripción:} 
+\item \textbf{Descripción:} El jefe de estación recibe un nuevo auto que ingresa a la estación de servicio.
 \item \textbf{Actores participantes}: Jefe de Estación
 \item \textbf{Pre-condiciones}: -
 \item \textbf{Flujo principal}
 \begin{enumerate}
-\item 
-\item 
-\item 
-\item 
+\item El auto ingresa a la estación de servicio
+\item El auto se coloca detrás del último auto en ingresar a la estación de servicio
+\item El auto espera a que el jefe de estación se encuentre libre
+\item El auto es recibido por el jefe de estación
 \item Fin del caso de uso
 \end{enumerate}
-\textbf{Post-condiciones:} 
+\textbf{Post-condiciones:} El jefe de estación se encuentra libre
 \end{enumerate}
 
 \subsection{Caso de uso: Asignar empleado}
 
 \begin{enumerate}
-\item \textbf{Descripción:} 
-\item \textbf{Actores participantes}: 
-\item \textbf{Pre-condiciones}: 
+\item \textbf{Descripción:} El jefe de estación asigna un empleado para atender un nuevo auto. 
+\item \textbf{Actores participantes}: Jefe de Estación, Empleado
+\item \textbf{Pre-condiciones}: El auto debe haber sido previamente recibido por el jefe de estación.
 \item \textbf{Flujo principal}
 \begin{enumerate}
-\item 
-\item 
-\item 
-\item 
+\item El jefe de estación busca un empleado libre para atender el auto
+\item El jefe de estación asigna el auto al primer empleado libre que encuentre
 \item Fin del caso de uso
 \end{enumerate}
-\textbf{Post-condiciones:} 
+\item \textbf{Flujos de excepción}
+\begin{enumerate}
+\item No hay empleados disponibles para atender el auto
+\begin{enumerate}
+\item El auto se retira de la estación de servicio.
+\end{enumerate}
+\end{enumerate}
+\textbf{Post-condiciones:} El auto ha sido asignado a un empleado o bien se ha retirado de la estación de servicio por no haber empleados disponibles. El empleado se encuentra ocupado atendiendo el auto y el jefe de estación se encuentra libre para recibir un nuevo auto
 \end{enumerate}
 
 \subsection{Caso de uso: Atender auto}
 
 \begin{enumerate}
-\item \textbf{Descripción:} El empleado atiende el auto asignado por el jefe de estación y almacena la recaudación en la caja.
+\item \textbf{Descripción:} El empleado atiende el auto asignado por el jefe de estación.
 \item \textbf{Actores participantes}: Empleado
-\item \textbf{Pre-condiciones}: El auto a atender debe ser previamente asignado por el jefe de estación. El empleado no puede estar ocupado atendiendo otro auto. El tiempo de carga debe ser menor al tiempo de simulación restante.
+\item \textbf{Pre-condiciones}: El auto a atender debe ser previamente asignado por el jefe de estación. El empleado no puede estar ocupado atendiendo otro auto.
 \item \textbf{Flujo principal}
 \begin{enumerate}
 \item El empleado busca un surtidor libre para atender el auto
 \item El empleado determina el tiempo de carga según la capacidad del tanque de nafta del auto
 \item El empleado carga nafta en el auto
-\item El empleado almacena la recaudación resultante en la caja de la estación de servicio
+\item El empleado libera el surtidor utilizado
 \item Fin del caso de uso
 \end{enumerate}
-\textbf{Post-condiciones:} La recaudación es almacenada en la caja y el empleado se encuentra disponible para atender un nuevo auto
+\textbf{Post-condiciones:} El surtidor utilizado por el empleado se encuentra libre
 \end{enumerate}
 
 \subsection{Caso de uso: Almacenar recaudación}
 
 \begin{enumerate}
-\item \textbf{Descripción:} 
+\item \textbf{Descripción:} El empleado almacena la recaudación resultante de la atención de un auto en la caja de la estación de servicio.
 \item \textbf{Actores participantes}: Empleado
-\item \textbf{Pre-condiciones}: 
+\item \textbf{Pre-condiciones}: El empleado debe haber terminado de cargar nafta en el auto.
 \item \textbf{Flujo principal}
 \begin{enumerate}
-\item 
-\item 
-\item 
-\item 
+\item El empleado solicita el uso de la caja de la estación de servicio
+\item El empleado espera hasta que se libere la caja de la estación de servicio
+\item El empleado almacena la recaudación resultante en la caja de la estación de servicio
 \item Fin del caso de uso
 \end{enumerate}
-\textbf{Post-condiciones:} La recaudación es almacenada en la caja y el empleado se encuentra disponible para atender un nuevo auto
+\textbf{Post-condiciones:} La recaudación es almacenada en la caja y el empleado se encuentra disponible para atender un nuevo auto.
 \end{enumerate}
 
 \subsection{Caso de uso: Consultar recaudación}
 
 \begin{enumerate}
-\item \textbf{Descripción:} 
+\item \textbf{Descripción:} El administrador consulta la recaudación disponible en la caja de la estación de servicio.
 \item \textbf{Actores participantes}: Administrador
-\item \textbf{Pre-condiciones}: 
+\item \textbf{Pre-condiciones}: -
 \item \textbf{Flujo principal}
 \begin{enumerate}
-\item 
-\item 
-\item 
-\item 
+\item El administrador solicita el uso de la caja de la estación de servicio
+\item El administrador espera hasta que se libere la caja de la estación de servicio
+\item El administrador consulta el saldo disponible en la caja de la estación de servicio
 \item Fin del caso de uso
 \end{enumerate}
-\textbf{Post-condiciones:} 
+\textbf{Post-condiciones:} El administrador conoce el saldo disponible en la caja de la estación de servicio.
 \end{enumerate}
 
 \section{Tareas realizadas}
@@ -309,7 +310,7 @@ NOTA: En el caso de no haber empleados disponibles al ingresar un nuevo auto, no
 \item Una vez obtenida la división en procesos, establecer un esquema de comunicación entre ellos teniendo en cuenta los requerimientos de la aplicación. ¿Qué procesos se comunican entre sí? ¿Qué datos necesitan compartir para poder trabajar?
 
 \begin{itemize}
-\item[•] El proceso principal se comunica con la vista por medio de un canal de comunicación. Al ingresar un nuevo auto, se puede determinar su capacidad mediante la interfaz gráfica de usuario. La vista escribe en el canal dicha capacidad y el proceso principal la lee para determinar el tiempo que necesita el auto en ser atendido.
+\item[•] El proceso principal se comunica con la vista por medio de una cola de mensajes. Al ingresar un nuevo auto, se puede determinar su capacidad mediante la interfaz gráfica de usuario. La vista escribe en la cola de mensajes dicha capacidad y el tipo de auto que ha ingresado a la estación de servicio y el proceso principal la lee para determinar el tiempo que necesita el auto en ser atendido y determinar que tipo de auto ha ingresado.
 \item[•] El proceso principal y los procesos responsables de atender los autos que ingresan en la estación de servicio dejan el registro de su actividad en un único archivo de texto si el programa es ejecutado en modo debug. Este archivo debe ser compartido por todos los procesos.
 \item[•] Cada vez que se lanza un proceso para atender un nuevo auto, el proceso escribe la recaudación resultante en una caja común. Esta caja es compartida por todos los procesos y por el administrador de la estación de servicio, el cual en todo momento puede consultar la recaudación contenida en la caja.
 \item[•] La vista debe comunicar al proceso principal la finalización del tiempo de simulación. Este tiempo es controlado por la vista mediante un timer.
@@ -335,8 +336,9 @@ NOTA: En el caso de no haber empleados disponibles al ingresar un nuevo auto, no
 
 \begin{itemize}
 \item[•] Si el programa es ejecutado en modo debug, se utiliza un Lock File para sincronizar correctamente la escritura de los procesos en el archivo de texto.
-\item[•] Para determinar que surtidor se encuentra libre, se utiliza una memoria compartida con tantas posiciones como surtidores existan en la estación de servicio. Esta memoria es compartida por todos los empleados.
+\item[•] Para determinar que surtidor se encuentra libre, se utiliza una memoria compartida cuyo tamaño coincide con la cantidad de surtidores que existan en la estación de servicio. Esta memoria es compartida por todos los empleados.
 \item[•] La caja es una memoria compartida por todos los procesos que se lanzan cada vez que ingresa un nuevo auto. Dado que estos procesos pueden ejecutarse concurrentemente, se utiliza un semáforo de exclusión mutua para la sincronización de la lectura y escritura en la memoria compartida.
+\item[•] Para solicitar el uso de la caja, los empleados escriben un mensaje en una cola de mensajes que va almacenando las peticiones realizadas tanto por los empleados como por el administrador. Esta cola de mensajes es leída sincrónicamente por el jefe de estación, el cual asigna el uso de la caja a un empleado dependiendo de que existan peticiones o no del administrador. En caso de existir peticiones del administrador, el cual tendra prioridad en el uso de la caja, los empleados deberan esperar hasta que se realicen dichas peticiones.
 \end{itemize}
 \end{enumerate}
 
@@ -360,7 +362,7 @@ NOTA: En el caso de no haber empleados disponibles al ingresar un nuevo auto, no
 \begin{center}
 \includegraphics[scale=0.5]{diagrama_estado_empleado.png}
 \end{center}
-\caption[Long caption]{Diagrama de estado del jefe de estación}
+\caption[Long caption]{Diagrama de estado de un empleado}
 \end{figure}
 
 \section{Diagrama de procesos}
