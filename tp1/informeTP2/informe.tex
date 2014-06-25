@@ -295,6 +295,25 @@ Se identificaron los siguientes casos de uso:
 \textbf{Post-condiciones:} El administrador conoce el saldo disponible en la caja de la estación de servicio.
 \end{enumerate}
 
+\section{Mapeo a problemas conocidos de concurrencia}
+
+A continuacion mostramos el análisis de los problemas clásicos de concurrencia encontrados.
+
+\subsection*{Llegada de un nuevo auto y Jefe de Estación}
+
+El producto es la llegada de un nuevo auto, que se toma como un proceso aleatorio, y el consumidor es el jefe de estación que ejecuta una lectura destructiva. La comunicación entre las dos partes está hecha con una cola de manera asincrónica. De esta manera el productor (proceso aleatorio) agrega al final de la cola cada nuevo auto producido, mientras que el consumidor(jefe de estación) lee de la cola cada nuevo auto producido.
+
+\subsection*{Administrador-Empleados}
+
+La relación entre empleados y administradores puede verse como el problema de productores consumidores. En este caso, los empleados son los que producen su disponibilidad y el jefe la consume. El problema esta resuelto de manera asincrónica.
+
+\subsection*{Administrador-Empleados con la caja}
+
+Este problema puede verse como el de Lectores escritores. El recurso por el cual competir es la caja mientras que el administrador lee y el empleado escribe en ella. La prioridad en este caso es siempre para el administrador(Lector), lo que hace que cualquier empleado que este esperando por escribir en la caja tenga que esperar a qe el administrador haga todas las lecturas pendientes.
+
+
+
+
 \section{Tareas realizadas}
 
 \begin{enumerate}
