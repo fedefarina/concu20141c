@@ -15,7 +15,6 @@ class Empleado : public EventHandler{
 
 private:    
 
-    unsigned int id;
     sig_atomic_t esperandoCaja;
 
     Caja* caja;
@@ -24,7 +23,16 @@ private:
     Semaforo semaforoColaCaja;
     MemoriaCompartida<bool> surtidores;
 
+    bool leerColaCaja(unsigned int tipo,mensaje &msg){
+        semaforoColaCaja.p();
+        ssize_t bytesLeidos =colaCaja->leer(tipo,&msg);
+        semaforoColaCaja.v();
+        return bytesLeidos>0;
+    }
+
 public:
+
+    unsigned int id;
 
     Empleado(unsigned int empleadoID) {
         unsigned int surtidores = EstacionDeServicio::getInstancia()->getSurtidores();
@@ -46,11 +54,19 @@ public:
         SignalHandler::getInstance()->registrarHandler( SIGALRM, this );
     }
 
-    bool leerColaCaja(unsigned int tipo,mensaje &msg){
-        semaforoColaCaja.p();
-        ssize_t bytesLeidos =colaCaja->leer(tipo,&msg);
-        semaforoColaCaja.v();
-        return bytesLeidos>0;
+
+    int getSurtidorLibre() {
+        int id = -1;
+        for (unsigned int i = 0; i < surtidores.cantidad(); i++) {
+            semaforoSurtidores.p(i);
+            if(this->surtidores.leer(i) == true) {
+                id = i;
+                semaforoSurtidores.v(i);
+                break;
+            }
+            semaforoSurtidores.v(i);
+        }
+        return id;
     }
 
     void atenderAuto(Auto& unAuto) {
@@ -62,8 +78,8 @@ public:
                 semaforoSurtidores.v(i);
 
                 string tipo=(unAuto.getTipo()==AUTO_VIP?" VIP":"");
-                Logger::debug(getpid(), "Evento -> Atendiendo auto"+tipo+"\n");
                 Utils<int> utils;
+                Logger::debug(getpid(), "Evento -> Empleado "+utils.toString(id)+" atendiendo auto"+tipo+"\n");
                 Logger::debug(getpid(),"Usando surtidor "  + utils.toString(i+1) +"\n");
                 sleep(tiempoDeCarga);
 
@@ -77,10 +93,6 @@ public:
 
                 Logger::debug(getpid(),"El empleado "+ utils.toString(id)+ " pide usar la caja\n");
 
-                semaforoSurtidores.p(i);
-                this->surtidores.escribir(true, i);
-                semaforoSurtidores.v(i);
-
                 while(esperandoCaja==0){
                     sleep(0.001);
                 }
@@ -92,6 +104,11 @@ public:
 
                 Logger::debug(getpid(),"El empleado "+ utils.toString(id) +" termino de usar la caja\n");
                 Logger::debug(getpid(), "Auto" + tipo + " atendido\n");
+
+
+                semaforoSurtidores.p(i);
+                this->surtidores.escribir(true, i);
+                semaforoSurtidores.v(i);
 
                 unAuto.setAtendido(true);
                 return;

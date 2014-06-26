@@ -29,6 +29,17 @@ private:
         return bytesLeidos>0;
     }
 
+
+    void encolarAutoEsperando(unsigned int id,unsigned int capacidad){
+        mensaje msg;
+        msg.id=id;
+        msg.mtype=AUTO_ESPERANDO;
+        msg.capacidad=capacidad;
+        semaforoColaAutos.p();
+        colaAutos->escribir(msg);
+        semaforoColaAutos.v();
+    }
+
     bool leerAuto(Auto &unAuto){
 
         bool autoLeido=false;
@@ -98,6 +109,7 @@ public:
         unAuto.setCapacidad(0);
         unAuto.setTipo(AUTO);
 
+
         if(leerAuto(unAuto)){
             int idEmpleado = getEmpleadoLibre();
 
@@ -113,13 +125,27 @@ public:
 
                     Empleado* empleado = new Empleado(id+1);
 
+                    if(unAuto.getTipo()!=AUTO_VIP)
+                        encolarAutoEsperando(id,unAuto.getCapacidad());
+
                     while(!unAuto.isAtendido()){
                         semaforoContadorVIP.p();
                         unsigned int contador=contadorVIP.leer();
                         semaforoContadorVIP.v();
 
                         if(unAuto.getTipo()==AUTO_VIP || contador==0){
-                            empleado->atenderAuto(unAuto);
+                            if(unAuto.getTipo()!=AUTO_VIP && empleado->getSurtidorLibre()>=0){
+                                mensaje msg;
+                                if(leerColaAutos(AUTO_ESPERANDO,msg)){
+                                    empleado->id=msg.id+1;
+                                    unAuto.setCapacidad(msg.capacidad);
+                                    empleado->atenderAuto(unAuto);
+                                }else{
+                                    empleado->atenderAuto(unAuto);
+                                }
+                            }else if(unAuto.getTipo()==AUTO_VIP) {
+                                empleado->atenderAuto(unAuto);
+                            }
                         }
                     }
 

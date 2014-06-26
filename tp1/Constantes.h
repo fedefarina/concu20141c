@@ -23,5 +23,6 @@
 #define AUTO 2
 #define ADMINISTRADOR 3
 #define EMPLEADO 4
+#define AUTO_ESPERANDO 5
 
 #endif // CONSTANTES_H
