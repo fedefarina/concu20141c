@@ -295,25 +295,6 @@ Se identificaron los siguientes casos de uso:
 \textbf{Post-condiciones:} El administrador conoce el saldo disponible en la caja de la estación de servicio.
 \end{enumerate}
 
-\section{Mapeo a problemas conocidos de concurrencia}
-
-A continuacion mostramos el análisis de los problemas clásicos de concurrencia encontrados.
-
-\subsection*{Llegada de un nuevo auto y Jefe de Estación}
-
-El producto es la llegada de un nuevo auto, que se toma como un proceso aleatorio, y el consumidor es el jefe de estación que ejecuta una lectura destructiva. La comunicación entre las dos partes está hecha con una cola de manera asincrónica. De esta manera el productor (proceso aleatorio) agrega al final de la cola cada nuevo auto producido, mientras que el consumidor(jefe de estación) lee de la cola cada nuevo auto producido.
-
-\subsection*{Administrador-Empleados}
-
-La relación entre empleados y administradores puede verse como el problema de productores consumidores. En este caso, los empleados son los que producen su disponibilidad y el jefe la consume. El problema esta resuelto de manera asincrónica.
-
-\subsection*{Administrador-Empleados con la caja}
-
-Este problema puede verse como el de Lectores escritores. El recurso por el cual competir es la caja mientras que el administrador lee y el empleado escribe en ella. La prioridad en este caso es siempre para el administrador(Lector), lo que hace que cualquier empleado que este esperando por escribir en la caja tenga que esperar a qe el administrador haga todas las lecturas pendientes.
-
-
-
-
 \section{Tareas realizadas}
 
 \begin{enumerate}
@@ -329,7 +310,7 @@ NOTA: En el caso de no haber empleados disponibles al ingresar un nuevo auto, no
 \item Una vez obtenida la división en procesos, establecer un esquema de comunicación entre ellos teniendo en cuenta los requerimientos de la aplicación. ¿Qué procesos se comunican entre sí? ¿Qué datos necesitan compartir para poder trabajar?
 
 \begin{itemize}
-\item[•] El proceso principal se comunica con la vista por medio de una cola de mensajes. Al ingresar un nuevo auto, se puede determinar su capacidad mediante la interfaz gráfica de usuario. La vista escribe en la cola de mensajes dicha capacidad y el tipo de auto que ha ingresado a la estación de servicio y el proceso principal la lee para determinar el tiempo que necesita el auto en ser atendido y determinar que tipo de auto ha ingresado.
+\item[•] La vista se debe comunicar con el proceso principal para indicarle la capacidad y el tipo de auto que ha ingresado a la estación de servicio.
 \item[•] El proceso principal y los procesos responsables de atender los autos que ingresan en la estación de servicio dejan el registro de su actividad en un único archivo de texto si el programa es ejecutado en modo debug. Este archivo debe ser compartido por todos los procesos.
 \item[•] Cada vez que se lanza un proceso para atender un nuevo auto, el proceso escribe la recaudación resultante en una caja común. Esta caja es compartida por todos los procesos y por el administrador de la estación de servicio, el cual en todo momento puede consultar la recaudación contenida en la caja.
 \item[•] La vista debe comunicar al proceso principal la finalización del tiempo de simulación. Este tiempo es controlado por la vista mediante un timer.
@@ -337,34 +318,34 @@ NOTA: En el caso de no haber empleados disponibles al ingresar un nuevo auto, no
 
 \item Tratar de mapear la comunicación entre los procesos a los problemas conocidos de concurrencia.
 
-\bigskip
-\begin{center}
-   \begin{tabular}[1.5\textwidth]{| l | c |}
-     \hline
-     \textbf{Dominio} & \textbf{Problema de Concurrencia}  \\ \hline
-     Entrada y atención de autos & Lector-Escritor  \\ \hline
-     Caja & Exclusiòn mutua\\ \hline
-     Empleados disponibles & Productor-Consumidor\\ \hline
-     Nuevos autos & Productor-consumidor\\ 
-     \hline
-   \end{tabular}
- \end{center}
+\textbf{Llegada de un nuevo auto y Jefe de Estación}
+
+Este problema puede tratarse como un problema de Productor-Consumidor. El producto es la llegada de un nuevo auto, que se toma como un proceso aleatorio; y el consumidor es el jefe de estación, que ejecuta una lectura destructiva. La comunicación entre las dos partes está basada en una cola de mensajes que se escribe de manera asincrónica y se lee de manera sincrónica. De esta manera, el productor (proceso aleatorio) agrega al final de la cola de mensajes cada nuevo auto producido y el consumidor (jefe de estación) lo consume.
+
+\textbf{Jefe de Estación-Empleados}
+
+La relación entre los empleados y el jefe de estación puede verse como el problema de productores y consumidores. En este caso, los empleados son los que producen su disponibilidad y el jefe de estación la consume. 
+La comunicación es asincrónica porque apenas se encuentre disponible un empleado, el jefe de estación lo utiliza para atender un nuevo auto.
+
+\textbf{Administrador-Empleados con la caja}
+
+Este problema puede verse como un problema de Lectores-Escritores. El recurso por el cual competir en este caso es la caja, en la cual el administrador lee y el empleado escribe. La prioridad es siempre para el administrador (Lector), lo que hace que cualquier empleado que esté esperando para escribir en la caja, tenga que esperar a que el administrador ejecute todas sus lecturas pendientes.
  
-\newpage
 \item Determinar los mecanismos de concurrencia a utilizar para cada una de las comunicaciones entre procesos que fueron detectadas en el ítem 2. No se requiere la utilización de algún mecanismo específico, la elección en cada caso queda a cargo del grupo y debe estar debidamente justificada.
 
 \begin{itemize}
 \item[•] Si el programa es ejecutado en modo debug, se utiliza un Lock File para sincronizar correctamente la escritura de los procesos en el archivo de texto.
-\item[•] Para determinar que surtidor se encuentra libre, se utiliza una memoria compartida cuyo tamaño coincide con la cantidad de surtidores que existan en la estación de servicio. Esta memoria es compartida por todos los empleados.
+\item[•] El proceso principal se comunica con la vista por medio de una cola de mensajes. Al ingresar un nuevo auto, se puede determinar su capacidad mediante la interfaz gráfica de usuario. La vista escribe en la cola de mensajes dicha capacidad y el tipo de auto que ha ingresado a la estación de servicio y el proceso principal la lee para determinar el tipo de auto y el tiempo que necesita en ser atendido.
+\item[•] Para determinar que surtidor se encuentra libre, se utiliza una memoria compartida cuyo tamaño coincide con la cantidad de surtidores que existan en la estación de servicio. Esta memoria es compartida por todos los procesos que se crean al asignar un empleado a atender un nuevo auto. Se utiliza un semáforo de exclusión mutua para sincronizar correctamente el acceso a este recurso.
 \item[•] La caja es una memoria compartida por todos los procesos que se lanzan cada vez que ingresa un nuevo auto. Dado que estos procesos pueden ejecutarse concurrentemente, se utiliza un semáforo de exclusión mutua para la sincronización de la lectura y escritura en la memoria compartida.
-\item[•] Para solicitar el uso de la caja, los empleados escriben un mensaje en una cola de mensajes que va almacenando las peticiones realizadas tanto por los empleados como por el administrador. Esta cola de mensajes es leída sincrónicamente por el jefe de estación, el cual asigna el uso de la caja a un empleado dependiendo de que existan peticiones o no del administrador. En caso de existir peticiones del administrador, el cual tendra prioridad en el uso de la caja, los empleados deberan esperar hasta que se realicen dichas peticiones.
+\item[•] Para solicitar el uso de la caja, los empleados escriben un mensaje en una cola de mensajes que va almacenando las peticiones realizadas tanto por los empleados como por el administrador. Esta cola de mensajes es leída sincrónicamente por el encargado de administrar la caja; el cual asigna su uso a un empleado dependiendo de que existan peticiones o no del administrador. En caso de existir peticiones del administrador, los empleados deberán esperar hasta que el administrador haya terminado de consultar el saldo disponible en la caja.
 \end{itemize}
 \end{enumerate}
 
 \section{Diagrama de casos de uso}
 \begin{figure}[hbtp]
 \begin{center}
-\includegraphics[scale=0.5]{diagramaDeCasosDeUso.png} 
+\includegraphics[scale=0.6]{diagramaDeCasosDeUso.png} 
 \end{center}
 \caption{Diagrama de casos de uso}
 \end{figure}
@@ -372,7 +353,7 @@ NOTA: En el caso de no haber empleados disponibles al ingresar un nuevo auto, no
 \section{Diagrama de clases}
 \begin{figure}[hbtp]
 \centering
-\includegraphics[scale=0.5]{diagramaDeClases.png}
+\includegraphics[scale=0.4]{diagramaDeClases.png}
 \caption{Diagrama de clases}
 \end{figure}
 
@@ -385,5 +366,11 @@ NOTA: En el caso de no haber empleados disponibles al ingresar un nuevo auto, no
 \end{figure}
 
 \section{Diagrama de procesos}
+\begin{figure}[hbtp]
+\begin{center}
+\includegraphics[scale=0.3]{diagramaDeProcesos.png} 
+\end{center}
+\caption{Diagrama de procesos}
+\end{figure}
 
 \end{document}
