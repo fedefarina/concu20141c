@@ -21,19 +21,20 @@ private:
     MemoriaCompartida<bool> cajaFinalizada;
     Semaforo semaforoCajaFinalizada;
 
-    bool leerColaCaja(unsigned int tipo,mensaje &msg){
-        semaforoColaCaja.p();
-        ssize_t bytesLeidos =colaCaja->leer(tipo,&msg);
-        semaforoColaCaja.v();
-        return bytesLeidos>0;
+    bool leerColaCaja(mensaje &msg){
+//        semaforoColaCaja.p();
+//        ssize_t bytesLeidos =colaCaja->leer(&msg);
+//        semaforoColaCaja.v();
+//        return bytesLeidos>0;
+        return true;
     }
 
     void finalizarCaja(){
-        if(!hayPeticionesPendientes() && !isCajaFinalizada()){
-            semaforoCajaFinalizada.p();
-            cajaFinalizada.escribir(true);
-            semaforoCajaFinalizada.v();
-        }
+//        if(!hayPeticionesPendientes() && !isCajaFinalizada()){
+//            semaforoCajaFinalizada.p();
+//            cajaFinalizada.escribir(true);
+//            semaforoCajaFinalizada.v();
+//        }
     }
 
 public:
@@ -55,32 +56,32 @@ public:
         this->caja = new Caja();
     }
 
-    void recibirPeticionesCaja(bool finalizado){
+    void recibirPeticionesCaja(){
 
-        if(caja->isOcupada())
-            return;
+//        if(caja->isOcupada())
+//            return;
 
-        if(finalizado)
-            finalizarCaja();
+//        if(finalizado)
+//            finalizarCaja();
 
-        mensaje msg;
+//        mensaje msg;
 
-        if(leerColaCaja(ADMINISTRADOR,msg)){
-            pid_t pid = fork ();
-            if ( pid == 0 ) {
-                administrador->consultarCaja();
-                exit(0);
-            }
-        }else{
-            if(leerColaCaja(EMPLEADO,msg)){
-                pid_t pid = fork ();
-                if ( pid == 0 ) {
-                    pid_t pidEmpleado=msg.pid;
-                    kill(pidEmpleado,SIGALRM);
-                    exit(0);
-                }
-            }
-        }
+//        if(leerColaCaja(ADMINISTRADOR,msg)){
+//            pid_t pid = fork ();
+//            if ( pid == 0 ) {
+//                administrador->consultarCaja();
+//                exit(0);
+//            }
+//        }else{
+//            if(leerColaCaja(EMPLEADO,msg)){
+//                pid_t pid = fork ();
+//                if ( pid == 0 ) {
+//                    pid_t pidEmpleado=msg.pid;
+//                    kill(pidEmpleado,SIGALRM);
+//                    exit(0);
+//                }
+//            }
+//        }
     }
 
     bool isCajaFinalizada(){
@@ -88,13 +89,6 @@ public:
         bool finalizada=cajaFinalizada.leer();
         semaforoCajaFinalizada.v();
         return finalizada;
-    }
-
-    bool hayPeticionesPendientes(){
-        semaforoColaCaja.p();
-        bool estaVacia=colaCaja->estaVacia();
-        semaforoColaCaja.v();
-        return !estaVacia;
     }
 
     ~LectorCaja() {

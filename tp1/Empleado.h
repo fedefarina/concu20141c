@@ -16,23 +16,21 @@ class Empleado : public EventHandler{
 private:    
 
     sig_atomic_t esperandoCaja;
-
+    unsigned int id;
     Caja* caja;
     Cola<mensaje>* colaCaja;
     Semaforo semaforoSurtidores;
-    Semaforo semaforoColaCaja;
     MemoriaCompartida<bool> surtidores;
+    Semaforo semaforoSurtidoresDisponibles;
 
-    bool leerColaCaja(unsigned int tipo,mensaje &msg){
-        semaforoColaCaja.p();
-        ssize_t bytesLeidos =colaCaja->leer(tipo,&msg);
-        semaforoColaCaja.v();
-        return bytesLeidos>0;
-    }
+//    bool leerColaCaja(mensaje &msg){
+//        ssize_t bytesLeidos =colaCaja->leer(&msg);
+//        return bytesLeidos>0;
+//    }
 
 public:
 
-    unsigned int id;
+
 
     Empleado(unsigned int empleadoID) {
         unsigned int surtidores = EstacionDeServicio::getInstancia()->getSurtidores();
@@ -44,9 +42,10 @@ public:
         Semaforo semaforoSurtidores((char*)SEMAFORO_SURTIDOR);
         this->semaforoSurtidores=semaforoSurtidores;
 
+        Semaforo semaforoSurtidoresDisponibles((char*)SEMAFORO_SURTIDORES_DISPONIBLES);
+        this->semaforoSurtidoresDisponibles=semaforoSurtidoresDisponibles;
+
         this->caja = new Caja();
-        Semaforo semaforoColaCaja((char*) SEMAFORO_COLA_CAJA);
-        this->semaforoColaCaja=semaforoColaCaja;
 
         Cola<mensaje> *colaCaja =new Cola<mensaje>( COLA_CAJA,'C');
         this->colaCaja=colaCaja;
@@ -83,34 +82,34 @@ public:
                 Logger::debug(getpid(),"Usando surtidor "  + utils.toString(i+1) +"\n");
                 sleep(tiempoDeCarga);
 
-                mensaje msg;
-                msg.pid=getpid();
-                msg.mtype=EMPLEADO;
+                //                mensaje msg;
+                //                msg.pid=getpid();
+                //                msg.mtype=EMPLEADO;
 
-                semaforoColaCaja.p();
-                colaCaja->escribir(msg);
-                semaforoColaCaja.v();
+                //                semaforoColaCaja.p();
+                //                colaCaja->escribir(msg);
+                //                semaforoColaCaja.v();
 
-                Logger::debug(getpid(),"El empleado "+ utils.toString(id)+ " pide usar la caja\n");
+                //                Logger::debug(getpid(),"El empleado "+ utils.toString(id)+ " pide usar la caja\n");
 
-                while(esperandoCaja==0){
-                    sleep(0.001);
-                }
+                //                while(esperandoCaja==0){
+                //                    sleep(0.001);
+                //                }
 
-                Logger::debug(getpid(),"El empleado "+ utils.toString(id) + " usa la caja\n");
-                caja->depositarMonto(tiempoDeCarga);
+                //                Logger::debug(getpid(),"El empleado "+ utils.toString(id) + " usa la caja\n");
+                //                caja->depositarMonto(tiempoDeCarga);
 
-                Logger::debug(getpid(),"Saldo de caja: "  + utils.toString(caja->getSaldo()) +"\n");
+                //                Logger::debug(getpid(),"Saldo de caja: "  + utils.toString(caja->getSaldo()) +"\n");
 
-                Logger::debug(getpid(),"El empleado "+ utils.toString(id) +" termino de usar la caja\n");
+                //                Logger::debug(getpid(),"El empleado "+ utils.toString(id) +" termino de usar la caja\n");
+
                 Logger::debug(getpid(), "Auto" + tipo + " atendido\n");
 
 
                 semaforoSurtidores.p(i);
                 this->surtidores.escribir(true, i);
                 semaforoSurtidores.v(i);
-
-                unAuto.setAtendido(true);
+                //semaforoSurtidoresDisponibles.v();
                 return;
             }
             semaforoSurtidores.v(i);

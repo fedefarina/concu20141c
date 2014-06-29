@@ -12,8 +12,6 @@
 #include "Logger.h"
 #include "Constantes.h"
 #include "QProgressBar"
-#include "EventHandler.h"
-#include "SignalHandler.h"
 #include "QCheckBox"
 #include "LectorCaja.h"
 #include <sys/wait.h>
@@ -24,13 +22,11 @@
  * Maneja el loop principal de la simulacion.
  */
 
-class Main : public EventHandler{
+class Main{
 
 public:
 
-    Main(): terminarSimulacion(0){
-        SignalHandler :: getInstance()->registrarHandler ( SIGUNUSED,this);
-    }
+    Main(){}
 
     void run(){
 
@@ -66,26 +62,34 @@ public:
             pid_t pid = fork ();
             if ( pid == 0 ) {
 
-                LectorCaja* lectorCaja=new LectorCaja();
+                //LectorCaja* lectorCaja=new LectorCaja();
 
-                while (terminarSimulacion == 0 ){
-                    jefe->recibirAuto();
-                    if(timeElapsed.elapsed()%100==0)
-                        lectorCaja->recibirPeticionesCaja(false);
+                while (true){
+                    sleep(2);
+                    if(!jefe->recibirAuto()){
+                        break;
+                    }
                 }
+                //                    if(timeElapsed.elapsed()%100==0)
+                //                        lectorCaja->recibirPeticionesCaja(false);
 
-                while(!lectorCaja->isCajaFinalizada()){
-                    if(timeElapsed.elapsed()%100==0)
-                        lectorCaja->recibirPeticionesCaja(true);
-                }
 
-                while (jefe->getEmpleadosOcupados()>0){
-                    if(timeElapsed.elapsed()%100==0)
-                        lectorCaja->recibirPeticionesCaja(true);
-                }
 
+                //                while(!lectorCaja->isCajaFinalizada()){
+                //                    if(timeElapsed.elapsed()%100==0)
+                //                        lectorCaja->recibirPeticionesCaja(true);
+                //                }
+
+                //                while (jefe->getEmpleadosOcupados()>0){
+                //                    //                                    if(timeElapsed.elapsed()%100==0)
+                //                    //                                        lectorCaja->recibirPeticionesCaja(true);
+                //                }
+
+
+                Logger::debug(getpid(), "Sali \n");
                 delete(jefe);
-                delete(lectorCaja);
+                delete(cola);
+                //delete(lectorCaja);
                 exit (0);
             }
 
@@ -102,7 +106,11 @@ public:
             progressBar->setValue(100);
             MainWindow* mainWindow=MainWindow::getInstance();
             disableAutoButton();
-            kill(pid, SIGUNUSED);
+
+            mensaje msg;
+            msg.mtype=FIN_SIMULACION;
+            msg.capacidad=1;
+            cola->escribir(msg);
 
             while (jefe->getEmpleadosOcupados()>0)
                 QCoreApplication::processEvents();
@@ -113,24 +121,13 @@ public:
             onFinished();
             delete(jefe);
             delete(cola);
-            SignalHandler::getInstance()->removerHandler(SIGUNUSED);
-            SignalHandler :: getInstance()->destruir();
             EstacionDeServicio::destruirInstancia();
         }
-    }
-
-    int handleSignal( int signum ){
-        if ( signum == SIGUNUSED ){
-            terminarSimulacion=1;
-        }
-        return 0;
     }
 
     ~Main(){}
 
 private:
-
-    sig_atomic_t terminarSimulacion;
 
     void onFinished(){
         restartUI(true);

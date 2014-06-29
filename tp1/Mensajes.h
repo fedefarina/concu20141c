@@ -8,10 +8,9 @@
 
 
 typedef struct mensaje {
-	long mtype;
-	int id;
-    pid_t pid;
+    long mtype;
     float capacidad;
+    unsigned int empleadoID;
 } mensaje;
 
 #endif /* MENSAJES_H_ */

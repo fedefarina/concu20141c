@@ -15,7 +15,7 @@ private:
 public:
     Semaforo();
     explicit Semaforo (char* nombre,unsigned int cantidad=1);
-    explicit Semaforo (char* nombre, int valorInicial, unsigned int cantidad=1);
+    explicit Semaforo (char* nombre, unsigned int valorInicial, unsigned int cantidad);
     virtual ~Semaforo();
 
     int p (unsigned int posicion=0); // decrementa

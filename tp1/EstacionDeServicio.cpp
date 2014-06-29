@@ -13,18 +13,6 @@ EstacionDeServicio::EstacionDeServicio() {
     Semaforo semaforoCajaFinalizada((char*)SEMAFORO_CAJA_FINALIZADA,1,1);
     this->semaforoCajaFinalizada=semaforoCajaFinalizada;
 
-    Semaforo semaforoColaAutos ( (char*)SEMAFORO_COLA_AUTOS,1,1);
-    this->semaforoColaAutos=semaforoColaAutos;
-
-    Semaforo semaforoColaCaja( (char*)SEMAFORO_COLA_CAJA,1,1);
-    this->semaforoColaCaja=semaforoColaCaja;
-
-    Semaforo semaforoContadorVIP((char*) SEMAFORO_CONTADOR_VIP,1,1);
-    this->semaforoContadorVIP=semaforoContadorVIP;
-
-    this->contadorVIP.crear((char*) MEMORIA_CONTADOR_VIP, 'M');
-    contadorVIP.escribir(0);
-
     this->cajaFinalizada.crear((char*) MEMORIA_CAJA_FINALIZADA, 'M');
     cajaFinalizada.escribir(false);
 
@@ -43,16 +31,13 @@ EstacionDeServicio::~EstacionDeServicio() {
     this->colaAutos->destruir();
     this->colaCaja->destruir();
     this->semaforoSurtidores.eliminar();
-    this->semaforoContadorVIP.eliminar();
+    this->semaforoSurtidoresDisponibles.eliminar();
     this->semaforoEmpleados.eliminar();
-    this->semaforoColaAutos.eliminar();
-    this->semaforoColaCaja.eliminar();
     this->semaforoCajaFinalizada.eliminar();
     this->semaforoCaja.eliminar();
     this->semaforoCajaOcupada.eliminar();
     this->empleados.liberar();
     this->surtidores.liberar();
-    this->contadorVIP.liberar();
     this->cajaFinalizada.liberar();
     delete(this->colaAutos);
     delete(this->colaCaja);
@@ -87,6 +72,9 @@ void EstacionDeServicio::setSurtidores(unsigned int surtidores) {
 
     Semaforo semaforoSurtidores((char*)SEMAFORO_SURTIDOR, 1, surtidores);
     this->semaforoSurtidores=semaforoSurtidores;
+
+    Semaforo semaforoSurtidoresDisponibles((char*)SEMAFORO_SURTIDORES_DISPONIBLES, surtidores,1);
+    this->semaforoSurtidoresDisponibles=semaforoSurtidoresDisponibles;
 }
 
 unsigned int EstacionDeServicio::getEmpleados() {

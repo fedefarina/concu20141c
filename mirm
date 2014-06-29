@@ -13,6 +13,7 @@ ipcrm -S 0x6103003a
 ipcrm -S 0x6103001c
 ipcrm -S 0x6103001b
 ipcrm -S 0x6103004f
+ipcrm -S 0x61030046
 
 ipcrm -Q 0x4303004c
 ipcrm -Q 0x43030029

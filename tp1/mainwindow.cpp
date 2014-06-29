@@ -6,6 +6,7 @@
 #include "mainwindow.h"
 #include "Main.h"
 #include "Constantes.h"
+#include "Cola.h"
 #include <sys/wait.h>
 
 MainWindow* MainWindow::instance = NULL;
@@ -60,11 +61,6 @@ void MainWindow::iniciarSimulacion(){
     Cola<mensaje> *colaAutos = new Cola<mensaje>( COLA_AUTOS,'C');
     this->colaAutos=colaAutos;
     this->caja = new Caja();
-    Semaforo semaforoCola((char*) SEMAFORO_COLA_AUTOS);
-    this->semaforoColaAutos=semaforoCola;
-
-    Semaforo semaforoColaCaja((char*) SEMAFORO_COLA_CAJA);
-    this->semaforoColaCaja=semaforoColaCaja;
 
     Cola<mensaje> *colaCaja =new Cola<mensaje>( COLA_CAJA,'C');
     this->colaCaja=colaCaja;
@@ -80,9 +76,7 @@ void MainWindow::notificarPeticion(){
     Logger::debug(getpid(),"El administrador pide usar la caja\n");
     mensaje msg;
     msg.mtype=ADMINISTRADOR;
-    semaforoColaCaja.p();
     colaCaja->escribir(msg);
-    semaforoColaCaja.v();
 }
 
 void MainWindow::recibirAuto(){
@@ -97,28 +91,30 @@ void MainWindow::nuevoAuto(unsigned int tipo){
 
     JefeDeEstacion jefe;
     string tipoAuto=(tipo==AUTO_VIP)?" VIP":"";
-    if(jefe.getEmpleadosOcupados()==nEmpleados){
-        Logger::debug(getpid(), "Evento > No hay empleados disponibles\n");
-        Logger::debug(getpid(), "Evento > El auto"+ tipoAuto +" se retira de la estación de servicio\n");
-        return;
-    }else{
-        Logger::debug(getpid(),"Evento > Un nuevo auto"+tipoAuto+" entra a la estacion de servicio\n",true);
-    }
+
+    mensaje msg;
+
+        if(jefe.getEmpleadosOcupados()==nEmpleados){
+            Logger::debug(getpid(), "Evento > No hay empleados disponibles\n");
+            Logger::debug(getpid(), "Evento > El auto"+ tipoAuto +" se retira de la estación de servicio\n");
+            return;
+        }else{
+            Logger::debug(getpid(),"Evento > Un nuevo auto"+tipoAuto+" entra a la estacion de servicio\n",true);
+            unsigned int id=jefe.getEmpleadoLibre();
+            jefe.setEmpleadoOcupado(id);
+            msg.empleadoID=id;
+        }
 
     int capacidad;
-
     if(tipo==AUTO){
         capacidad=this->findChild<QLineEdit*>("capacidadEdit")->text().toInt();
     }else{
         capacidad=this->findChild<QLineEdit*>("capacidadVipEdit")->text().toInt();
     }
 
-    mensaje msg;
     msg.mtype=tipo;
     msg.capacidad=capacidad;
-    semaforoColaAutos.p();
     colaAutos->escribir(msg);
-    semaforoColaAutos.v();
 }
 
 bool MainWindow::event(QEvent *event){

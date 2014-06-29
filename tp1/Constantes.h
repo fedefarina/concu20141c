@@ -13,6 +13,7 @@
 #define SEMAFORO_COLA_AUTOS "/bin/cp"
 #define SEMAFORO_COLA_CAJA "/bin/sed"
 #define SEMAFORO_SURTIDOR "/bin/chmod"
+#define SEMAFORO_SURTIDORES_DISPONIBLES "/bin/less"
 #define SEMAFORO_CAJA "/bin/mv"
 #define SEMAFORO_CAJA_OCUPADA "/bin/kill"
 #define SEMAFORO_CAJA_FINALIZADA "/bin/login"
@@ -21,6 +22,8 @@
 
 #define AUTO_VIP 1
 #define AUTO 2
+#define FIN_SIMULACION 3
+
 #define ADMINISTRADOR 3
 #define EMPLEADO 4
 #define AUTO_ESPERANDO 5

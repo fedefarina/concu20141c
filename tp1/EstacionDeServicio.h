@@ -17,17 +17,14 @@ private:
     Caja* caja;
     MemoriaCompartida<bool> empleados;
     MemoriaCompartida<bool> surtidores;
-    MemoriaCompartida<unsigned int> contadorVIP;
     MemoriaCompartida<bool> cajaFinalizada;
 
     Semaforo semaforoSurtidores;
+    Semaforo semaforoSurtidoresDisponibles;
     Semaforo semaforoEmpleados;
     Semaforo semaforoCaja;
     Semaforo semaforoCajaOcupada;
     Semaforo semaforoCajaFinalizada;
-    Semaforo semaforoColaAutos;
-    Semaforo semaforoColaCaja;
-    Semaforo semaforoContadorVIP;
     Cola<mensaje> *colaAutos;
     Cola<mensaje> *colaCaja;
 

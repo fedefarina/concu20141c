@@ -13,56 +13,89 @@ class JefeDeEstacion {
 
 private:
     MemoriaCompartida<bool> empleados;
-
-    MemoriaCompartida<unsigned int> contadorVIP;
-    Semaforo semaforoContadorVIP;
-
     Semaforo semaforoEmpleados;
-    Semaforo semaforoColaAutos;
+    Semaforo semaforoSurtidoresDisponibles;
 
     Cola<mensaje> *colaAutos;
 
-    bool leerColaAutos(unsigned int tipo,mensaje &msg){
-        semaforoColaAutos.p();
-        ssize_t bytesLeidos =colaAutos->leer(tipo,&msg);
-        semaforoColaAutos.v();
-        return bytesLeidos>0;
+
+public:
+
+    JefeDeEstacion() {
+        unsigned int empleados = EstacionDeServicio::getInstancia()->getEmpleados();
+
+        this->empleados.crear((char*) MEMORIA_EMPLEADOS, 'E',empleados);
+
+        Semaforo semaforoEmpleados((char*)SEMAFORO_EMPLEADOS);
+        this->semaforoEmpleados = semaforoEmpleados;
+
+        Semaforo semaforoSurtidoresDisponibles((char*)SEMAFORO_SURTIDORES_DISPONIBLES);
+        this->semaforoSurtidoresDisponibles=semaforoSurtidoresDisponibles;
+        Utils<int> utils;
+
+        Cola<mensaje> *colaAutos =new Cola<mensaje>( COLA_AUTOS,'C');
+        this->colaAutos=colaAutos;
     }
 
+    bool recibirAuto() {
 
-    void encolarAutoEsperando(unsigned int id,unsigned int capacidad){
-        mensaje msg;
-        msg.id=id;
-        msg.mtype=AUTO_ESPERANDO;
-        msg.capacidad=capacidad;
-        semaforoColaAutos.p();
-        colaAutos->escribir(msg);
-        semaforoColaAutos.v();
-    }
-
-    bool leerAuto(Auto &unAuto){
-
-        bool autoLeido=false;
+        Auto unAuto;
         mensaje msg;
 
-        if(!leerColaAutos(AUTO_VIP,msg)){
-            if(leerColaAutos(AUTO,msg)){
-                unAuto.setTipo(AUTO);
-                autoLeido=true;
-            }
-        }else{
-            semaforoContadorVIP.p();
-            unsigned int contador=contadorVIP.leer();
-            contadorVIP.escribir(++contador);
-            semaforoContadorVIP.v();
-            autoLeido=true;
-            unAuto.setTipo(AUTO_VIP);
+        Utils<int> utils;
+        //Logger::debug(getpid(),"Afuera Valor Antes : "+utils.toString(semaforoSurtidoresDisponibles.getValue())+"\n");
+        semaforoSurtidoresDisponibles.p();
+
+        Logger::debug(getpid(),"Antes de leer\n");
+        if(colaAutos->leer(&msg)==-1){
+            semaforoSurtidoresDisponibles.v();
+            return true;
         }
 
-        if(autoLeido)
-            unAuto.setCapacidad(msg.capacidad);
+        Logger::debug(getpid(),"Capacidad: " +utils.toString(msg.capacidad)+ "\n");
 
-        return autoLeido;
+
+        if(msg.mtype==FIN_SIMULACION){
+            semaforoSurtidoresDisponibles.v();
+            return false;
+        }
+
+
+        unAuto.setTipo(msg.mtype);
+        unAuto.setCapacidad(msg.capacidad);
+
+        unsigned int id=msg.empleadoID;
+
+        //unsigned int id=getEmpleadoLibre();
+
+        pid_t pid = fork();
+        if (pid == 0) {
+
+            //                    string tipo=(unAuto.getTipo()==AUTO_VIP?" VIP":"");
+
+            //                    Utils<int> utils;
+            //                    Logger::debug(getpid(),"El auto"+ tipo +" es atendido por el empleado " + utils.toString(id+1)+"\n");
+
+
+            Empleado* empleado = new Empleado(id+1);
+            empleado->atenderAuto(unAuto);
+            delete(empleado);
+            semaforoEmpleados.p(id);
+            this->empleados.escribir(true,id);
+            semaforoEmpleados.v(id);
+
+//            sleep(3);
+            semaforoSurtidoresDisponibles.v();
+            exit(0);
+        }
+
+        return true;
+    }
+
+    void setEmpleadoOcupado(unsigned int id){
+        semaforoEmpleados.p(id);
+        this->empleados.escribir(false,id);
+        semaforoEmpleados.v(id);
     }
 
     int getEmpleadoLibre() {
@@ -77,94 +110,9 @@ private:
             }
             semaforoEmpleados.v(i);
         }
-
         return id;
     }
 
-public:
-
-    JefeDeEstacion() {
-        unsigned int empleados = EstacionDeServicio::getInstancia()->getEmpleados();
-
-        this->empleados.crear((char*) MEMORIA_EMPLEADOS, 'E',empleados);
-
-        Semaforo semaforoEmpleados((char*)SEMAFORO_EMPLEADOS);
-        this->semaforoEmpleados = semaforoEmpleados;
-
-        Semaforo semaforoColaAutos((char*) SEMAFORO_COLA_AUTOS);
-        this->semaforoColaAutos=semaforoColaAutos;
-
-        Semaforo semaforoContadorVIP((char*) SEMAFORO_CONTADOR_VIP);
-        this->semaforoContadorVIP=semaforoContadorVIP;
-
-        this->contadorVIP.crear((char*) MEMORIA_CONTADOR_VIP, 'M');
-
-        Cola<mensaje> *colaAutos =new Cola<mensaje>( COLA_AUTOS,'C');
-        this->colaAutos=colaAutos;
-    }
-
-    void recibirAuto() {
-
-        Auto unAuto;
-        unAuto.setCapacidad(0);
-        unAuto.setTipo(AUTO);
-
-
-        if(leerAuto(unAuto)){
-            int idEmpleado = getEmpleadoLibre();
-
-            //Busco un empleado libre
-            if(idEmpleado >= 0){
-                unsigned int id=idEmpleado;
-
-                pid_t pid = fork();
-                if (pid == 0) {
-                    Utils<int> utils;
-                    string tipo=(unAuto.getTipo()==AUTO_VIP?" VIP":"");
-                    Logger::debug(getpid(),"El auto"+ tipo +" es atendido por el empleado " + utils.toString(id+1)+"\n");
-
-                    Empleado* empleado = new Empleado(id+1);
-
-                    if(unAuto.getTipo()!=AUTO_VIP)
-                        encolarAutoEsperando(id,unAuto.getCapacidad());
-
-                    while(!unAuto.isAtendido()){
-                        semaforoContadorVIP.p();
-                        unsigned int contador=contadorVIP.leer();
-                        semaforoContadorVIP.v();
-
-                        if(unAuto.getTipo()==AUTO_VIP || contador==0){
-                            if(unAuto.getTipo()!=AUTO_VIP && empleado->getSurtidorLibre()>=0){
-                                mensaje msg;
-                                if(leerColaAutos(AUTO_ESPERANDO,msg)){
-                                    empleado->id=msg.id+1;
-                                    unAuto.setCapacidad(msg.capacidad);
-                                    empleado->atenderAuto(unAuto);
-                                }else{
-                                    empleado->atenderAuto(unAuto);
-                                }
-                            }else if(unAuto.getTipo()==AUTO_VIP) {
-                                empleado->atenderAuto(unAuto);
-                            }
-                        }
-                    }
-
-                    if(unAuto.getTipo()==AUTO_VIP){
-                        semaforoContadorVIP.p();
-                        unsigned int contador=contadorVIP.leer();
-                        contadorVIP.escribir(--contador);
-                        semaforoContadorVIP.v();
-                    }
-
-                    delete(empleado);
-                    semaforoEmpleados.p(id);
-                    this->empleados.escribir(true,id);
-                    semaforoEmpleados.v(id);
-                    exit(0);
-                }
-            }
-        }
-    }
 
     unsigned int getEmpleadosOcupados() {
         unsigned int ocupados = 0;
@@ -180,7 +128,6 @@ public:
 
     ~JefeDeEstacion() {
         this->empleados.liberar();
-        this->contadorVIP.liberar();
         delete(this->colaAutos);
     }
 

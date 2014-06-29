@@ -14,7 +14,7 @@ Semaforo::Semaforo(){
 
 }
 
-Semaforo :: Semaforo (char* nombre, int valorInicial, unsigned int cantidad) {
+Semaforo :: Semaforo (char* nombre, unsigned int valorInicial, unsigned int cantidad) {
 
     key_t clave = ftok ( nombre,'a' );
     //clave a partir de ftok,cantidad de semaforos, creo el semaforo si no existe

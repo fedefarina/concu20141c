@@ -16,8 +16,7 @@ public:
     Cola ( const std::string& archivo,const char letra );
     ~Cola();
     int escribir ( const T& dato ) const;
-    int leer ( const int tipo,T* buffer ) const;
-    bool estaVacia () const;
+    int leer (T* buffer ) const;
     int destruir () const;
 };
 
@@ -44,15 +43,12 @@ template <class T> int Cola<T> :: escribir ( const T& dato ) const {
     return resultado;
 }
 
-template <class T> int Cola<T> :: leer ( const int tipo,T* buffer ) const {
-    int resultado = msgrcv ( this->id,static_cast<void *>(buffer),sizeof(T)-sizeof(long),tipo,IPC_NOWAIT);
-    return resultado;
-}
+template <class T> int Cola<T> :: leer (T* buffer ) const {
+    int resultado = msgrcv ( this->id,static_cast<void *>(buffer),sizeof(T)-sizeof(long),-10,0 );
+    if(resultado!=-1)
+        std::cout<<"Bien"<<std::endl;
 
-template <class T> bool Cola<T> :: estaVacia () const {
-    struct msqid_ds buf;
-    msgctl(this->id, IPC_STAT, &buf);
-    return  buf.msg_qnum==0;
+    return resultado;
 }
 
 #endif /* COLA_H_ */
