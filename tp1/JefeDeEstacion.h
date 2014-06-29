@@ -43,17 +43,12 @@ public:
         mensaje msg;
 
         Utils<int> utils;
-        //Logger::debug(getpid(),"Afuera Valor Antes : "+utils.toString(semaforoSurtidoresDisponibles.getValue())+"\n");
         semaforoSurtidoresDisponibles.p();
 
-        Logger::debug(getpid(),"Antes de leer\n");
         if(colaAutos->leer(&msg)==-1){
             semaforoSurtidoresDisponibles.v();
             return true;
         }
-
-        Logger::debug(getpid(),"Capacidad: " +utils.toString(msg.capacidad)+ "\n");
-
 
         if(msg.mtype==FIN_SIMULACION){
             semaforoSurtidoresDisponibles.v();
@@ -71,21 +66,17 @@ public:
         pid_t pid = fork();
         if (pid == 0) {
 
-            //                    string tipo=(unAuto.getTipo()==AUTO_VIP?" VIP":"");
-
-            //                    Utils<int> utils;
-            //                    Logger::debug(getpid(),"El auto"+ tipo +" es atendido por el empleado " + utils.toString(id+1)+"\n");
-
+            string tipo=(unAuto.getTipo()==AUTO_VIP?" VIP":"");
+            Logger::debug(getpid(),"El auto"+ tipo +" es atendido por el empleado " + utils.toString(id+1)+"\n");
 
             Empleado* empleado = new Empleado(id+1);
             empleado->atenderAuto(unAuto);
+            semaforoSurtidoresDisponibles.v();
+
             delete(empleado);
             semaforoEmpleados.p(id);
             this->empleados.escribir(true,id);
             semaforoEmpleados.v(id);
-
-//            sleep(3);
-            semaforoSurtidoresDisponibles.v();
             exit(0);
         }
 

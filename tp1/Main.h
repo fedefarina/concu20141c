@@ -80,12 +80,6 @@ public:
                 //                        lectorCaja->recibirPeticionesCaja(true);
                 //                }
 
-                //                while (jefe->getEmpleadosOcupados()>0){
-                //                    //                                    if(timeElapsed.elapsed()%100==0)
-                //                    //                                        lectorCaja->recibirPeticionesCaja(true);
-                //                }
-
-
                 Logger::debug(getpid(), "Sali \n");
                 delete(jefe);
                 delete(cola);

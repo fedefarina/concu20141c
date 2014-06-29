@@ -11,17 +11,15 @@
 #include "SigUnusedHandler.h"
 #include "SignalHandler.h"
 
-class Empleado : public EventHandler{
+class Empleado{
 
 private:    
 
-    sig_atomic_t esperandoCaja;
     unsigned int id;
     Caja* caja;
     Cola<mensaje>* colaCaja;
     Semaforo semaforoSurtidores;
     MemoriaCompartida<bool> surtidores;
-    Semaforo semaforoSurtidoresDisponibles;
 
 //    bool leerColaCaja(mensaje &msg){
 //        ssize_t bytesLeidos =colaCaja->leer(&msg);
@@ -42,15 +40,11 @@ public:
         Semaforo semaforoSurtidores((char*)SEMAFORO_SURTIDOR);
         this->semaforoSurtidores=semaforoSurtidores;
 
-        Semaforo semaforoSurtidoresDisponibles((char*)SEMAFORO_SURTIDORES_DISPONIBLES);
-        this->semaforoSurtidoresDisponibles=semaforoSurtidoresDisponibles;
-
         this->caja = new Caja();
 
         Cola<mensaje> *colaCaja =new Cola<mensaje>( COLA_CAJA,'C');
         this->colaCaja=colaCaja;
 
-        SignalHandler::getInstance()->registrarHandler( SIGALRM, this );
     }
 
 
@@ -109,22 +103,13 @@ public:
                 semaforoSurtidores.p(i);
                 this->surtidores.escribir(true, i);
                 semaforoSurtidores.v(i);
-                //semaforoSurtidoresDisponibles.v();
                 return;
             }
             semaforoSurtidores.v(i);
         }
     }
 
-    int handleSignal( int signum ){
-        if ( signum == SIGALRM ){
-            esperandoCaja=1;
-        }
-        return 0;
-    }
-
     ~Empleado() {
-        SignalHandler::getInstance()->removerHandler(SIGALRM);
         this->surtidores.liberar();
         delete(this->colaCaja);
         delete(this->caja);
