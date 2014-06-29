@@ -13,10 +13,10 @@ EstacionDeServicio::EstacionDeServicio() {
     this->caja = new Caja();
     caja->setMonto(0);
 
-    ColaPrioridad<mensaje> *colaAutos=new ColaPrioridad<mensaje>( COLA_AUTOS,'C');
+    Cola<mensaje> *colaAutos=new Cola<mensaje>( COLA_AUTOS,'C');
     this->colaAutos=colaAutos;
 
-    ColaPrioridad<mensaje> *colaCaja=new ColaPrioridad<mensaje>( COLA_CAJA,'C');
+    Cola<mensaje> *colaCaja=new Cola<mensaje>( COLA_CAJA,'C');
     this->colaCaja=colaCaja;
 }
 
@@ -24,7 +24,7 @@ EstacionDeServicio::~EstacionDeServicio() {
     this->colaAutos->destruir();
     this->colaCaja->destruir();
     this->semaforoCaja.eliminar();
-    semaforoCajaOcupada.eliminar();
+    this->semaforoCajaOcupada.eliminar();
     this->semaforoSurtidores.eliminar();
     this->semaforoSurtidoresDisponibles.eliminar();
     this->semaforoEmpleados.eliminar();

@@ -24,7 +24,7 @@ HEADERS += \
     LectorCaja.h \
     Administrador.h \
     MensajeCaja.h \
-    ColaPrioridad.h
+    Cola.h
 
 SOURCES += \
     main.cpp \

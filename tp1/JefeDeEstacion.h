@@ -3,7 +3,7 @@
 
 #include "Auto.h"
 #include "Empleado.h"
-#include "ColaPrioridad.h"
+#include "Cola.h"
 #include "Mensajes.h"
 #include <sys/wait.h>
 
@@ -16,7 +16,7 @@ private:
     Semaforo semaforoEmpleados;
     Semaforo semaforoSurtidoresDisponibles;
 
-    ColaPrioridad<mensaje> *colaAutos;
+    Cola<mensaje> *colaAutos;
 
 
 public:
@@ -33,7 +33,7 @@ public:
         this->semaforoSurtidoresDisponibles=semaforoSurtidoresDisponibles;
         Utils<int> utils;
 
-        ColaPrioridad<mensaje> *colaAutos =new ColaPrioridad<mensaje>( COLA_AUTOS,'C');
+        Cola<mensaje> *colaAutos =new Cola<mensaje>( COLA_AUTOS,'C');
         this->colaAutos=colaAutos;
     }
 

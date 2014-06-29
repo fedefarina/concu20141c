@@ -6,7 +6,7 @@
 #include "mainwindow.h"
 #include "Main.h"
 #include "Constantes.h"
-#include "ColaPrioridad.h"
+#include "Cola.h"
 #include <sys/wait.h>
 
 MainWindow* MainWindow::instance = NULL;
@@ -58,11 +58,11 @@ void MainWindow::ejecutarComando(){
 
 void MainWindow::iniciarSimulacion(){
 
-    ColaPrioridad<mensaje> *colaAutos = new ColaPrioridad<mensaje>( COLA_AUTOS,'C');
+    Cola<mensaje> *colaAutos = new Cola<mensaje>( COLA_AUTOS,'C');
     this->colaAutos=colaAutos;
     this->caja = new Caja();
 
-    ColaPrioridad<mensaje> *colaCaja =new ColaPrioridad<mensaje>( COLA_CAJA,'C');
+    Cola<mensaje> *colaCaja =new Cola<mensaje>( COLA_CAJA,'C');
     this->colaCaja=colaCaja;
 }
 

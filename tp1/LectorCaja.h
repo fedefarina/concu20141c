@@ -4,7 +4,7 @@
 #include "Constantes.h"
 #include "Semaforo.h"
 #include "Caja.h"
-#include "ColaPrioridad.h"
+#include "Cola.h"
 #include "Administrador.h"
 #include "MensajeCaja.h"
 
@@ -17,7 +17,7 @@ private:
     Administrador *administrador;
     Semaforo semaforoCaja;
     Semaforo semaforoCajaOcupada;
-    ColaPrioridad<mensajeCaja> *colaCaja;
+    Cola<mensajeCaja> *colaCaja;
 
 public:
 
@@ -25,7 +25,7 @@ public:
 
         administrador=new Administrador();
 
-        ColaPrioridad<mensajeCaja> *colaCaja =new ColaPrioridad<mensajeCaja>( COLA_CAJA,'C');
+        Cola<mensajeCaja> *colaCaja =new Cola<mensajeCaja>( COLA_CAJA,'C');
         this->colaCaja=colaCaja;
 
         Semaforo semaforoCaja((char*)SEMAFORO_CAJA);

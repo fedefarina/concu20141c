@@ -17,18 +17,11 @@ private:
 
     unsigned int id;
     Caja* caja;
-    ColaPrioridad<mensaje>* colaCaja;
+    Cola<mensaje>* colaCaja;
     Semaforo semaforoSurtidores;
     MemoriaCompartida<bool> surtidores;
 
-//    bool leerColaCaja(mensaje &msg){
-//        ssize_t bytesLeidos =colaCaja->leer(&msg);
-//        return bytesLeidos>0;
-//    }
-
 public:
-
-
 
     Empleado(unsigned int empleadoID) {
         unsigned int surtidores = EstacionDeServicio::getInstancia()->getSurtidores();
@@ -41,7 +34,7 @@ public:
 
         this->caja = new Caja();
 
-        ColaPrioridad<mensaje> *colaCaja =new ColaPrioridad<mensaje>( COLA_CAJA,'C');
+        Cola<mensaje> *colaCaja =new Cola<mensaje>( COLA_CAJA,'C');
         this->colaCaja=colaCaja;
 
     }
