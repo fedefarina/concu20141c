@@ -115,12 +115,13 @@ public:
             msg.mtype=FIN_SIMULACION;
             colaAutos->escribir(msg);
 
+            int estado;
+            wait ((void *) &estado);
+
             mensajeCaja msgCaja;
             msgCaja.mtype=FIN_SIMULACION;
             colaCaja->escribir(msgCaja);
 
-            int estado;
-            wait ((void *) &estado);
             wait ((void *) &estado);
             mainWindow->finalizarSimulacion();
             onFinished();

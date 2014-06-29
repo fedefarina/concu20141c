@@ -31,11 +31,8 @@ public:
 
         mensajeCaja msg;
         if(colaCaja->leer(&msg)==-1){
-            Logger::debug(getpid(),"Leo mal\n");
             return true;
         }
-
-        Logger::debug(getpid(),"Lei un mensaje \n");
 
         if(msg.mtype==FIN_SIMULACION){
             return false;
