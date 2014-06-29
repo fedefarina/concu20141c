@@ -10,6 +10,7 @@
 #include "mainwindow.h"
 #include "SigUnusedHandler.h"
 #include "SignalHandler.h"
+#include "MensajeCaja.h"
 
 class Empleado{
 
@@ -17,7 +18,7 @@ private:
 
     unsigned int id;
     Caja* caja;
-    Cola<mensaje>* colaCaja;
+    Cola<mensajeCaja>* colaCaja;
     Semaforo semaforoSurtidores;
     MemoriaCompartida<bool> surtidores;
 
@@ -34,7 +35,7 @@ public:
 
         this->caja = new Caja();
 
-        Cola<mensaje> *colaCaja =new Cola<mensaje>( COLA_CAJA,'C');
+        Cola<mensajeCaja> *colaCaja =new Cola<mensajeCaja>( COLA_CAJA,'C');
         this->colaCaja=colaCaja;
 
     }
@@ -68,30 +69,23 @@ public:
                 Logger::debug(getpid(),"Usando surtidor "  + utils.toString(i+1) +"\n");
                 sleep(tiempoDeCarga);
 
-                //                mensaje msg;
-                //                msg.pid=getpid();
-                //                msg.mtype=EMPLEADO;
+                mensajeCaja msg;
+                msg.mtype=EMPLEADO;
+                msg.empleadoPID=getpid();
 
-                //                semaforoColaCaja.p();
-                //                colaCaja->escribir(msg);
-                //                semaforoColaCaja.v();
+                colaCaja->escribir(msg);
 
-                //                Logger::debug(getpid(),"El empleado "+ utils.toString(id)+ " pide usar la caja\n");
+                Logger::debug(getpid(),"El empleado "+ utils.toString(id)+ " pide usar la caja\n");
+                colaCaja->leer((int) getpid(),&msg);
 
-                //                while(esperandoCaja==0){
-                //                    sleep(0.001);
-                //                }
+                Logger::debug(getpid(),"El empleado "+ utils.toString(id) + " usa la caja\n");
+                caja->depositarMonto(tiempoDeCarga);
+                sleep(1);
+                Logger::debug(getpid(),"Saldo de caja: "  + utils.toString(caja->getSaldo()) +"\n");
+                Logger::debug(getpid(),"El empleado "+ utils.toString(id) +" termino de usar la caja\n");
 
-                //                Logger::debug(getpid(),"El empleado "+ utils.toString(id) + " usa la caja\n");
-                //                caja->depositarMonto(tiempoDeCarga);
-
-                //                Logger::debug(getpid(),"Saldo de caja: "  + utils.toString(caja->getSaldo()) +"\n");
-
-                //                Logger::debug(getpid(),"El empleado "+ utils.toString(id) +" termino de usar la caja\n");
 
                 Logger::debug(getpid(), "Auto" + tipo + " atendido\n");
-
-
                 semaforoSurtidores.p(i);
                 this->surtidores.escribir(true, i);
                 semaforoSurtidores.v(i);

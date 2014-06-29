@@ -51,18 +51,18 @@ public:
             EstacionDeServicio::getInstancia()->setEmpleados(empleados);
             EstacionDeServicio::getInstancia()->setSurtidores(surtidores);
 
-            Cola<mensaje> *cola =new Cola<mensaje>( COLA_AUTOS,'C');
             QProgressBar* progressBar=mainWindow->findChild<QProgressBar*>("progressBar");
             Logger::debug(getpid(), "Inicio de simulacion\n");
             QTime timeElapsed;
             timeElapsed.start();
 
-            JefeDeEstacion* jefe = new JefeDeEstacion();
+            Cola<mensaje> *colaAutos =new Cola<mensaje>( COLA_AUTOS,'C');
 
             pid_t pid = fork ();
             if ( pid == 0 ) {
 
-                //LectorCaja* lectorCaja=new LectorCaja();
+                JefeDeEstacion* jefe = new JefeDeEstacion();
+
 
                 while (true){
                     sleep(1);
@@ -70,20 +70,30 @@ public:
                         break;
                     }
                 }
-                //                    if(timeElapsed.elapsed()%100==0)
-                //                        lectorCaja->recibirPeticionesCaja(false);
 
-
-
-                //                while(!lectorCaja->isCajaFinalizada()){
-                //                    if(timeElapsed.elapsed()%100==0)
-                //                        lectorCaja->recibirPeticionesCaja(true);
-                //                }
-
-                Logger::debug(getpid(), "Sali \n");
+                Logger::debug(getpid(), "Sali de empleados\n");
                 delete(jefe);
-                delete(cola);
-                //delete(lectorCaja);
+                delete(colaAutos);
+                exit (0);
+            }
+
+            Cola<mensajeCaja> *colaCaja =new Cola<mensajeCaja>( COLA_CAJA,'C');
+
+            pid = fork ();
+            if ( pid == 0 ) {
+
+                LectorCaja* lectorCaja=new LectorCaja();
+                while (true){
+                    sleep(1);
+                    if(!lectorCaja->recibirPeticionesCaja()){
+                        break;
+                    }
+
+                }
+                Logger::debug(getpid(), "Sali de caja\n");
+                delete(lectorCaja);
+                delete(colaAutos);
+                delete(colaCaja);
                 exit (0);
             }
 
@@ -103,18 +113,19 @@ public:
 
             mensaje msg;
             msg.mtype=FIN_SIMULACION;
-            msg.capacidad=1;
-            cola->escribir(msg);
+            colaAutos->escribir(msg);
 
-            while (jefe->getEmpleadosOcupados()>0)
-                QCoreApplication::processEvents();
+            mensajeCaja msgCaja;
+            msgCaja.mtype=FIN_SIMULACION;
+            colaCaja->escribir(msgCaja);
 
             int estado;
             wait ((void *) &estado);
+            wait ((void *) &estado);
             mainWindow->finalizarSimulacion();
             onFinished();
-            delete(jefe);
-            delete(cola);
+            delete(colaAutos);
+            delete(colaCaja);
             EstacionDeServicio::destruirInstancia();
         }
     }
@@ -132,6 +143,8 @@ private:
         MainWindow* mainWindow=MainWindow::getInstance();
         QPushButton *nuevoAutoButton = mainWindow->findChild<QPushButton*>("nuevoAutoButton");
         QPushButton *nuevoAutoVipButton = mainWindow->findChild<QPushButton*>("nuevoAutoVipButton");
+        QPushButton *saldoButton = mainWindow->findChild<QPushButton*>("saldoButton");
+        saldoButton->setEnabled(false);
         nuevoAutoButton->setEnabled(false);
         nuevoAutoVipButton->setEnabled(false);
     }

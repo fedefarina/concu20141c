@@ -7,7 +7,7 @@ EstacionDeServicio::EstacionDeServicio() {
     Semaforo semaforoCaja((char*)SEMAFORO_CAJA,1,1);
     this->semaforoCaja=semaforoCaja;
 
-    Semaforo semaforoCajaOcupada((char*)SEMAFORO_CAJA_OCUPADA);
+    Semaforo semaforoCajaOcupada((char*)SEMAFORO_CAJA_OCUPADA,1,1);
     this->semaforoCajaOcupada=semaforoCajaOcupada;
 
     this->caja = new Caja();

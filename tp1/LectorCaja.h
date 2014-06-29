@@ -37,31 +37,40 @@ public:
         this->caja = new Caja();
     }
 
-    void recibirPeticionesCaja(){
+    bool recibirPeticionesCaja(){
 
+        Logger::debug(getpid(),"Antes\n");
         semaforoCajaOcupada.p();
+        Logger::debug(getpid(),"Despues\n");
 
         mensajeCaja msg;
         if(colaCaja->leer(&msg)==-1){
+            Logger::debug(getpid(),"Leo mal\n");
             semaforoCajaOcupada.v();
-            return;
+            return true;
         }
 
-        int empleadoPID=msg.empleadoPID;
+        Logger::debug(getpid(),"Lei un mensaje \n");
 
-        pid_t pid = fork ();
-        if ( pid == 0 ) {
-            if(msg.mtype==ADMINISTRADOR){
-                Logger::debug(getpid(),"El administrador usa la caja\n");
-                administrador->consultarCaja();
-                sleep(1);
-                Logger::debug(getpid(),"El administrador termino de usar la caja\n");
-            }else{
-
-            }
+        if(msg.mtype==FIN_SIMULACION){
             semaforoCajaOcupada.v();
-            exit(0);
+            return false;
         }
+
+
+        if(msg.mtype==ADMINISTRADOR){
+            Logger::debug(getpid(),"Lector caja, atendiendo peticion del administrador\n");
+            administrador->consultarCaja();
+        }else{
+            Logger::debug(getpid(),"Lector caja, atendiendo peticion de empleado\n");
+            msg.mtype=msg.empleadoPID;
+            colaCaja->escribir(msg);
+        }
+
+        sleep(1);
+        semaforoCajaOcupada.v();
+
+        return true;
     }
 
     ~LectorCaja() {
