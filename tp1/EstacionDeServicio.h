@@ -22,7 +22,6 @@ private:
     Semaforo semaforoSurtidoresDisponibles;
     Semaforo semaforoEmpleados;
     Semaforo semaforoCaja;
-    Semaforo semaforoCajaOcupada;
     Cola<mensaje> *colaAutos;
     Cola<mensaje> *colaCaja;
 

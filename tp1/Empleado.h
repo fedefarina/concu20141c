@@ -40,7 +40,6 @@ public:
 
     }
 
-
     int getSurtidorLibre() {
         int id = -1;
         for (unsigned int i = 0; i < surtidores.cantidad(); i++) {

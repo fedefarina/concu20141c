@@ -13,10 +13,7 @@ class LectorCaja {
 private:
 
     Caja* caja;
-
     Administrador *administrador;
-    Semaforo semaforoCaja;
-    Semaforo semaforoCajaOcupada;
     Cola<mensajeCaja> *colaCaja;
 
 public:
@@ -24,39 +21,25 @@ public:
     LectorCaja() {
 
         administrador=new Administrador();
-
         Cola<mensajeCaja> *colaCaja =new Cola<mensajeCaja>( COLA_CAJA,'C');
         this->colaCaja=colaCaja;
-
-        Semaforo semaforoCaja((char*)SEMAFORO_CAJA);
-        this->semaforoCaja=semaforoCaja;
-
-        Semaforo semaforoCajaOcupada((char*)SEMAFORO_CAJA_OCUPADA);
-        this->semaforoCajaOcupada=semaforoCajaOcupada;
-
         this->caja = new Caja();
     }
 
     bool recibirPeticionesCaja(){
 
-        Logger::debug(getpid(),"Antes\n");
-        semaforoCajaOcupada.p();
-        Logger::debug(getpid(),"Despues\n");
 
         mensajeCaja msg;
         if(colaCaja->leer(&msg)==-1){
             Logger::debug(getpid(),"Leo mal\n");
-            semaforoCajaOcupada.v();
             return true;
         }
 
         Logger::debug(getpid(),"Lei un mensaje \n");
 
         if(msg.mtype==FIN_SIMULACION){
-            semaforoCajaOcupada.v();
             return false;
         }
-
 
         if(msg.mtype==ADMINISTRADOR){
             Logger::debug(getpid(),"Lector caja, atendiendo peticion del administrador\n");
@@ -68,7 +51,6 @@ public:
         }
 
         sleep(1);
-        semaforoCajaOcupada.v();
 
         return true;
     }
