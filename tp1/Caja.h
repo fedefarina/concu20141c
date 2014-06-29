@@ -20,37 +20,13 @@ public:
 
         Semaforo semaforoCajaOcupada((char*)SEMAFORO_CAJA_OCUPADA);
         this->semaforoCajaOcupada=semaforoCajaOcupada;
-
         this->caja.crear((char*)MEMORIA_CAJA, 'C');
-        this->ocupada.crear((char*)MEMORIA_CAJA_OCUPADA, 'C');
-
-    }
-
-    bool isOcupada(){
-        semaforoCajaOcupada.p();
-        bool estaOcupada=ocupada.leer();
-        semaforoCajaOcupada.v();
-        return estaOcupada;
-    }
-
-    void setOcupada(bool isOcupada){
-        semaforoCajaOcupada.p();
-        ocupada.escribir(isOcupada);
-        semaforoCajaOcupada.v();
     }
 
     unsigned int getSaldo() {
         semaforoCaja.p();
         unsigned int saldo = caja.leer();
         semaforoCaja.v();
-        return saldo;
-    }
-
-    unsigned int consultarSaldo() {
-        this->setOcupada(true);
-        unsigned int saldo=this->getSaldo();
-        sleep(1);
-        this->setOcupada(false);
         return saldo;
     }
 
@@ -61,11 +37,13 @@ public:
         semaforoCaja.v();
     }
 
+
+    unsigned int consultarSaldo() {
+        return this->getSaldo();
+    }
+
     void depositarMonto(unsigned int monto) {
-        this->setOcupada(true);
         this->setMonto(monto);
-        sleep(1);
-        this->setOcupada(false);
     }
 
     ~Caja() {

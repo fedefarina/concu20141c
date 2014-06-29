@@ -6,7 +6,7 @@
 #include "MemoriaCompartida.h"
 #include "Constantes.h"
 #include "Mensajes.h"
-#include "Cola.h"
+#include "ColaPrioridad.h"
 #include "Caja.h"
 
 using namespace std;
@@ -17,16 +17,14 @@ private:
     Caja* caja;
     MemoriaCompartida<bool> empleados;
     MemoriaCompartida<bool> surtidores;
-    MemoriaCompartida<bool> cajaFinalizada;
 
     Semaforo semaforoSurtidores;
     Semaforo semaforoSurtidoresDisponibles;
     Semaforo semaforoEmpleados;
     Semaforo semaforoCaja;
     Semaforo semaforoCajaOcupada;
-    Semaforo semaforoCajaFinalizada;
-    Cola<mensaje> *colaAutos;
-    Cola<mensaje> *colaCaja;
+    ColaPrioridad<mensaje> *colaAutos;
+    ColaPrioridad<mensaje> *colaCaja;
 
     static EstacionDeServicio* instancia;
 

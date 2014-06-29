@@ -11,7 +11,7 @@
 #include <string>
 #include "MemoriaCompartida.h"
 #include "Semaforo.h"
-#include "Cola.h"
+#include "ColaPrioridad.h"
 #include "Mensajes.h"
 #include "Caja.h"
 
@@ -45,10 +45,10 @@ public slots:
 
 private:
     unsigned int nSurtidores, nEmpleados, tiempoSimulacion;
-    Cola<mensaje> *colaAutos;
+    ColaPrioridad<mensaje> *colaAutos;
     Semaforo semaforoColaAutos;
     Semaforo semaforoColaCaja;
-    Cola<mensaje> *colaCaja;
+    ColaPrioridad<mensaje> *colaCaja;
     Caja* caja;
     Ui::MainWindow *ui;
     explicit MainWindow(QWidget *parent = 0);

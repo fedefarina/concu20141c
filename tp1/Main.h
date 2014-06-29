@@ -51,7 +51,7 @@ public:
             EstacionDeServicio::getInstancia()->setEmpleados(empleados);
             EstacionDeServicio::getInstancia()->setSurtidores(surtidores);
 
-            Cola<mensaje> *cola =new Cola<mensaje>( COLA_AUTOS,'C');
+            ColaPrioridad<mensaje> *cola =new ColaPrioridad<mensaje>( COLA_AUTOS,'C');
             QProgressBar* progressBar=mainWindow->findChild<QProgressBar*>("progressBar");
             Logger::debug(getpid(), "Inicio de simulacion\n");
             QTime timeElapsed;
@@ -65,7 +65,7 @@ public:
                 //LectorCaja* lectorCaja=new LectorCaja();
 
                 while (true){
-                    sleep(2);
+                    sleep(1);
                     if(!jefe->recibirAuto()){
                         break;
                     }

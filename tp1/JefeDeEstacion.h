@@ -3,7 +3,7 @@
 
 #include "Auto.h"
 #include "Empleado.h"
-#include "Cola.h"
+#include "ColaPrioridad.h"
 #include "Mensajes.h"
 #include <sys/wait.h>
 
@@ -16,7 +16,7 @@ private:
     Semaforo semaforoEmpleados;
     Semaforo semaforoSurtidoresDisponibles;
 
-    Cola<mensaje> *colaAutos;
+    ColaPrioridad<mensaje> *colaAutos;
 
 
 public:
@@ -33,18 +33,15 @@ public:
         this->semaforoSurtidoresDisponibles=semaforoSurtidoresDisponibles;
         Utils<int> utils;
 
-        Cola<mensaje> *colaAutos =new Cola<mensaje>( COLA_AUTOS,'C');
+        ColaPrioridad<mensaje> *colaAutos =new ColaPrioridad<mensaje>( COLA_AUTOS,'C');
         this->colaAutos=colaAutos;
     }
 
     bool recibirAuto() {
 
-        Auto unAuto;
-        mensaje msg;
-
-        Utils<int> utils;
         semaforoSurtidoresDisponibles.p();
 
+        mensaje msg;
         if(colaAutos->leer(&msg)==-1){
             semaforoSurtidoresDisponibles.v();
             return true;
@@ -55,17 +52,18 @@ public:
             return false;
         }
 
+        Auto unAuto;
 
         unAuto.setTipo(msg.mtype);
         unAuto.setCapacidad(msg.capacidad);
 
         unsigned int id=msg.empleadoID;
 
-        //unsigned int id=getEmpleadoLibre();
 
         pid_t pid = fork();
         if (pid == 0) {
 
+            Utils<int> utils;
             string tipo=(unAuto.getTipo()==AUTO_VIP?" VIP":"");
             Logger::debug(getpid(),"El auto"+ tipo +" es atendido por el empleado " + utils.toString(id+1)+"\n");
 

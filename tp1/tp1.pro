@@ -19,11 +19,12 @@ HEADERS += \
     SignalHandler.h \
     EventHandler.h \
     Main.h \
-    Cola.h \
     Mensajes.h \
     Caja.h \
     LectorCaja.h \
-    Administrador.h
+    Administrador.h \
+    MensajeCaja.h \
+    ColaPrioridad.h
 
 SOURCES += \
     main.cpp \
@@ -31,9 +32,6 @@ SOURCES += \
     Logger.cpp \
     LockFile.cpp \
     EstacionDeServicio.cpp \
-    FifoLectura.cpp \
-    FifoEscritura.cpp \
-    Fifo.cpp \
     Semaforo.cpp \
     SignalHandler.cpp \
     Administrador.cpp

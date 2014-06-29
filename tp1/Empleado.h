@@ -17,7 +17,7 @@ private:
 
     unsigned int id;
     Caja* caja;
-    Cola<mensaje>* colaCaja;
+    ColaPrioridad<mensaje>* colaCaja;
     Semaforo semaforoSurtidores;
     MemoriaCompartida<bool> surtidores;
 
@@ -33,7 +33,6 @@ public:
     Empleado(unsigned int empleadoID) {
         unsigned int surtidores = EstacionDeServicio::getInstancia()->getSurtidores();
         id=empleadoID;
-        esperandoCaja=0;
 
         this->surtidores.crear((char*)MEMORIA_SURTIDORES, 'S', surtidores);
 
@@ -42,7 +41,7 @@ public:
 
         this->caja = new Caja();
 
-        Cola<mensaje> *colaCaja =new Cola<mensaje>( COLA_CAJA,'C');
+        ColaPrioridad<mensaje> *colaCaja =new ColaPrioridad<mensaje>( COLA_CAJA,'C');
         this->colaCaja=colaCaja;
 
     }
