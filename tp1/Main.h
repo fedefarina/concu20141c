@@ -14,6 +14,7 @@
 #include "QProgressBar"
 #include "QCheckBox"
 #include "LectorCaja.h"
+#include <errno.h>
 #include <sys/wait.h>
 
 
@@ -68,8 +69,13 @@ public:
                     }
                 }
 
-                while(jefe->getEmpleadosOcupados()>0);
-                Logger::debug(getpid(), "Sali de empleados\n");
+                pid_t childPID;
+                while (childPID = waitpid(-1, NULL, 0)) {
+                   if (errno == ECHILD) {
+                      break;
+                   }
+                }
+
                 delete(jefe);
                 delete(colaAutos);
                 exit (0);
@@ -86,9 +92,8 @@ public:
                     if(!lectorCaja->recibirPeticionesCaja()){
                         break;
                     }
-
                 }
-                Logger::debug(getpid(), "Sali de caja\n");
+
                 delete(lectorCaja);
                 delete(colaAutos);
                 delete(colaCaja);
@@ -160,6 +165,5 @@ private:
         nuevoAutoButton->setEnabled(!enabled);
         nuevoAutoVipButton->setEnabled(!enabled);
     }
-
 };
 #endif // WORKERTHREAD_H
