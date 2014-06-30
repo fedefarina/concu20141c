@@ -62,15 +62,13 @@ public:
             if ( pid == 0 ) {
 
                 JefeDeEstacion* jefe = new JefeDeEstacion();
-
-
                 while (true){
-                    sleep(1);
                     if(!jefe->recibirAuto()){
                         break;
                     }
                 }
 
+                while(jefe->getEmpleadosOcupados()>0);
                 Logger::debug(getpid(), "Sali de empleados\n");
                 delete(jefe);
                 delete(colaAutos);
@@ -109,7 +107,7 @@ public:
 
             progressBar->setValue(100);
             MainWindow* mainWindow=MainWindow::getInstance();
-            disableAutoButton();
+            disableButtons();
 
             mensaje msg;
             msg.mtype=FIN_SIMULACION;
@@ -140,7 +138,7 @@ private:
         Logger::debug(getpid(), string("Fin de simulacion\n"));
     }
 
-    void disableAutoButton(){
+    void disableButtons(){
         MainWindow* mainWindow=MainWindow::getInstance();
         QPushButton *nuevoAutoButton = mainWindow->findChild<QPushButton*>("nuevoAutoButton");
         QPushButton *nuevoAutoVipButton = mainWindow->findChild<QPushButton*>("nuevoAutoVipButton");
@@ -148,6 +146,7 @@ private:
         saldoButton->setEnabled(false);
         nuevoAutoButton->setEnabled(false);
         nuevoAutoVipButton->setEnabled(false);
+        QCoreApplication::processEvents();
     }
 
     void restartUI(bool enabled){

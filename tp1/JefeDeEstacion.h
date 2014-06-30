@@ -12,12 +12,12 @@ using namespace std;
 class JefeDeEstacion {
 
 private:
+
+    pid_t pidEmpleado;
     MemoriaCompartida<bool> empleados;
     Semaforo semaforoEmpleados;
-    Semaforo semaforoSurtidoresDisponibles;
-
     Cola<mensaje> *colaAutos;
-
+    Cola<mensaje> *colaSurtidores;
 
 public:
 
@@ -29,9 +29,8 @@ public:
         Semaforo semaforoEmpleados((char*)SEMAFORO_EMPLEADOS);
         this->semaforoEmpleados = semaforoEmpleados;
 
-        Semaforo semaforoSurtidoresDisponibles((char*)SEMAFORO_SURTIDORES_DISPONIBLES);
-        this->semaforoSurtidoresDisponibles=semaforoSurtidoresDisponibles;
-        Utils<int> utils;
+        Cola<mensaje> *colaSurtidores=new Cola<mensaje>( COLA_SURTIDORES,'C');
+        this->colaSurtidores=colaSurtidores;
 
         Cola<mensaje> *colaAutos =new Cola<mensaje>( COLA_AUTOS,'C');
         this->colaAutos=colaAutos;
@@ -39,29 +38,22 @@ public:
 
     bool recibirAuto() {
 
-        semaforoSurtidoresDisponibles.p();
-
         mensaje msg;
-        if(colaAutos->leer(&msg)==-1){
-            semaforoSurtidoresDisponibles.v();
+        if(colaSurtidores->leer(SURTIDOR,&msg)==-1)
             return true;
-        }
 
-        if(msg.mtype==FIN_SIMULACION){
-            semaforoSurtidoresDisponibles.v();
+        while(colaAutos->leer(&msg)==-1);
+
+        if(msg.mtype==FIN_SIMULACION)
             return false;
-        }
 
         Auto unAuto;
-
         unAuto.setTipo(msg.mtype);
         unAuto.setCapacidad(msg.capacidad);
-
         unsigned int id=msg.empleadoID;
 
-
-        pid_t pid = fork();
-        if (pid == 0) {
+        pidEmpleado = fork();
+        if (pidEmpleado == 0) {
 
             Utils<int> utils;
             string tipo=(unAuto.getTipo()==AUTO_VIP?" VIP":"");
@@ -69,12 +61,12 @@ public:
 
             Empleado* empleado = new Empleado(id+1);
             empleado->atenderAuto(unAuto);
-            semaforoSurtidoresDisponibles.v();
 
             delete(empleado);
             semaforoEmpleados.p(id);
             this->empleados.escribir(true,id);
             semaforoEmpleados.v(id);
+
             exit(0);
         }
 
@@ -102,7 +94,6 @@ public:
         return id;
     }
 
-
     unsigned int getEmpleadosOcupados() {
         unsigned int ocupados = 0;
         for (unsigned int i = 0; i < empleados.cantidad(); i++) {
@@ -117,9 +108,17 @@ public:
 
     ~JefeDeEstacion() {
         this->empleados.liberar();
+        delete(this->colaSurtidores);
         delete(this->colaAutos);
     }
 
+    pid_t getPidEmpleado() const;
+    void setPidEmpleado(const pid_t &value);
 };
 
 #endif // JEFEDEESTACION_H
+
+pid_t JefeDeEstacion::getPidEmpleado() const{
+    return pidEmpleado;
+}
+

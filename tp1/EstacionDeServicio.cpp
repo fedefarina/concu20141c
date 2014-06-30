@@ -13,21 +13,25 @@ EstacionDeServicio::EstacionDeServicio() {
     Cola<mensaje> *colaAutos=new Cola<mensaje>( COLA_AUTOS,'C');
     this->colaAutos=colaAutos;
 
-    Cola<mensaje> *colaCaja=new Cola<mensaje>( COLA_CAJA,'C');
+    Cola<mensajeCaja> *colaCaja=new Cola<mensajeCaja>( COLA_CAJA,'C');
     this->colaCaja=colaCaja;
+
+    Cola<mensaje> *colaSurtidores=new Cola<mensaje>( COLA_SURTIDORES,'C');
+    this->colaSurtidores=colaSurtidores;
 }
 
 EstacionDeServicio::~EstacionDeServicio() {
     this->colaAutos->destruir();
     this->colaCaja->destruir();
+    this->colaSurtidores->destruir();
     this->semaforoCaja.eliminar();
     this->semaforoSurtidores.eliminar();
-    this->semaforoSurtidoresDisponibles.eliminar();
     this->semaforoEmpleados.eliminar();
     this->empleados.liberar();
     this->surtidores.liberar();
     delete(this->colaAutos);
     delete(this->colaCaja);
+    delete(this->colaSurtidores);
     delete(caja);
 }
 
@@ -60,8 +64,11 @@ void EstacionDeServicio::setSurtidores(unsigned int surtidores) {
     Semaforo semaforoSurtidores((char*)SEMAFORO_SURTIDOR, 1, surtidores);
     this->semaforoSurtidores=semaforoSurtidores;
 
-    Semaforo semaforoSurtidoresDisponibles((char*)SEMAFORO_SURTIDORES_DISPONIBLES, surtidores,1);
-    this->semaforoSurtidoresDisponibles=semaforoSurtidoresDisponibles;
+    mensaje msg;
+    msg.mtype=SURTIDOR;
+    for(unsigned int i=0;i<surtidores;i++)
+        colaSurtidores->escribir(msg);
+
 }
 
 unsigned int EstacionDeServicio::getEmpleados() {

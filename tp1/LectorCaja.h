@@ -40,7 +40,9 @@ public:
 
         if(msg.mtype==ADMINISTRADOR){
             Logger::debug(getpid(),"Lector caja, atendiendo peticion del administrador\n");
+            Logger::debug(getpid(),"El administrador usa la caja\n");
             administrador->consultarCaja();
+            Logger::debug(getpid(),"El administrador termino de usar la caja\n");
         }else{
             Logger::debug(getpid(),"Lector caja, atendiendo peticion de empleado\n");
             msg.mtype=msg.empleadoPID;

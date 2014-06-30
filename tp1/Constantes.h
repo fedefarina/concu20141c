@@ -7,9 +7,9 @@
 #define MEMORIA_CONTADOR_VIP "/bin/fgrep"
 #define COLA_AUTOS "/bin/ln"
 #define COLA_CAJA "/bin/dir"
+#define COLA_SURTIDORES "/bin/less"
 
 #define SEMAFORO_SURTIDOR "/bin/chmod"
-#define SEMAFORO_SURTIDORES_DISPONIBLES "/bin/less"
 #define SEMAFORO_CAJA "/bin/mv"
 #define SEMAFORO_CAJA_OCUPADA "/bin/kill"
 #define SEMAFORO_EMPLEADOS "/bin/chown"
@@ -20,6 +20,8 @@
 
 #define ADMINISTRADOR 1
 #define EMPLEADO 2
+
+#define SURTIDOR 4
 
 
 #endif // CONSTANTES_H

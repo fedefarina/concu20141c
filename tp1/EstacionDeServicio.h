@@ -6,6 +6,7 @@
 #include "MemoriaCompartida.h"
 #include "Constantes.h"
 #include "Mensajes.h"
+#include "MensajeCaja.h"
 #include "Cola.h"
 #include "Caja.h"
 
@@ -19,11 +20,11 @@ private:
     MemoriaCompartida<bool> surtidores;
 
     Semaforo semaforoSurtidores;
-    Semaforo semaforoSurtidoresDisponibles;
     Semaforo semaforoEmpleados;
     Semaforo semaforoCaja;
     Cola<mensaje> *colaAutos;
-    Cola<mensaje> *colaCaja;
+    Cola<mensajeCaja> *colaCaja;
+    Cola<mensaje> *colaSurtidores;
 
     static EstacionDeServicio* instancia;
 
