@@ -88,7 +88,6 @@ public:
 
                 LectorCaja* lectorCaja=new LectorCaja();
                 while (true){
-                    sleep(1);
                     if(!lectorCaja->recibirPeticionesCaja()){
                         break;
                     }

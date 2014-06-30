@@ -96,7 +96,7 @@ public:
                 Logger::debug(getpid(),"Saldo de caja: "  + utils.toString(caja->getSaldo()) +"\n");
                 Logger::debug(getpid(),"El empleado "+ utils.toString(id) +" termino de usar la caja\n");               
 
-                Logger::debug(getpid(), "Auto" + tipo + " atendido\n");
+                Logger::debug(getpid(),"El empleado "+ utils.toString(id) +" termino de atender el auto\n");
                 return;
             }
             semaforoSurtidores.v(i);
